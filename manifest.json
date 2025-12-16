@@ -22,7 +22,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["images/icon-48.png"],
+      "resources": ["images/hc-gh&st-collab.png"],
       "matches": ["https://flavortown.hackclub.com/*"]
     }
   ]
