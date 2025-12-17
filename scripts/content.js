@@ -58,6 +58,7 @@ function applySettingsSync() {
     if (value !== undefined) {
       const screenshareModeCheckbox = document.getElementById('screenshare_mode');
       if (!screenshareModeCheckbox) return;
+      
       screenshareModeCheckbox.checked = value;
     }
   })
@@ -69,14 +70,18 @@ function applyUISync() {
     if (value !== undefined && value) {
       const apiKeyDisplay = document.querySelector(".api-key-display");
       if (!apiKeyDisplay) return;
+
       let censored = true;
       let apiKey = apiKeyDisplay.textContent;
+
       apiKeyDisplay.classList.add("api-key-display-secure");
       apiKeyDisplay.classList.add("api-key-display-censored");
       apiKeyDisplay.textContent = "";
+
       apiKeyDisplay.addEventListener('mouseleave', (e) => {
         e.stopImmediatePropagation();
       }, true);
+
       apiKeyDisplay.addEventListener('mouseup', () => {
         if (censored) {
           censored = false;
