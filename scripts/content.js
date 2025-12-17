@@ -58,13 +58,37 @@ function applySettingsSync() {
       console.log(value);
       if (value) {
         const apiKeyDisplay = document.querySelector(".api-key-display");
+        var censored = true;
         if (!apiKeyDisplay) {
           return;
         }
         apiKeyDisplay.style.transition = "none";
         apiKeyDisplay.style.filter = "blur(0px)";
+        apiKeyDisplay.style.background = "black";
+        apiKeyDisplay.style.color = "black";
+        apiKeyDisplay.style.WebkitUserSelect = "none";
+        apiKeyDisplay.style.msUserSelect = "none";
+        apiKeyDisplay.style.userSelect = "none";
+        apiKeyDisplay.style.cursor = "pointer";
         apiKeyDisplay.addEventListener('mouseleave', (e) => {
           e.stopImmediatePropagation();
+        }, true);
+        apiKeyDisplay.addEventListener('mouseup', () => {
+          if (censored) {
+            censored = false;
+            apiKeyDisplay.style.background = "none";
+            apiKeyDisplay.style.color = "var(--color-text-body)";
+            apiKeyDisplay.style.WebkitUserSelect = "text";
+            apiKeyDisplay.style.msUserSelect = "text";
+            apiKeyDisplay.style.userSelect = "text";
+          } else {
+            censored = true;
+            apiKeyDisplay.style.background = "black";
+            apiKeyDisplay.style.color = "black";
+            apiKeyDisplay.style.WebkitUserSelect = "none";
+            apiKeyDisplay.style.msUserSelect = "none";
+            apiKeyDisplay.style.userSelect = "none";
+          }
         }, true);
       }
     }
