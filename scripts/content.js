@@ -13,6 +13,7 @@ function initialize() {
 
   // settings related
   addSpicetownSettings(); // must go BEFORE applySettingsSync()
+  addThemesPage();
   applySettingsSync();
   applyUISync();
 
@@ -22,10 +23,9 @@ function initialize() {
 
 async function addSpicetownSettings() {
   const settingsForm = await document.querySelector(".settings-form");
+  if (!settingsForm) return;
   const modalActions = await settingsForm.querySelector(".modal__actions");
-  const saveBtn = modalActions.querySelector(".modal__actions-close");
-
-  if (!settingsForm || !modalActions || !saveBtn) return;
+  const saveBtn = await modalActions.querySelector(".modal__actions-close");
 
   // screenshare mode
   const screenshareModeDiv = document.createElement("div");
@@ -153,11 +153,17 @@ async function addSpicetownSettings() {
   }
 }
 
+function addThemesPage() {
+  if (window.location.pathname === "/themes") {
+    document.body.innerHTML = "";
+  }
+}
+
 function addBannerTemplateHint() {
   const bannerInputDiv = document.querySelector(".input.file-upload.input--green");
-  const bannerInputSubtitle = bannerInputDiv.querySelector(".input__subtitle");
+  if (!bannerInputDiv) return;
 
-  if (!bannerInputDiv || !bannerInputSubtitle) return;
+  const bannerInputSubtitle = bannerInputDiv.querySelector(".input__subtitle");
 
   bannerInputSubtitle.textContent += " ";
 
