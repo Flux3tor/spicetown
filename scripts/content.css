@@ -174,3 +174,18 @@
 .report-btn {
   transition: all .2s ease !important;
 }
+
+.vote-action__div {
+  display: flex !important;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem auto;
+}
+
+.votes-new__prev-btn {
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  transform: translateX(0%) !important;
+}

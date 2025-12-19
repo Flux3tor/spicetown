@@ -22,8 +22,24 @@ function initialize() {
   applyUISync();
 
   // non settings related
+  addImprovedUI();
   addThemesPage();
   addBannerTemplateHint();
+}
+
+function addImprovedUI() {
+  const previousVotesBtn = document.querySelector(".btn.btn--brown.btn--borderless.votes-new__prev-btn");
+  if (previousVotesBtn) {
+    previousVotesBtn.textContent = "Previous votes";
+    const refreshVotesBtn = previousVotesBtn.cloneNode();
+    refreshVotesBtn.textContent = "Skip";
+    refreshVotesBtn.href = "javascript:window.location.href=window.location.href";
+    const voteActionsDiv = document.createElement("div");
+    voteActionsDiv.classList.add("vote-action__div");
+    previousVotesBtn.parentElement.insertBefore(voteActionsDiv, previousVotesBtn.parentElement.querySelector(".votes-new__main"));
+    voteActionsDiv.appendChild(previousVotesBtn);
+    voteActionsDiv.appendChild(refreshVotesBtn);
+  }
 }
 
 async function addSpicetownSettings() {
