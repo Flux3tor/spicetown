@@ -107,20 +107,35 @@ function addAchievementInfo() {
     "Regular Customer": "Buy 5 items from the shop",
     "VIP Diner": "Buy 10 items from the shop",
     "Line Cook": "Have 5 or more projects",
-    "???": "Post 10 devlogs",
-    "Cookbook Author": "Post 10 devlogs"
+    "Cookbook Author": "Post 10 devlogs",
+    "Scrapbook usage?!": "Use scrapbook in a devlog",
+    "Cooking": "Get 'fire' project status, given out by Flavortown devs"
+  };
+  const secretMap = {
+    "12": {name: "Cookbook Author", desc: "Post 10 devlogs", reward: "15"},
+    "13": {name: "Scrapbook usage?!", desc: "Use scrapbook in a devlog"},
+    "14": {name: "Cooking", desc: "Get 'fire' project status, given out by Flavortown devs", reward: "5"},
+    "15": {name: "Unknown", desc: "Unknown(???)"} // isnt in fucking source code :(
   };
   const achievementCards = achievementGridDiv.querySelectorAll(".achievements__card");
-  achievementCards.forEach(achievementCard => {
+  achievementCards.forEach((achievementCard, index) => {
     const achievementCardNameEl = achievementCard.querySelector(".achievements__name");
     const achievementCardDescriptionEl = achievementCard.querySelector(".achievements__description");
+    const achievementCardRewardEl = achievementCard.querySelector(".achievements__reward.achievements__reward--secret");
 
-    if (achievementCardNameEl && achievementCardDescriptionEl) {
-      const achievementCardName = achievementCardNameEl.textContent.trim();
+    if (!achievementCardNameEl || !achievementCardDescriptionEl) return;
 
-      if (achievementMap[achievementCardName]) {
-        achievementCardDescriptionEl.textContent = achievementMap[achievementCardName];
+    const achievementCardName = achievementCardNameEl.textContent.trim();
+    const position = (index + 1).toString(); // fuck 0-index
+
+    if (achievementCardName === "???" && secretMap[position]) {
+      achievementCardNameEl.textContent = secretMap[position].name;
+      achievementCardDescriptionEl.textContent = secretMap[position].desc;
+      if (achievementCardRewardEl && secretMap[position].reward) {
+        achievementCardRewardEl.textContent = `+${secretMap[position].reward} 🍪`;
       }
+    } else if (achievementMap[achievementCardName]) {
+      achievementCardDescriptionEl.textContent = achievementMap[achievementCardName];
     }
   })
 }
