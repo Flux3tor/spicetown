@@ -27,7 +27,7 @@
       <li><a href="#settings+">Settings+</a></li>
       <li><a href="#themes">Themes <i>(⚠️ WIP)</i></a>
         <ul>
-          <li><a href="#themes-ruby">Ruby <i>(⚠️ HEAVY WIP)</i></a></li>
+          <li><a href="#themes-ruby">Ruby <i>(⚠️ WIP)</i></a></li>
         </ul>
       </li>
     </ul>
@@ -120,7 +120,7 @@
 <h3 id="themes">Themes</h3>
 <p></p>
 
-<h3 id="themes-ruby">Themes</h3>
+<h3 id="themes-ruby">Ruby</h3>
 <p></p>
 
 <h2 id="improvements">Improvements</h2>

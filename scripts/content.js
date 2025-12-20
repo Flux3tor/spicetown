@@ -11,10 +11,6 @@ function initialize() {
 
     topCollabDiv.insertAdjacentElement("afterend", spicetownIcon);
   }
-  
-  if (savedBgColor) {
-    applyTheme(savedBgColor);
-  }
 
   // settings related
   addSpicetownSettings(); // must go BEFORE applySettingsSync()
@@ -28,6 +24,10 @@ function initialize() {
   addAchievementInfo();
   addThemesPage();
   addBannerTemplateHint();
+
+  if (savedBgColor) {
+    applyTheme(savedBgColor);
+  }
 }
 
 function addImprovedUI() {
@@ -482,15 +482,15 @@ function addThemesPage() {
         </div>
         <div class="themes__div-container">
           <div class="themes__div-label-container">
-            <h2>Background Color</h2>
-            <p>Customize the background color</p>
+            <h2>Themes</h2>
+            <p>Choose your flavouring!</p>
           </div>
           <div class="themes__div-options-container" id="bg-color-container">
             <div class="themes__div-option themes__div-option--bg-color" name="bg-color-option" id="bg-color-vanilla">
               <p class="themes__div-option-name">Vanilla</p>
             </div>
             <div class="themes__div-option themes__div-option--bg-color" name="bg-color-option" id="bg-color-ruby">
-              <p class="themes__div-option-name">Ruby [⚠️ Major WIP]</p>
+              <p class="themes__div-option-name">Ruby [⚠️ WIP]</p>
             </div>
           <div>
         </div>
@@ -527,7 +527,21 @@ function addThemesPage() {
 
 function applyTheme(themeId) {
   if (themeId === "bg-color-ruby") {
-    document.body.style.backgroundColor = "#9B111E";
+    document.body.style.backgroundColor = "#6e0c16ff";
+    if (document.querySelector(".ui-heading__surface")) {
+      document.querySelector(".ui-heading__surface").style.backgroundColor = "#81101bff";
+      document.querySelector(".ui-heading__backdrop").style.backgroundColor = "#9c1422ff";
+    }
+    if (document.querySelector(".sidebar__user-card")) {
+      document.querySelector(".sidebar__user-card").style.backgroundColor = "#a00e1dff";
+      document.querySelector(".sidebar__user-avatar").style.backgroundColor = "#be0a1cff";
+      document.querySelector(".sidebar__user-name").style.backgroundColor = "#c7081bff";
+    }
+    if (document.querySelector(".sidebar__blob")) {
+      document.querySelector(".sidebar__blob").style.backgroundColor = "#91101dff";
+      document.querySelector(".sidebar__nav-link--active").classList.add("ruby-modified");
+      document.querySelector(".sidebar__nav-link--active > .sidebar__nav-icon-wrapper").style.background = "#7c0b16ff";
+    }
     document.body.style.backgroundImage = 'url("'+ chrome.runtime.getURL("/themes/bg-color/ruby/bg.png") + '")'
     if (document.querySelector(".projects-board__title")) {
       document.querySelector(".projects-board__title").style.color = "white";
@@ -542,7 +556,22 @@ function applyTheme(themeId) {
       // projectsBoardCreateCard.style.setProperty('--mask-url', `url("${imageUrl}")`);
     }
   } else {
-    document.body.style.backgroundColor = "var(--color-bg-2)";
+    document.body.style.backgroundColor = '';
+    document.body.style.backgroundImage = '';
+    if (document.querySelector(".ui-heading__surface")) {
+      document.querySelector(".ui-heading__surface").style.backgroundColor = ''
+      document.querySelector(".ui-heading__backdrop").style.backgroundColor = '';
+    }
+    if (document.querySelector(".sidebar__user-card")) {
+      document.querySelector(".sidebar__user-card").style.backgroundColor = '';
+      document.querySelector(".sidebar__user-avatar").style.backgroundColor = '';
+      document.querySelector(".sidebar__user-name").style.backgroundColor = '';
+    }
+    if (document.querySelector(".sidebar__blob")) {
+      document.querySelector(".sidebar__blob").style.backgroundColor = '';
+      document.querySelector(".sidebar__nav-link--active").classList.remove("ruby-modified");
+      document.querySelector(".sidebar__nav-link--active > .sidebar__nav-icon-wrapper").style.background = '';
+    }
   }
 }
 

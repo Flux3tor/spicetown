@@ -254,3 +254,7 @@
   color: var(--color-text-body);
   padding: 0 1rem;
 }
+
+.ruby-modified.sidebar__nav-link--active::before {
+  background-color: #a71423ff !important;
+}
