@@ -198,6 +198,8 @@
   padding: 1rem 1.5rem;
   border-radius: 8px;
   background-color: var(--color-brown-700);
+  background-image: url("https://i.ibb.co/mCg6W9br/chocolate-pattern.png");
+  background-size: 52px;
 }
 
 .project-extra-info__container {
