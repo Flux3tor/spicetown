@@ -324,9 +324,9 @@
 
 [data-theme] .ui-heading__surface {background-color: var(--surface-header) !important;}
 [data-theme] .ui-heading__backdrop {background-color: var(--surface-header-backdrop) !important;}
-[data-theme] .sidebar__user-card {background-color: var(--surface-card) !important;}
-[data-theme] .sidebar__user-avatar {background-color: var(--accent) !important;}
-[data-theme] .sidebar__user-name {background-color: var(--accent) !important;}
+[data-theme] .sidebar__user-card {background-color: var(--accent) !important;}
+[data-theme] .sidebar__user-avatar {background-color: var(--accent-darker) !important;}
+[data-theme] .sidebar__user-name {background-color: var(--accent-darker) !important;}
 [data-theme] .sidebar__blob {background-color: var(--accent-darker) !important;}
 [data-theme] .sidebar__nav-link--active::before {background-color: var(--accent) !important;}
 [data-theme] .sidebar__nav-link--active > .sidebar__nav-icon-wrapper {background: var(--accent-darker) !important;}
@@ -453,65 +453,103 @@
 [data-theme] .project-show-card__actions > .btn.btn--brown.btn--borderless {
   color: var(--text-highlight) !important;
 }
-
 [data-theme] .state-card--success {
   --state-card-accent: var(--accent-darker) !important;
   background-color: var(--accent-darker) !important;
   border-color: var(--border-color) !important;
   filter: blur(1.5px) !important;
 }
-
 [data-theme] .state-card--neutral,
 [data-theme] .state-card--warning {
   --state-card-accent: var(--accent) !important;
   background-color: var(--accent) !important;
   border-color: var(--accent-darker) !important;
 }
-
-
 [data-theme] .state-card--success .state-card__title,
 [data-theme] .state-card--success .state-card__icon-circle,
 [data-theme] .state-card--warning .state-card__cta > a,
 [data-theme] .state-card--neutral .state-card__cta > a {
   color: var(--border-color) !important;
 }
-
 [data-theme] .state-card--success .state-card__badge,
 [data-theme] .state-card--success .state-card__icon-circle {
   background: var(--border-color) !important;
 }
-
 [data-theme] .state-card--success .state-card__badge {
   color: var(--accent-darker) !important;
 }
-
 [data-theme] .state-card--success .state-card__description {
   color: var(--border-color) !important;
 }
-
 [data-theme] .state-card--warning .state-card__title,
 [data-theme] .state-card--neutral .state-card__title {
   color: var(--text-highlight) !important;
 }
-
 [data-theme] .state-card--warning .state-card__description,
 [data-theme] .state-card--neutral .state-card__description {
   color: var(--text-primary) !important;
 }
-
 [data-theme] .state-card--warning .state-card__badge {
   background: var(--accent-darker) !important;
   color: var(--text-primary) !important;
 }
-
 [data-theme] .state-card--warning .state-card__icon-circle {
   background: var(--accent-darker) !important;
 }
 
-[data-theme] .themes__div-container {
-  color: var(--text-highlight);
+[data-theme] .shop__searchbar > .input {
+  --input-bg: var(--input-sub-bg) !important;
+  --input-placeholder-color: var(--accent-muted) !important;
 }
+[data-theme] .shop__searchbar .input__field {
+  background-color: var(--input-main-bg) !important;
+  color: var(--input-sub-text) !important;
+}
+[data-theme] .shop__searchbar .input__field::placeholder {
+  color: var(--accent) !important;
+}
+[data-theme] .shop__searchbar .input__icon {
+  background: var(--input-main-bg) !important;
+  color: var(--input-sub-text) !important;
+}
+[data-theme] .shop__searchbar .input__control:focus-within {
+  outline: 4px solid var(--accent) !important;
+}
+[data-theme] .shop__searchbar .input__icon > svg path {
+  fill: var(--input-sub-text) !important;
+}
+[data-theme] .shop__filters .dropdown > .dropdown__label,
+[data-theme] .shop__buttons .dropdown > .dropdown__label {
+  color: var(--text-highlight) !important;
+  background-color: var(--accent) !important;
+}
+[data-theme] .shop__filters .dropdown .dropdown__button,
+[data-theme] .shop__filters #sort-btn,
+[data-theme] .shop__buttons .dropdown .dropdown__button,
+[data-theme] .shop__filters .dropdown .dropdown__menu > .dropdown__item:hover,
+[data-theme] .shop__buttons .dropdown .dropdown__menu > .dropdown__item:hover {background-color: var(--accent-darker) !important;}
+[data-theme] .shop__filters .dropdown .dropdown__menu,
+[data-theme] .shop__filters #sort-btn > span,
+[data-theme] .shop__buttons .dropdown .dropdown__menu {background-color: var(--accent) !important;}
+[data-theme] .shop__filters .dropdown .dropdown__menu > .dropdown__item,
+[data-theme] .shop__filters #sort-btn > span > svg,
+[data-theme] .shop__buttons .dropdown .dropdown__menu > .dropdown__item {
+  transition: all 200ms ease;
+  color: var(--text-primary) !important;
+}
+[data-theme] .shop-item-card::before {
+  background-color: var(--accent-darker) !important;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05)), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05));
+  background-size: 100px 100px;
+}
+[data-theme] .shop-item-card .shop-item-card__image {background-color: var(--border-color) !important;}
+[data-theme] .shop-item-card .shop-item-card__title,
+[data-theme] .shop-item-card .shop-item-card__price,
+[data-theme] .shop-item-card .shop-item-card__hours {color: var(--text-highlight) !important;}
+[data-theme] .shop-item-card .shop-item-card__description {color: var(--text-primary) !important;}
+[data-theme] .shop-item-card .shop-item-card__order-button > .btn.btn-primary.w-full {background: var(--accent) !important;}
 
+[data-theme] .themes__div-container {color: var(--text-highlight);}
 [data-theme] .themes__div-option.themes__div-option--bg-color {
   background-color: var(--accent-darker) !important;
   border-color: var(--accent-darker) !important;
