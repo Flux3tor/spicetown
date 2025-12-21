@@ -133,10 +133,12 @@
   border: 2px solid var(--color-tan-400);
   border-radius: 16px;
   box-shadow: var(--shadow);
-  background: var(--color-tan-300) url(/assets/landing/hero/hero-bg-59d6bbf0.webp) repeat center center / 1200px;
+  background-color: var(--color-tan-400);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05)), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05));
+  background-size: 60px 60px;
   cursor: pointer;
   transition: all 150ms ease;
-}
+} 
 
 .themes__div-option[selected="true"] {
   padding: 2rem 1rem;
@@ -330,6 +332,7 @@
 [data-theme] .sidebar__nav-link--active > .sidebar__nav-icon-wrapper {background: var(--accent-darker) !important;}
 
 [data-theme] .kitchen-setup::before,
+[data-theme] .themes__div-container::before,
 [data-theme] .kitchen-help::before,
 [data-theme] .projects-new__card::before {
   background-color: var(--bg-primary) !important;
@@ -503,4 +506,17 @@
 
 [data-theme] .state-card--warning .state-card__icon-circle {
   background: var(--accent-darker) !important;
+}
+
+[data-theme] .themes__div-container {
+  color: var(--text-highlight);
+}
+
+[data-theme] .themes__div-option.themes__div-option--bg-color {
+  background-color: var(--accent-darker) !important;
+  border-color: var(--accent-darker) !important;
+}
+[data-theme] .themes__div-option[selected="true"] {
+  padding: 2rem 1rem;
+  border-color: var(--border-color) !important;
 }
