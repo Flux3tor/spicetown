@@ -303,7 +303,8 @@
 }
 
 [data-theme] .tutorial-steps__title,
-[data-theme] .tutorial-steps__progress-text {
+[data-theme] .tutorial-steps__progress-text,
+[data-theme] .projects-board__subtitle {
   color: var(--text-primary) !important;
 }
 
@@ -326,8 +327,10 @@
 [data-theme] .post::after {background-color: var(--surface-dark) !important; border-color: var(--border-color) !important;}
 [data-theme] .post .post__attachment,
 [data-theme] .project-show-card .project-card__banner-image,
+[data-theme] .project-card__banner-image,
 [data-theme] .post .post__chevron,
 [data-theme] .post .comments-section__list,
+[data-theme] .post .comment-form__input,
 [data-theme] .project-show-card .project-extra-info__div {
   background-color: var(--border-color) !important;
 }
@@ -375,7 +378,7 @@
 [data-theme] .projects-new__card .input__icon { background-color: var(--input-sub-bg) !important; }
 
 [data-theme] .projects-new__card .file-upload__dropzone {
-  --file-upload-border-color: hsl(0deg 73.96% 40.37%) !important;
+  --file-upload-border-color: var(--accent) !important;
   --file-upload-background: var(--border-color) !important;
 }
 [data-theme] .projects-new__card .file-upload__headline, 
