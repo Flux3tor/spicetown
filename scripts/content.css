@@ -256,175 +256,181 @@
   padding: 0 1rem;
 }
 
-.ruby-modified.sidebar__nav-link--active::before {
-  background-color: #a71423ff !important;
+/** RUBY THEME **/
+
+[data-theme="bg-color-ruby"] {
+  --bg-primary: #6e0c16ff;
+  --text-primary: #d4d4d4ff;
+  --text-highlight: #f5d0d0;
+
+  --surface-header: #81101bff;
+  --surface-header-backdrop: #9c1422ff;
+  --surface-card: #a00e1dff;
+  --surface-dark: #650a0a;
+
+  --accent: #be0a1cff;
+  --accent-darker: #7c0b16ff;
+  --border-color: #591212;
+
+  --kitchen-bar-border: #850f1bff;
+  --kitchen-bar-bg: #db8b8bff;
+  --kitchen-gradient: linear-gradient(90deg, #8d0816ff 0%, #be0a1cff 100%);
+
+  --input-main-bg: hsl(0deg 100% 27.24%);
+  --input-sub-bg: hsl(0deg 92.89% 23.75%);
+  --input-sub-text: hsl(0deg 49.1% 83.27%);
 }
 
-.ruby-modified.kitchen-setup::before, .ruby-modified.projects-new__card::before {
-  background-color: hsl(0deg 100% 23.3%) !important;
+[data-theme] {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  background-image: var(--theme-bg-image) !important;
 }
 
-.ruby-modified.kitchen-help::before {
-  background-color: hsl(0deg 100% 23.3%) !important;
+[data-theme] .ui-heading__surface {background-color: var(--surface-header) !important;}
+[data-theme] .ui-heading__backdrop {background-color: var(--surface-header-backdrop) !important;}
+[data-theme] .sidebar__user-card {background-color: var(--surface-card) !important;}
+[data-theme] .sidebar__user-avatar {background-color: var(--accent) !important;}
+[data-theme] .sidebar__user-name {background-color: var(--accent) !important;}
+[data-theme] .sidebar__blob {background-color: var(--accent-darker) !important;}
+[data-theme] .sidebar__nav-link--active::before {background-color: var(--accent) !important;}
+[data-theme] .sidebar__nav-link--active > .sidebar__nav-icon-wrapper {background: var(--accent-darker) !important;}
+
+[data-theme] .kitchen-setup::before,
+[data-theme] .kitchen-help::before,
+[data-theme] .projects-new__card::before {
+  background-color: var(--bg-primary) !important;
 }
 
-.ruby-modified.state-card--success {
-  --state-card-accent: #991313 !important;
-  background: hsl(0deg 84.73% 24.38%) !important;
-  border-color: hsl(0deg 82.42% 22.09%) !important;
-  filter: blur(1.5px);
+[data-theme] .tutorial-steps__title,
+[data-theme] .tutorial-steps__progress-text {
+  color: var(--text-primary) !important;
 }
 
-.ruby-modified.state-card--success .state-card__title {
-  color: hsl(0deg 88.47% 14.28%) !important;
+[data-theme] .tutorial-steps__progress-bar {
+  border: 3px solid var(--kitchen-bar-border) !important;
+  background-color: var(--kitchen-bar-bg) !important;
+}
+[data-theme] .tutorial-steps__progress-fill {background: var(--kitchen-gradient) !important;}
+
+[data-theme] .explore__nav,
+[data-theme] .post,
+[data-theme] .project-card,
+[data-theme] .project-show-card,
+[data-theme] .btn--brown,
+[data-theme] .projects-board__grid-item > .project-card {
+  background-color: var(--surface-dark) !important;
+  border-color: var(--border-color) !important;
 }
 
-.ruby-modified.state-card--success .state-card__description {
-  color: hsl(0deg 100% 14.25%) !important;
+[data-theme] .post::after {background-color: var(--surface-dark) !important; border-color: var(--border-color) !important;}
+[data-theme] .post .post__attachment,
+[data-theme] .project-show-card .project-card__banner-image,
+[data-theme] .post .post__chevron,
+[data-theme] .post .comments-section__list,
+[data-theme] .project-show-card .project-extra-info__div {
+  background-color: var(--border-color) !important;
 }
 
-.ruby-modified.state-card--success .state-card__badge {
-  background: hsl(0deg 82.42% 22.09%) !important;
-  color: hsl(0deg 88.47% 14.28%) !important;
+[data-theme] .post .comment-form__input,
+[data-theme] .post .comments-section__list {
+  color: var(--text-highlight) !important;
 }
 
-.ruby-modified.state-card--success .state-card__icon-circle {
-  background: hsl(0deg 82.42% 22.09%) !important;
-}
+[data-theme] .projects-board__title {color: var(--text-highlight) !important};
+[data-theme] .projects-board__subtitle {color: var(--text-primary) !important};
 
-.ruby-modified.state-card--warning, .ruby-modified.state-card--neutral {
-  --state-card-accent: hsl(0deg 74.08% 42.6%) !important;
-  background: hsl(0deg 84% 32.6%) !important;
-  border-color: hsl(0deg 78.22% 27.48%) !important;
-}
-
-.ruby-modified.state-card--warning .state-card__title, .ruby-modified.state-card--neutral .state-card__title {
-  color: hsl(0deg 0% 100%) !important;
-}
-
-.ruby-modified.state-card--warning .state-card__description, .ruby-modified.state-card--neutral .state-card__description {
-  color: #d4d4d4ff !important;
-}
-
-.ruby-modified.state-card--warning .state-card__cta > a, .ruby-modified.state-card--neutral .state-card__cta > a {
-  background-color: hsl(0deg 78.22% 27.48%) !important;
-}
-
-.ruby-modified.state-card--warning .state-card__badge {
-  background: hsl(0deg 78.57% 27.45%) !important;
-  color: white;
-}
-
-.ruby-modified.state-card--warning .state-card__icon-circle {
-  background: hsl(0deg 78.57% 27.45%) !important;
-}
-
-.ruby-modified.post {
-  background-color: #650a0a !important;
-  border-color: #591212 !important;
-}
-
-.ruby-modified.post::after {
-  background-color: #650a0a !important;
-  border-color: #591212 !important;
-}
-
-.ruby-modified.post .post__attachment, .ruby-modified.project-show-card .project-card__banner-image {
-  background-color: #591212 !important;
-}
-
-.ruby-modified.post .comment-form__input {
-  background-color: #591212 !important;
-  color: #f5d0d0 !important;
-}
-
-.ruby-modified.post .btn, .ruby-modified.btn.btn--brown {
-  border-color: #591212 !important; 
-  --btn-bg: #650a0a !important;
-  --btn-bg-dark: #650a0a !important;
-  --btn-focus-ring: #650a0a !important;
-  background-color: #650a0a !important;
-}
-
-.ruby-modified.post .post__chevron, .ruby-modified.post .comments-section__list {
-  background-color: #591212 !important;
-}
-
-.ruby-modified.post .comments-section__list {
-  color: #f5d0d0 !important;
-}
-
-.ruby-modified.project-card, .ruby-modified.project-show-card {
-  background-color: #650a0a !important;
-  border-color: #591212 !important;
-}
-
-.ruby-modified.project-card .project-card__stats > h5 {
-  background-color: #591212 !important;
-  color: #f5d0d0 !important;
-}
-
-.ruby-modified.project-card .project-card__stats svg {
-  filter: drop-shadow(5px 0 0 #591212) drop-shadow(-5px 0 0 #591212) drop-shadow(0 5px 0 #591212) drop-shadow(0 -5px 0 #591212) !important;
-  color: #f5d0d0 !important;
-}
-
-.ruby-modified.projects-board__create-card {
-  background-color: hsl(7deg 32.29% 18.56% / 10%) !important;
-}
-
-.ruby-modified.projects-board__create-card::before {
+[data-theme] .projects-board__create-card {background-color: hsl(7deg 32.29% 18.56% / 10%) !important;}
+[data-theme] .projects-board__create-card::before {
   background: url(https://i.ibb.co/0RB40Sgg/aaa-1x.webp) center / 100% 100% no-repeat !important;
 }
 
-.ruby-modified.projects-board__create-card > svg, .ruby-modified.projects-board__create-card > span, .ruby-modified.post .comment__delete {
-  color: #f5d0d0 !important;
+[data-theme] .project-card__stats svg,
+[data-theme] .projects-board__create-card > svg,
+[data-theme] .post .comment-delete,
+[data-theme] .projects-show__admin-actions svg,
+[data-theme] .projects-board__create-card > span {
+  color: var(--text-highlight) !important;
 }
 
-.ruby-modified.projects-new__card .projects-new__field > .input {
-  --input-bg: hsl(0deg 100% 27.24%) !important;
+[data-theme] .projects-new__card .projects-new__field > .input {
+  --input-bg: var(--input-main-bg) !important;
   --input-focus-ring: hsl(0deg 76.46% 36.23%) !important;
   --input-placeholder-color: hsl(0deg 28.84% 44.12%) !important;
-  --input-subtitle-bg: hsl(0deg 92.89% 23.75%) !important;
-  --input-subtitle-color: hsl(0deg 49.1% 83.27%) !important;
-  /* --input-icon-bg: var(--color-yellow-500) !important;
-  --input-icon-color: var(--color-bg) !important; */
+  --input-subtitle-bg: var(--input-sub-bg) !important;
+  --input-subtitle-color: var(--input-sub-text) !important;
 }
 
-.ruby-modified.projects-new__card .projects-new__field > .input-group::before, .ruby-modified.projects-new__card .hackatime-project-selector::before, .ruby-modified.projects-new__card .hackatime-project-selector__label {
-  background-color: hsl(0deg 100% 27.24%) !important;
+[data-theme] .projects-new__card .input-group::before,
+[data-theme] .projects-new__card .hackatime-project-selector::before,
+[data-theme] .projects-new__card .hackatime-project-selector__label,
+[data-theme] .projects-new__card .input-group__label { background-color: var(--input-main-bg) !important; }
+
+[data-theme] .projects-new__card .input-group__subtitle,
+[data-theme] .projects-new__card .hackatime-project-selector__subtitle { 
+  background-color: var(--input-sub-bg) !important; 
+  color: var(--input-sub-text) !important; 
 }
 
-.ruby-modified.projects-new__card .input-group__subtitle, .ruby-modified.projects-new__card .hackatime-project-selector__subtitle {
-  background-color: hsl(0deg 92.89% 23.75%) !important;
-  color: hsl(0deg 49.1% 83.27%) !important;
-}
+[data-theme] .projects-new__card .input__icon { background-color: var(--input-sub-bg) !important; }
 
-.ruby-modified.projects-new__card .input-group__label {
-  background-color: hsl(0deg 100% 27.24%) !important;
-}
-
-.ruby-modified.projects-new__card .input__icon {
-  background-color: hsl(0deg 92.89% 23.75%) !important;
-}
-
-.ruby-modified.projects-new__card .file-upload__dropzone {
+[data-theme] .projects-new__card .file-upload__dropzone {
   --file-upload-border-color: hsl(0deg 73.96% 40.37%) !important;
-  --file-upload-background: rgb(89, 18, 18) !important;
+  --file-upload-background: var(--border-color) !important;
+}
+[data-theme] .projects-new__card .file-upload__headline, 
+[data-theme] .projects-new__card .file-upload__hint { color: var(--text-highlight) !important; }
+
+[data-theme] .state-card--success {
+  --state-card-accent: var(--accent-darker) !important;
+  background-color: var(--accent-darker) !important;
+  border-color: var(--border-color) !important;
+  filter: blur(1.5px) !important;
 }
 
-.ruby-modified.projects-new__card .file-upload__headline, .ruby-modified.projects-new__card .file-upload__hint {
-  color: #f5d0d0 !important;
+[data-theme] .state-card--neutral,
+[data-theme] .state-card--warning {
+  --state-card-accent: var(--accent) !important;
+  background-color: var(--accent) !important;
+  border-color: var(--accent-darker) !important;
 }
 
-.ruby-modified.project-show-card .btn {
-  background-color: #591212 !important;
+
+[data-theme] .state-card--success .state-card__title,
+[data-theme] .state-card--success .state-card__icon-circle,
+[data-theme] .state-card--warning .state-card__cta > a,
+[data-theme] .state-card--neutral .state-card__cta > a {
+  color: var(--border-color) !important;
 }
 
-.ruby-modified.project-show-card .project-extra-info__div {
-  background-color: #591212 !important;
+[data-theme] .state-card--success .state-card__badge,
+[data-theme] .state-card--success .state-card__icon-circle {
+  background: var(--border-color) !important;
 }
 
-.ruby-modified.project-show-card .projects-show__admin-actions svg {
-  color: #f5d0d0 !important;
+[data-theme] .state-card--success .state-card__badge {
+  color: var(--accent-darker) !important;
+}
+
+[data-theme] .state-card--success .state-card__description {
+  color: hsl(0deg 100% 14.25%) !important;
+}
+
+[data-theme] .state-card--warning .state-card__title,
+[data-theme] .state-card--neutral .state-card__title {
+  color: var(--text-highlight) !important;
+}
+
+[data-theme] .state-card--warning .state-card__description,
+[data-theme] .state-card--neutral .state-card__description {
+  color: var(--text-primary) !important;
+}
+
+[data-theme] .state-card--warning .state-card__badge {
+  background: var(--accent-darker) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme] .state-card--warning .state-card__icon-circle {
+  background: var(--accent-darker) !important;
 }

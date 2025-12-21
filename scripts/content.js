@@ -527,93 +527,17 @@ function addThemesPage() {
 }
 
 function applyTheme(themeId) {
-  if (themeId === "bg-color-ruby") {
-    document.body.style.backgroundColor = "#6e0c16ff";
-    document.body.style.color = "#d4d4d4ff";
-    document.body.style.backgroundImage = 'url("'+ chrome.runtime.getURL("/themes/bg-color/ruby/bg.png") + '")' // how and why tf did i spend 10 minutes of my life on this
-    if (document.querySelector(".dev-footer")) {
-      document.querySelector(".dev-footer").style.color = "#d4d4d4ff";
-    }
-    if (document.querySelector(".ui-heading__surface")) {
-      document.querySelector(".ui-heading__surface").style.backgroundColor = "#81101bff";
-      document.querySelector(".ui-heading__backdrop").style.backgroundColor = "#9c1422ff";
-    }
-    if (document.querySelector(".sidebar__user-card")) {
-      document.querySelector(".sidebar__user-card").style.backgroundColor = "#a00e1dff";
-      document.querySelector(".sidebar__user-avatar").style.backgroundColor = "#be0a1cff";
-      document.querySelector(".sidebar__user-name").style.backgroundColor = "#c7081bff";
-    }
-    if (document.querySelector(".sidebar__blob")) {
-      document.querySelector(".sidebar__blob").style.backgroundColor = "#91101dff";
-      if (document.querySelector(".sidebar__nav-link--active")) {
-        document.querySelector(".sidebar__nav-link--active").classList.add("ruby-modified");
-        document.querySelector(".sidebar__nav-link--active > .sidebar__nav-icon-wrapper").style.background = "#7c0b16ff";
-      }
-    }
-    if (document.querySelector(".kitchen-setup")) {
-      document.querySelector(".kitchen-setup").classList.add("ruby-modified");
-      document.querySelector(".kitchen-help").classList.add("ruby-modified");
-      document.querySelector(".tutorial-steps__title").style.color = "#d4d4d4ff";
-      document.querySelector(".tutorial-steps__progress-text").style.color = "#d4d4d4ff";
-      document.querySelector(".tutorial-steps__progress-bar").style.border = "3px solid #850f1bff";
-      document.querySelector(".tutorial-steps__progress-bar").style.backgroundColor = "#db8b8bff";
-      document.querySelector(".tutorial-steps__progress-fill").style.background = "linear-gradient(90deg, #8d0816ff 0%, #be0a1cff 100%)";
-      document.querySelectorAll(".state-card.tutorial-step-card").forEach(tutorialStepCard => {
-        tutorialStepCard.classList.add("ruby-modified");
-      });
-      document.querySelectorAll(".state-card.state-card--neutral.kitchen-help-card").forEach(kitchenHelpCard => {
-        kitchenHelpCard.classList.add("ruby-modified");
-      });
-    }
-    if (document.querySelector(".explore__nav")) {
-      document.querySelector(".explore__nav").style.backgroundColor = "#650a0a";
-      document.querySelectorAll(".post").forEach(postEl => {
-        postEl.classList.add("ruby-modified");
-      });
-    }
-    if (document.querySelector(".explore__projects-list")) {
-      document.querySelectorAll(".project-card").forEach(projectEl => {
-        projectEl.classList.add("ruby-modified");
-      });
-    }
-    if (document.querySelector(".projects-board__grid")) {
-      document.querySelector(".projects-board__create-card").classList.add("ruby-modified");
-      document.querySelectorAll(".projects-board__grid-item > .project-card").forEach(projectItem => {
-        projectItem.classList.add("ruby-modified");
-      });
-    }
-    if (document.querySelector(".projects-new__card")) {
-      document.querySelector(".projects-new__card").classList.add("ruby-modified");
-    }
-    if (document.querySelector(".projects-board__title")) {
-      document.querySelector(".projects-board__title").style.color = "white";
-      document.querySelector(".projects-board__subtitle").style.color = "#d4d4d4ff";
-    }
-    if (document.querySelector(".project-show-card")) {
-      document.querySelector(".project-show-card").classList.add("ruby-modified");
-    }
-    if (document.querySelector(".projects-show__timeline")) {
-      document.querySelector(".projects-show__timeline").parentElement.querySelector(".mt-4 > .btn.btn--brown").classList.add("ruby-modified");
-      document.querySelectorAll(".post").forEach(postEl => {
-        postEl.classList.add("ruby-modified");
-      });
-    }
-  } else {
-    document.body.style.backgroundColor = '';
-    document.body.style.backgroundImage = '';
-    if (document.querySelector(".ui-heading__surface")) {
-      document.querySelector(".ui-heading__surface").style.backgroundColor = ''
-      document.querySelector(".ui-heading__backdrop").style.backgroundColor = '';
-    }
-    if (document.querySelector(".sidebar__user-card")) {
-      document.querySelector(".sidebar__user-card").style.backgroundColor = '';
-      document.querySelector(".sidebar__user-avatar").style.backgroundColor = '';
-      document.querySelector(".sidebar__user-name").style.backgroundColor = '';
-    }
-    if (document.querySelector(".sidebar__blob")) {
-      document.querySelector(".sidebar__blob").style.backgroundColor = '';
-      document.querySelector(".sidebar__nav-link--active").classList.remove("ruby-modified");
-      document.querySelector(".sidebar__nav-link--active > .sidebar__nav-icon-wrapper").style.background = '';
+  const body = document.body;
+
+  body.removeAttribute("data-theme");
+  body.style.removeProperty("--theme-bg-image");
+
+  if (themeId && themeId != "bg-color-vanilla") {
+    body.setAttribute("data-theme", themeId);
+
+    if (themeId === "bg-color-ruby") {
+      const bgUrl = chrome.runtime.getURL("/themes/bg-color/ruby/bg.png");
+      body.style.setProperty("--theme-bg-image", `url('${bgUrl}')`);
     }
   }
 }
