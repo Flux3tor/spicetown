@@ -195,7 +195,7 @@ function addExtraProjectInfo() {
 
 function addImprovedShop() {
   const shopGoalsItems = document.querySelectorAll(".shop-goals__item");
-  if (!shopGoalsItems) return;
+  if (!shopGoalsItems || shopGoalsItems.length === 0) return;
 
   document // thanks gizzy for this amazing code (now it's mine :3)
     .querySelectorAll('a.shop-item-card__link[data-turbo-frame="_top"]')
@@ -214,38 +214,47 @@ function addImprovedShop() {
   const sidebarBalance = document.querySelector(".sidebar__user-balance");
   const userBalance = sidebarBalance ? parseFloat(sidebarBalance.textContent.replace(/[^\d.]/g, '')) : 0;
 
+  const shopGoalsContainer = document.querySelector(".shop-goals__container");
+  if (!shopGoalsContainer) return;
+
+  const shopGoalEditorDiv = document.createElement("div");
+  shopGoalEditorDiv.classList.add("shop-goals-editor__div");
+  shopGoalEditorDiv.style.display = "none";
+
+  shopGoalEditorDiv.innerHTML = `
+    <div class="shop-goal-editor__heading">
+      <h2 class="shop-goal-editor__name">Select an item</h2>
+      <button class="shop-goal-editor__save-btn">Save</button>
+      <button class="shop-goal-editor__remove-btn">Remove</button>
+    </div>
+    <div class="shop-goal-editor__input">
+      <label class="shop-goal-editor__quantity-label">Quantity</label>
+      <input type="number" class="shop-goal-editor__quantity-input" placeholder="1? 2?? 4??? 67????" min="1">
+    </div>
+  `;
+
+  const editorName = shopGoalEditorDiv.querySelector(".shop-goal-editor__name");
+  const editorInput = shopGoalEditorDiv.querySelector(".shop-goal-editor__quantity-input");
+  const editorSaveBtn = shopGoalEditorDiv.querySelector(".shop-goal-editor__save-btn");
+  const editorRemoveBtn = shopGoalEditorDiv.querySelector(".shop-goal-editor__remove-btn");
+
+  let activeEditingItem = null; // track which item is being edited and then sell your user data (joke)
+
   shopGoalsItems.forEach(shopGoalItemDiv => {
     const shopGoalItemID = shopGoalItemDiv.getAttribute("data-item-id");
     const shopGoalsLink = shopGoalItemDiv.querySelector(".shop-goals__link");
     const shopGoalsProgressTxt = shopGoalItemDiv.querySelector(".shop-goals__progress-text");
     const shopGoalsProgressBarFill = shopGoalItemDiv.querySelector(".shop-goals__progress-fill");
-    const shopGoalsRemoveBtn = shopGoalItemDiv.querySelector(".shop-goals__remove");
+    const itemName = shopGoalItemDiv.querySelector(".shop-goals__name").textContent;
 
-    const progressTxtContent = shopGoalsProgressTxt.textContent.toLowerCase();
-    let remainingCookies = 0;
+    const currentRemaining = parseFloat(shopGoalsProgressTxt.textContent.replace(/[^\d.]/g, '')) || 0;
+    const isComplete = shopGoalsProgressBarFill.style.width === "100%";
+    const pricePerUnit = isComplete ? (userBalance) : (currentRemaining + userBalance);
 
-    const shopGoalIsComplete = shopGoalsProgressBarFill.style.width === "100%" || progressTxtContent.includes("completed");
-
-    if (!shopGoalIsComplete) {
-      remainingCookies = parseFloat(shopGoalsProgressTxt.textContent.replace(/[^\d.]/g, '')) || 0;
-    }
-
-    const pricePerUnit = remainingCookies + userBalance;
-
-    const shopGoalActionsDiv = document.createElement("div");
-    shopGoalActionsDiv.classList.add("shop-goals-action__div");
-    shopGoalItemDiv.insertBefore(shopGoalActionsDiv, shopGoalsLink);
-
-    const itemQuantityInput = document.createElement("input");
-    itemQuantityInput.classList.add("shop-goals-quantity__input");
-    itemQuantityInput.type = "number";
-    itemQuantityInput.min = "1";
-
-    const updateShopItemPrice = () => {
-      const quantity = parseInt(itemQuantityInput.value) || 1;
+    const updateShopItemPrice = (quantity) => {
       const newTotalRequired = pricePerUnit * quantity;
       const newRemaining = Math.max(0, newTotalRequired - userBalance);
-      const newPercent = Math.max(0, ((userBalance / newTotalRequired) * 100));
+      const newPercent = Math.min(100, (userBalance / newTotalRequired) * 100);
 
       if (newRemaining <= 0) {
         shopGoalsProgressTxt.textContent = `✅ Ready to buy!`;
@@ -256,21 +265,65 @@ function addImprovedShop() {
       }
 
       shopGoalsProgressBarFill.style.width = `${newPercent}%`;
-
-      chrome.storage.local.set({[`shop_goal_qty_${shopGoalItemID}`]: quantity});
     }
 
     chrome.storage.local.get([`shop_goal_qty_${shopGoalItemID}`], result => {
-      const savedQuantity = result[`shop_goal_qty_${shopGoalItemID}`];
-      itemQuantityInput.value = savedQuantity || 1;
-      updateShopItemPrice();
+      const quantity = result[`shop_goal_qty_${shopGoalItemID}`] || 1;
+      updateShopItemPrice(quantity);
     });
 
-    itemQuantityInput.addEventListener("input", updateShopItemPrice);
+    shopGoalsLink.href = "";
 
-    shopGoalActionsDiv.appendChild(itemQuantityInput);
-    shopGoalActionsDiv.appendChild(shopGoalsRemoveBtn);
+    shopGoalsLink.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      activeEditingItem = {
+        id: shopGoalItemID,
+        div: shopGoalItemDiv,
+        updateShopItemPrice
+      };
+
+      editorName.textContent = itemName;
+      chrome.storage.local.get([`shop_goal_qty_${shopGoalItemID}`], result => {
+        editorInput.value = result[`shop_goal_qty_${shopGoalItemID}`] || 1;
+      });
+
+      shopGoalEditorDiv.style.display = "block";
+
+      // select styling (coming soon!!!!!!!!!!!!!! trust)
+      // shopGoalsItems.forEach(i => i.style.outline = "none");
+      // shopGoalItemDiv.style.outline = "2px solid var(--color"
+    });
   });
+
+  editorSaveBtn.addEventListener("click", () => {
+    if (!activeEditingItem) return;
+    const newQuantity = parseInt(editorInput.value) || 1;
+
+    chrome.storage.local.set({[`shop_goal_qty_${activeEditingItem.id}`]: newQuantity}, () => {
+      activeEditingItem.updateShopItemPrice(newQuantity);
+    });
+  });
+
+  editorRemoveBtn.addEventListener("click", () => {
+    if (!activeEditingItem) return;
+    const originalRemoveBtn = activeEditingItem.div.querySelector(".shop-goals__remove");
+    if (originalRemoveBtn) {
+      originalRemoveBtn.click();
+      shopGoalEditorDiv.style.display = "none";
+      activeEditingItem = null;
+    }
+  });
+
+  const shopGoalsDiv = document.createElement("div");
+  shopGoalsDiv.classList.add("shop-goals__div");
+  
+  const itemsContainer = document.querySelector(".shop-goals__items");
+  if (itemsContainer) {
+    shopGoalsContainer.appendChild(shopGoalsDiv);
+    shopGoalsDiv.appendChild(itemsContainer);
+    shopGoalsDiv.appendChild(shopGoalEditorDiv);
+  }
 }
 
 function addAchievementInfo() {
