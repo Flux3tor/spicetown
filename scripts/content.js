@@ -546,10 +546,19 @@ function applyTheme(themeId) {
     if (themeId === "bg-color-ruby") {
       const bgUrl = chrome.runtime.getURL("/themes/bg-color/ruby/bg.png");
       body.style.setProperty("--theme-bg-image", `url('${bgUrl}')`);
+      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
+        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://i.ibb.co/YBF6TqZ0/Mask-group-19.png";
+      }
     } else if (themeId === "bg-color-catppuccin-mocha") {
       body.style.setProperty("--theme-bg-image", `url('https://i.ibb.co/fYQVfZbb/Mask-group-12.png')`);
+      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
+        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://i.ibb.co/cSZ853Kk/Mask-group-17.png";
+      }
     } else if (themeId === "bg-color-catppuccin-macchiato") {
       body.style.setProperty("--theme-bg-image", `url('https://i.ibb.co/C5mZtM9R/Mask-group-13.png')`);
+      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
+        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://i.ibb.co/zhK0H9KW/Mask-group-16.png";
+      }
     }
   }
 }
