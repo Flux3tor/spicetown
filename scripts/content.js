@@ -345,6 +345,7 @@ function addImprovedShop() {
     const newQuantity = parseInt(editorInput.value) || 1;
 
     chrome.storage.local.set({[`shop_goal_qty_${activeEditingItem.id}`]: newQuantity}, () => {
+      window.location.reload();
       activeEditingItem.updateShopItemPrice(newQuantity);
       calculateAllProgress();
     });
@@ -357,6 +358,7 @@ function addImprovedShop() {
       originalRemoveBtn.click();
       shopGoalEditorDiv.style.display = "none";
       activeEditingItem = null;
+      window.location.reload();
     }
   });
 
