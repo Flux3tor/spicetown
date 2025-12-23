@@ -226,7 +226,8 @@ function addExtraProjectInfo() {
 }
 
 function addImprovedShop() {
-  const shopGoalsItems = document.querySelectorAll(".shop-goals__item");
+  const shopGoalsItemsNodeList = document.querySelectorAll(".shop-goals__item");
+  let shopGoalsItems = Array.from(shopGoalsItemsNodeList);
   if (!shopGoalsItems || shopGoalsItems.length === 0) return;
 
   document // thanks gizzy for this amazing code (now it's mine :3)
@@ -248,7 +249,9 @@ function addImprovedShop() {
 
   const shopGoalsContainer = document.querySelector(".shop-goals__container");
   const shopGoalsTitle = document.querySelector(".shop-goals__title");
-  if (!shopGoalsContainer || !shopGoalsTitle) return;
+  const itemsContainer = document.querySelector(".shop-goals__items");
+
+  if (!shopGoalsContainer || !shopGoalsTitle || !itemsContainer) return;
 
   const allProgressWrapper = document.createElement("div");
   allProgressWrapper.classList.add("shop-goals__all-progress-wrapper");
@@ -327,15 +330,19 @@ function addImprovedShop() {
     const allTotalText = document.querySelector("#all-total");
     const allPercentText = document.querySelector("#all-percent");
 
-    for (const item of shopGoalsItems) {
+    const currentItems = document.querySelectorAll(".shop-goals__item");
+
+    for (const item of currentItems) {
       const id = item.getAttribute("data-item-id");
       const progressTxt = item.querySelector(".shop-goals__progress-text");
       const fill = item.querySelector(".shop-goals__progress-fill");
-      const itemName = item.querySelector(".shop-goals__name").textContent;
-      
+
+      // better safe than sorry
+      if (!progressTxt || !fill) continue;
+
+      // wow better formatting :shocked: cleaner codebase??!?!??!?!?!? :shocked: :shocked:
       const remaining = parseFloat(progressTxt.textContent.replace(/[^\d.]/g, '')) || 0;
       const isComplete = fill.style.width === "100%";
-
       let derivedPrice = 0;
 
       const matchingShopItemCard = document.querySelector(`div.shop-item-card[data-shop-id="${id}"]`);
@@ -345,17 +352,12 @@ function addImprovedShop() {
       }
 
       if (!derivedPrice) {
-        if (isComplete) {
-          console.warn(`cannot calculate price for completed shop item ${itemName} fuck; im defaulting to 0`);
-          derivedPrice = 0;
-        } else {
-          derivedPrice = remaining + userBalance;
-        }
+        if (isComplete) derivedPrice = 0;
+        else derivedPrice = remaining + userBalance;
       }
 
       const storage = await chrome.storage.local.get([`shop_goal_qty_${id}`]);
       const qty = storage[`shop_goal_qty_${id}`] || 1;
-
       totalRequiredCost += (derivedPrice * qty);
     }
     
@@ -373,6 +375,8 @@ function addImprovedShop() {
     const shopGoalsProgressBarFill = shopGoalItemDiv.querySelector(".shop-goals__progress-fill");
     const itemName = shopGoalItemDiv.querySelector(".shop-goals__name").textContent;
 
+    shopGoalItemDiv.setAttribute("draggable", "true");
+
     const currentRemaining = parseFloat(shopGoalsProgressTxt.textContent.replace(/[^\d.]/g, '')) || 0;
     const isComplete = shopGoalsProgressBarFill.style.width === "100%";
     
@@ -385,12 +389,8 @@ function addImprovedShop() {
     }
 
     if (!derivedPrice) {
-      if (isComplete) {
-        console.warn(`cannot calculate price for completed shop item ${itemName} fuck; im defaulting to 0`);
-        derivedPrice = 0;
-      } else {
-        derivedPrice = currentRemaining + userBalance;
-      }
+      if (isComplete) derivedPrice = 0;
+      else derivedPrice = currentRemaining + userBalance;
     }
 
     const pricePerUnit = derivedPrice;
@@ -407,10 +407,13 @@ function addImprovedShop() {
       const emptyColor = "rgba(255, 255, 255, 0.5)";
 
       shopGoalItemDiv.style.background = `linear-gradient(to right, ${fillColor} ${newPercent}%, ${emptyColor} ${newPercent}%)`;
-      if (newPercent >= 100) {
-        shopGoalItemDiv.querySelector(".shop-goals__image").classList.add("completed");
-      } else {
-        shopGoalItemDiv.querySelector(".shop-goals__image").classList.remove("completed");
+
+      // i love formatting code properly
+      // its so fun (not sarcastic btw)
+      const shopGoalImg = shopGoalItemDiv.querySelector(".shop-goals__image");
+      if (shopGoalImg) {
+        if (newPercent >= 100) shopGoalImg.classList.add("completed");
+        else shopGoalImg.classList.remove("completed");
       }
 
       if (newRemaining <= 0) {
@@ -422,30 +425,28 @@ function addImprovedShop() {
       }
     }
 
+    // idk if i need this but oh well i aint gonna risk it
+    shopGoalItemDiv.updateShopItemPrice = updateShopItemPrice;
+
     chrome.storage.local.get([`shop_goal_qty_${shopGoalItemID}`], result => {
       const quantity = result[`shop_goal_qty_${shopGoalItemID}`] || 1;
       updateShopItemPrice(quantity);
     });
 
     shopGoalsLink.href = "";
-
     shopGoalsLink.addEventListener("click", (e) => {
       e.preventDefault();
-
       activeEditingItem = {
         id: shopGoalItemID,
         div: shopGoalItemDiv,
         updateShopItemPrice
       };
-
       editorName.textContent = itemName;
       chrome.storage.local.get([`shop_goal_qty_${shopGoalItemID}`], result => {
         editorInput.value = result[`shop_goal_qty_${shopGoalItemID}`] || 1;
       });
-
       shopGoalEditorDiv.style.visibility = "visible";
-
-      shopGoalsItems.forEach(item => item.classList.remove("selected"));
+      document.querySelectorAll(".shop-goals__item").forEach(item => item.classList.remove("selected"));
       shopGoalItemDiv.classList.add("selected");
     });
   });
@@ -453,11 +454,9 @@ function addImprovedShop() {
   editorSaveBtn.addEventListener("click", () => {
     if (!activeEditingItem) return;
     const newQuantity = parseInt(editorInput.value) || 1;
-
     chrome.storage.local.set({[`shop_goal_qty_${activeEditingItem.id}`]: newQuantity}, () => {
       activeEditingItem.updateShopItemPrice(newQuantity);
       calculateAllProgress();
-
       shopGoalEditorDiv.style.visibility = "hidden";
     });
   });
@@ -469,26 +468,78 @@ function addImprovedShop() {
       originalRemoveBtn.click();
       shopGoalEditorDiv.style.visibility = "hidden";
       activeEditingItem = null;
-      window.location.reload();
+      window.location.reload(); // reload needed or else the inject DOM gets overwriten!!!!!!!!!!!!!!!!!!!!!!!!!
     }
   });
 
   const shopGoalsDiv = document.createElement("div");
   shopGoalsDiv.classList.add("shop-goals__div");
-  
-  const itemsContainer = document.querySelector(".shop-goals__items");
-  if (itemsContainer) {
-    shopGoalsTitle.after(allProgressWrapper); // i love this function!!!!!!! this makes life way easier then
-    allProgressWrapper.after(shopGoalsDiv);
-    shopGoalsDiv.appendChild(itemsContainer);
-    shopGoalsDiv.appendChild(shopGoalEditorDiv);
-  }
+
+  shopGoalsTitle.after(allProgressWrapper); // i love this function!!!!!!! this makes life way easier then
+  allProgressWrapper.after(shopGoalsDiv);
+  shopGoalsDiv.appendChild(itemsContainer);
+  shopGoalsDiv.appendChild(shopGoalEditorDiv);
 
   document.querySelectorAll(".shop-item-card__star").forEach(btn => {
-    btn.addEventListener("click", () => {window.location.reload();});
+    btn.addEventListener("click", () => window.location.reload());
   });
 
-  calculateAllProgress();
+  // my mommy said my variables names shouldnt be super long
+  // so from now on variables will be cool and short (like me)
+  // NOOOO I CANT HAVE MY PROJECT EXTRA INFORMATION INFORMATION ELEMENT VARIABLE
+
+  let draggedItem = null;
+
+  shopGoalsItems.forEach(item => {
+    item.setAttribute("draggable", "true");
+
+    item.addEventListener("dragstart", (e) => { // mommy said e is for event
+      draggedItem = item;
+      item.classList.add("dragging");
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    item.addEventListener("dragend", () => {
+      item.classList.remove("dragging");
+      draggedItem = null;
+      shopGoalsItems.forEach(i => i.style.transform = "");
+      saveOrder();
+    });
+
+    item.addEventListener("dragover", () => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    });
+
+    item.addEventListener("dragenter", (e) => {
+      if (item === draggedItem) return;
+
+      const allItems = [...itemsContainer.querySelectorAll(".shop-goals__item")];
+      const draggedIndex = allItems.indexOf(draggedItem);
+      const targetIndex = allItems.indexOf(item);
+
+      if (draggedIndex < targetIndex) item.after(draggedItem);
+      else item.before(draggedItem);
+    });
+  });
+
+  function saveOrder() {
+    const currentOrder = Array.from(itemsContainer.querySelectorAll(".shop-goals__item")) // should be array? idk
+      .map(item => item.getAttribute("data-item-id"));
+    chrome.storage.local.set({'shop_goal_priority_order': currentOrder});
+  }
+
+  // loading the saved order
+  chrome.storage.local.get(['shop_goal_priority_order'], (result) => {
+    const savedOrder = result.shop_goal_priority_order;
+    if (savedOrder) {
+      savedOrder.forEach(id => {
+        const item = itemsContainer.querySelector(`.shop-goals__item[data-item-id="${id}"]`);
+        if (item) itemsContainer.appendChild(item);
+      });
+    }
+    calculateAllProgress();
+  });
 }
 
 function addAchievementInfo() {
