@@ -367,15 +367,22 @@ function addImprovedShop() {
       const newRemaining = Math.max(0, newTotalRequired - userBalance);
       const newPercent = Math.min(100, (userBalance / newTotalRequired) * 100);
 
+      const progressBarContainer = shopGoalItemDiv.querySelector(".shop-goals__progress-bar");
+      if (progressBarContainer) progressBarContainer.style.display = "none";
+
+      const fillColor = newPercent >= 100 ? "hsl(142, 71%, 59%)" : "var(--color-yellow-400)";
+      const emptyColor = "rgba(255, 255, 255, 0.5)";
+
+      shopGoalItemDiv.style.background = `linear-gradient(to right, ${fillColor} ${newPercent}%, ${emptyColor} ${newPercent}%)`;
+      if (newPercent >= 100) shopGoalItemDiv.querySelector(".shop-goals__image").classList.add("completed");
+
       if (newRemaining <= 0) {
         shopGoalsProgressTxt.textContent = `✅ Ready to buy!`;
-        shopGoalsProgressBarFill.classList.add("shop-goals__progress-fill--complete");
+        shopGoalItemDiv.classList.add("shop-goals__progress-fill--complete");
       } else {
         shopGoalsProgressTxt.textContent = `🍪${newRemaining.toLocaleString()} more needed`;
-        shopGoalsProgressBarFill.classList.remove("shop-goals__progress-fill--complete");
+        shopGoalItemDiv.classList.remove("shop-goals__progress-fill--complete");
       }
-
-      shopGoalsProgressBarFill.style.width = `${newPercent}%`;
     }
 
     chrome.storage.local.get([`shop_goal_qty_${shopGoalItemID}`], result => {
