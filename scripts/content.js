@@ -21,6 +21,7 @@ function initialize() {
   addImprovedUI();
   addExtraProjectInfo();
   addImprovedShop();
+  addProjectSearcher();
   addAchievementInfo();
   addThemesPage();
   addBannerTemplateHint();
@@ -52,7 +53,7 @@ function addImprovedUI() {
       const pinSidebarBtn = document.createElement("button");
       pinSidebarBtn.classList.add("pin-sidebar__btn");
       pinSidebarBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="var(--color-red-300)" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pin-icon lucide-pin">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pin-icon lucide-pin">
           <path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>
         </svg>
       `;
@@ -61,19 +62,19 @@ function addImprovedUI() {
       if (pinned) {
         sidebarAside.classList.add("pinned");
         sidebarAside.style.width = "var(--sidebar-expanded-width)";
-        pinSidebarBtn.querySelector("svg").style.fill = "var(--color-red-400)";
-      }
+        pinSidebarBtn.querySelector("svg").style.opacity = 1;
+      } else pinSidebarBtn.querySelector("svg").style.opacity = 0.4;
 
       pinSidebarBtn.addEventListener("click", () => {
         pinned = !pinned;
         if (pinned) {
           sidebarAside.classList.add("pinned");
           sidebarAside.style.width = "var(--sidebar-expanded-width)";
-          pinSidebarBtn.querySelector("svg").style.fill = "var(--color-red-400)";
+          pinSidebarBtn.querySelector("svg").style.opacity = 1;
         } else {
           sidebarAside.classList.remove("pinned");
           sidebarAside.style.width = "";
-          pinSidebarBtn.querySelector("svg").style.fill = "var(--color-red-300)";
+          pinSidebarBtn.querySelector("svg").style.opacity = 0.4;
         }
 
         chrome.storage.local.set({sidebarPinned: pinned});
@@ -541,6 +542,67 @@ function addImprovedShop() {
     calculateAllProgress();
   });
 }
+
+// let allProjects = [];
+
+// async function addProjectSearcher() {
+//   const explorePageContainer = document.querySelector(".explore");
+//   const projectList = document.querySelector("#project-list");
+//   if (!explorePageContainer || !projectList) return;
+
+//   const searchInput = document.createElement("input");
+//   searchInput.placeholder = "Search project";
+//   searchInput.classList.add("project-list__searcher", "input__field");
+//   explorePageContainer.insertBefore(searchInput, explorePageContainer.querySelector(".explore__projects-list"));
+
+//   const API_KEY = "something something";
+
+//   try {
+//     const response = await fetch("https://flavortown.hackclub.com/api/v1/projects", {
+//       method: 'GET',
+//       headers: {
+//         'Authorization': `Bearer ${API_KEY}`,
+//         'Accept': 'application/json'
+//       }
+//     });
+//     console.log(response);
+//     allProjects = await response.json();
+//   } catch (err) {console.error("bruh i couldnt fetch the fucking projects wtf flavortown: ", err)}
+
+//   searchInput.addEventListener("input", (e) => {
+//     const query = e.target.value.toLowerCase();
+
+//     const filtered = allProjects.filter(project => {
+//       const titleMatch = project.title?.toLowerCase().includes(query);
+//       const descMatch = project.description?.toLowerCase().includes(query);
+//       return titleMatch || descMatch;
+//     });
+
+//     if (filtered.length === 0) {
+//       projectList.innerHTML = `<p class="explore__end">You've reached the end.</p>`
+//       return;
+//     }
+
+//     container.innerHTML = filtered.map(filteredProj => `
+//       <div id="project_${filteredProj.id}" class="project-card">
+//         <div class="project-card__banner ${!filteredProj.banner_url ? 'project-card__banner--placeholder' : ''}">
+//           <a class="project-card__banner-frame" href="/projects/${filteredProj.id}">
+//             ${filteredProj.banner_url 
+//               ? `<img src="${filteredProj.banner_url}" class="project-card__banner-image" alt="${filteredProj.title}">`
+//               : `<div class="project-card__banner-placeholder"><p>No banner yet</p></div>`
+//             }
+//           </a>
+//         </div>
+//         <div class="project-card__content">
+//           <h3 class="project-card__title">
+//             <a class="project-card__title-link" href="/projects/${filteredProj.id}">${filteredProj.title}</a>
+//           </h3>
+//           <p class="project-card__description">${filteredProj.description || ''}</p>
+//         </div>
+//       </div>
+//     `).join('');
+//   });
+// }
 
 function addAchievementInfo() {
   const achievementGridDiv = document.querySelector(".achievements__grid");

@@ -492,6 +492,10 @@
   transform: none;
 }
 
+.project-list__searcher {
+  margin: 2rem 0;
+}
+
 /* .user-profile__achievements {
   overflow-x: scroll;
 } */
