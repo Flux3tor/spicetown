@@ -584,6 +584,7 @@ async function addProjectSearcher() {
     }
 
     try {
+      refreshApiKey();
       const API_KEY = apiKey;
 
       const query = encodeURIComponent(searchInput.value);

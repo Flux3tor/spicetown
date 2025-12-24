@@ -658,9 +658,7 @@
 [data-theme] .kitchen-setup::before,
 [data-theme] .themes__div-container::before,
 [data-theme] .kitchen-help::before,
-[data-theme] .projects-new__card::before {
-  background-color: var(--bg-primary) !important;
-}
+[data-theme] .projects-new__card::before {background-color: var(--bg-primary) !important;}
 
 [data-theme] .tutorial-steps__title,
 [data-theme] .tutorial-steps__progress-text,
