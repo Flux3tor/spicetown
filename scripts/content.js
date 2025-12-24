@@ -521,7 +521,7 @@ function addImprovedShop() {
       e.dataTransfer.dropEffect = "move";
     });
 
-    item.addEventListener("dragenter", (e) => {
+    item.addEventListener("dragenter", () => {
       if (item === draggedItem) return;
 
       const allItems = [...itemsContainer.querySelectorAll(".shop-goals__item")];
@@ -551,8 +551,6 @@ function addImprovedShop() {
     calculateAllProgress();
   });
 }
-
-let allProjects = [];
 
 async function addProjectSearcher() {
   const explorePageContainer = document.querySelector(".explore");
@@ -1136,7 +1134,6 @@ function applySettingsSync() {
       const shippingAddressText = document.querySelector(".dropdown__char-span");
 
       if (shippingAddressText) {
-        let censoredS = true;
         const shippingAddress = shippingAddressText.textContent;
 
         document.querySelector(".dropdown__menu").classList.add("dropdown__menu-secure")
