@@ -625,7 +625,7 @@
 
   --kitchen-bar-border: #727272;
   --kitchen-bar-bg: #242424;
-  --kitchen-gradient: linear-gradient(90deg, #8c8c8c 0%, #d7d7d7 100%);
+  --kitchen-gradient: linear-gradient(90deg, #8c8c8c 0%, #323232 100%);
 
   --input-main-bg: #aeaeae;
   --input-sub-bg: #8f8f8f;
@@ -821,6 +821,7 @@
   background: var(--accent-darker) !important;
 }
 
+[data-theme] .shop-goals__heading-progress-bar-fill{background: var(--kitchen-gradient) !important;}
 [data-theme] .shop__searchbar > .input {
   --input-bg: var(--input-sub-bg) !important;
   --input-placeholder-color: var(--accent-muted) !important;
