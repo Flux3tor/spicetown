@@ -193,6 +193,10 @@
   transform: translateX(0%) !important;
 }
 
+.project-card {
+  transition: all 150ms ease;
+}
+
 .project-extra-info__div {
   display: flex;
   flex-direction: column;
