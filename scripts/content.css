@@ -715,7 +715,11 @@
   background-color: var(--surface-dark) !important;
   border-color: var(--border-color) !important;
 }
-[data-theme] .explore__nav-component.selected {background-color: var(--border-color);}
+[data-theme] .explore__nav-component {color: var(--text-primary);}
+[data-theme] .explore__nav-component.selected {
+  background-color: var(--border-color);
+  color: var(--text-highlight);
+}
 
 [data-theme] .post::after {background-color: var(--surface-dark) !important; border-color: var(--border-color) !important;}
 [data-theme] .post .post__attachment,
@@ -889,7 +893,7 @@
   color: var(--text-primary) !important;
 }
 [data-theme] .shop-item-card::before {
-  background-color: var(--accent-darker) !important;
+  background-color: var(--surface-dark) !important;
   background-image: var(--accent-image, linear-gradient(rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05)), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.05) 75%, rgba(255, 255, 255, 0.05))) !important;
   background-size: 100px 100px;
 }
