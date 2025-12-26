@@ -542,6 +542,57 @@
   color: var(--color-bg-2);
 }
 
+/** ANIMATIONS **/
+
+.sidebar {
+  opacity: 0;
+  animation: 125ms fade-in 300ms ease forwards;
+}
+
+.ui-heading,
+.projects-board__heading,
+.explore__nav,
+.sidebar__user,
+.explore__header,
+.music-player,
+.project-show-card {
+  opacity: 0;
+  animation: 250ms fade-in 300ms ease forwards;
+}
+
+.kitchen-setup,
+.projects-board__header > .btn,
+.project-list__search-container,
+.shop-goals__container,
+.themes__div-container,
+.projects-show__container > .mt-4 > .btn,
+.projects-show__timeline {
+  opacity: 0;
+  animation: 0.5s fade-in 300ms ease forwards;
+}
+
+.projects-board__grid-item,
+.kitchen-help,
+.explore__list > .post,
+.project-card,
+.explore__end,
+.shop__buttons,
+.shop__nav,
+.themes__div-option,
+.projects-show__timeline .post {
+  opacity: 0;
+  animation: 1.5s fade-in 300ms ease forwards;
+}
+
+.shop-item-card {
+  opacity: 0;
+  animation: 2.5s fade-in 300ms ease forwards;
+}
+
+@keyframes fade-in {
+  to {opacity: 1;}
+}
+
 /* .user-profile__achievements {
   overflow-x: scroll;
 } */
