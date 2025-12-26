@@ -314,6 +314,8 @@ function addImprovedShop() {
 
   const calculateAllProgress = async () => {
     let totalRequiredCost = 0;
+    let runningBalance = userBalance;
+
     const allFill = document.querySelector(".shop-goals__heading-progress-bar-fill");
     const allCurrentText = document.querySelector("#all-current");
     const allTotalText = document.querySelector("#all-total");
@@ -323,31 +325,43 @@ function addImprovedShop() {
 
     for (const item of currentItems) {
       const id = item.getAttribute("data-item-id");
-      const progressTxt = item.querySelector(".shop-goals__progress-text");
       const fill = item.querySelector(".shop-goals__progress-fill");
+      const progressTxt = item.querySelector(".shop-goals__progress-text");
 
-      // better safe than sorry
       if (!progressTxt || !fill) continue;
 
-      // wow better formatting :shocked: cleaner codebase??!?!??!?!?!? :shocked: :shocked:
-      const remaining = parseFloat(progressTxt.textContent.replace(/[^\d.]/g, '')) || 0;
-      const isComplete = fill.style.width === "100%";
       let derivedPrice = 0;
-
       const matchingShopItemCard = document.querySelector(`div.shop-item-card[data-shop-id="${id}"]`);
       if (matchingShopItemCard) {
         const priceTextRaw = matchingShopItemCard.querySelector(".shop-item-card__price").textContent || "🍪 0";
         derivedPrice = parseFloat(priceTextRaw.replace(/[^\d.]/g, ''));
-      }
-
-      if (!derivedPrice) {
+      } else {
+        const remaining = parseFloat(progressTxt.textContent.replace(/[^\d.]/g, '')) || 0;
+        const isComplete = fill.style.width === "100%";
         if (isComplete) derivedPrice = 0;
         else derivedPrice = remaining + userBalance;
       }
 
       const storage = await chrome.storage.local.get([`shop_goal_qty_${id}`]);
       const qty = storage[`shop_goal_qty_${id}`] || 1;
-      totalRequiredCost += (derivedPrice * qty);
+      const itemTotal = derivedPrice * qty;
+      
+      totalRequiredCost += itemTotal;
+
+      const contribution = Math.min(runningBalance, itemTotal);
+      const itemPercent = itemTotal === 0 ? 100 : (contribution / itemTotal) * 100;
+
+      if (fill) fill.style.width = `${itemPercent}%`;
+      if (progressTxt) {
+        const neededForThis = Math.max(0, itemTotal - contribution);
+        progressTxt.textContent = neededForThis <= 0 ? "✅ Ready!" : `🍪${neededForThis.toLocaleString()} more`;
+      }
+
+      const fillColor = itemPercent >= 100 ? "var(--completed-color)" : "var(--progress-color)";
+      const emptyColor = "rgba(255, 255, 255, 0.5)";
+      item.style.background = `linear-gradient(to right, ${fillColor} ${itemPercent}%, ${emptyColor} ${itemPercent}%)`;
+      
+      runningBalance = Math.max(0, runningBalance - itemTotal);
     }
     
     const percent = totalRequiredCost === 0 ? 100 : Math.min(100, (userBalance / totalRequiredCost) * 100);
@@ -384,10 +398,12 @@ function addImprovedShop() {
 
     const pricePerUnit = derivedPrice;
 
-    const updateShopItemPrice = (quantity) => {
+    const updateShopItemPrice = (quantity, availableBalance) => {
       const newTotalRequired = pricePerUnit * quantity;
+
+      const contribution = Math.min(availableBalance, newTotalRequired);
       const newRemaining = Math.max(0, newTotalRequired - userBalance);
-      const newPercent = Math.min(100, (userBalance / newTotalRequired) * 100);
+      const newPercent = newTotalRequired === 0 ? 100 : Math.min(100, (contribution / newTotalRequired) * 100);
 
       const progressBarContainer = shopGoalItemDiv.querySelector(".shop-goals__progress-bar");
       if (progressBarContainer) progressBarContainer.style.display = "none";
@@ -412,6 +428,8 @@ function addImprovedShop() {
         shopGoalsProgressTxt.textContent = `🍪${newRemaining.toLocaleString()} more needed`;
         shopGoalItemDiv.classList.remove("shop-goals__progress-fill--complete");
       }
+
+      return Math.max(0, availableBalance - newTotalRequired);
     }
 
     // idk if i need this but oh well i aint gonna risk it
