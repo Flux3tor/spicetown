@@ -566,6 +566,10 @@
   padding: 2rem;
   color: var(--color-bg);
   min-width: 400px;
+  transition: all 300ms ease;
+}
+.user-card:hover {
+  transform: translateY(-6px)
 }
 .user-card__id {
   opacity: 0.5;
@@ -829,6 +833,7 @@
 [data-theme] .explore__nav,
 [data-theme] .post,
 [data-theme] .project-card,
+[data-theme] .user-card,
 [data-theme] .project-show-card,
 [data-theme] .btn--brown,
 [data-theme] .projects-board__grid-item > .project-card {
@@ -862,8 +867,10 @@
 [data-theme] .project-card .project-card__banner-placeholder {color: var(--text-highlight) !important;}
 [data-theme] .project-card .project-card__banner-frame {text-decoration: none !important;}
 
-[data-theme] .projects-board__title {color: var(--text-highlight) !important;}
-[data-theme] .projects-board__subtitle {color: var(--text-primary) !important;}
+[data-theme] .projects-board__title,
+[data-theme] .user-card__title {color: var(--text-highlight) !important;}
+[data-theme] .projects-board__subtitle,
+[data-theme] .user-card__id {color: var(--text-primary) !important;}
 
 [data-theme] .projects-board__create-card {background-color: ''; /* fucks your default bs */}
 [data-theme] .projects-board__create-card {background-color: var(--accent-semi-transparent) !important;}

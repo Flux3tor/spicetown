@@ -932,7 +932,6 @@ async function addUserExplore() {
         });
 
         const data = await response.json();
-        console.log(data);
 
         if (data.error === "rate_limited" || data.error === "unauthorized") {
           const msg = data.error === "rate_limited" ? "Rate limited. Wait 1 min." : "Generate an API key from settings.";
