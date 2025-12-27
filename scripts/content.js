@@ -907,12 +907,15 @@ async function addUserExplore() {
 
     const mainContainer = document.querySelector(".explore");
 
+    const usersWrapper = document.createElement("div");
+    usersWrapper.id = "users-container"; // i feel like using id today instead of classes (querySelector) for everything :D
+
     const usersDiv = document.createElement("div");
     usersDiv.id = "users";
     usersDiv.className = "explore__list";
-    usersDiv.innerHTML = "<p>Loading users...</p>";
 
-    mainContainer.appendChild(usersDiv);
+    usersWrapper.appendChild(usersDiv);
+    mainContainer.appendChild(usersWrapper);
 
     // start at 1?
     let currentPage = 1;
@@ -920,7 +923,7 @@ async function addUserExplore() {
     const getUsers = async (page = 1) => {
       try {
         await refreshApiKey();
-        const response = await fetch(`https://flavortown.hackclub.com/api/v1/users`, {
+        const response = await fetch(`https://flavortown.hackclub.com/api/v1/users?page=${page}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${apiKey}`,
@@ -937,7 +940,8 @@ async function addUserExplore() {
           return;
         }
 
-        renderUsers(data.users, usersDiv); 
+        renderUsers(data.users, usersDiv);
+        setupPagination(data.pagination, usersWrapper);
       } catch (err) {
         console.error("i couldnt get users api grrrrrrrrrr >:(", err);
         usersDiv.innerHTML = `<p class="explore__end">Error fetching users.</p>`;
@@ -954,18 +958,35 @@ async function addUserExplore() {
         <div class="user-card">
           <p class="user-card__id">#${user.id}</p>
           <img src="${user.avatar}" class="user-avatar"/>
-          <h3 class="user-card__title">${user.display_name}</h3>
+          <h3 class="user-card__title">
+            <a href="https://flavortown.hackclub.com/users/${user.id}" target="_blank" style="color: inherit;">
+              ${user.display_name}
+            </a>
+          </h3>
         </div>
       `).join('');
 
-      targetElement.innerHTML = html;
-      mainContainer.innerHTML += `
-        <div class="explore__pagination">
-          <button type="button" class="btn btn--brown" style="position: relative;">
-            Load More Projects
+      targetElement.insertAdjacentHTML("beforeend", html);
+    }
+
+    function setupPagination(pagination, wrapper) {
+      const oldPagination = wrapper.querySelector(".explore__pagination");
+      if (oldPagination) oldPagination.remove(); // fucking nuke the old next page button :D
+
+      if (pagination && pagination.current_page < pagination.total_pages) {
+        const paginationDiv = document.createElement("div");
+        paginationDiv.classList.add("explore__pagination");
+        paginationDiv.innerHTML = `
+          <button type="button" class="btn btn--brown" style="position: relative;" id="load-more-users">
+            Load More Users
           </button>
-        </div>
-      `;
+        `;
+        wrapper.appendChild(paginationDiv);
+        paginationDiv.querySelector("#load-more-users").addEventListener("click", () => {
+          currentPage++;
+          getUsers(currentPage);
+        });
+      }
     }
 
     getUsers();

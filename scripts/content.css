@@ -565,6 +565,7 @@
   background-position: center;
   padding: 2rem;
   color: var(--color-bg);
+  min-width: 400px;
 }
 .user-card__id {
   opacity: 0.5;
@@ -574,7 +575,12 @@
   height: 7.5rem;
   width: 7.5rem;
 }
-.user-card__title {font-size: 1.5rem;}
+.user-card__title {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 1.5rem;
+  text-overflow: ellipsis;
+}
 
 /** ANIMATIONS **/
 
