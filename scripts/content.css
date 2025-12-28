@@ -616,7 +616,6 @@
 }
 
 .projects-board__grid-item,
-.kitchen-help,
 .explore__list > .post,
 .project-card,
 .user-card,
@@ -624,12 +623,14 @@
 .shop__buttons,
 .shop__nav,
 .themes__div-option,
-.projects-show__timeline .post {
+.projects-show__timeline .post,
+.kitchen-stats {
   opacity: 0;
   animation: 1.5s fade-in 300ms ease forwards;
 }
 
-.shop-item-card {
+.shop-item-card,
+.kitchen-help {
   opacity: 0;
   animation: 2.5s fade-in 300ms ease forwards;
 }
@@ -816,6 +817,7 @@
 [data-theme] .kitchen-setup::before,
 [data-theme] .themes__div-container::before,
 [data-theme] .kitchen-help::before,
+[data-theme] .kitchen-stats::before,
 [data-theme] .projects-new__card::before {background-color: var(--bg-primary) !important;}
 
 [data-theme] .tutorial-steps__title,
