@@ -818,7 +818,9 @@
 [data-theme] .themes__div-container::before,
 [data-theme] .kitchen-help::before,
 [data-theme] .kitchen-stats::before,
+[data-theme] .kitchen-announcement > .announcement,
 [data-theme] .projects-new__card::before {background-color: var(--bg-primary) !important;}
+[data-theme] .announcement__content {border-color: var(--kitchen-bar-border) !important;}
 
 [data-theme] .tutorial-steps__title,
 [data-theme] .tutorial-steps__progress-text,
