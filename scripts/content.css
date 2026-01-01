@@ -635,7 +635,8 @@
 .shop__nav,
 .themes__div-option,
 .projects-show__timeline .post,
-.kitchen-stats {
+.kitchen-stats,
+.kitchen-announcement {
   opacity: 0;
   animation: 1.5s fade-in 300ms ease forwards;
 }
@@ -1188,4 +1189,12 @@
 }
 [data-theme] .music-player__volume{
   background: var(--music-player-bg, var(--color-brown-700));
+}
+
+[data-theme] main > h1,
+[data-theme] main > h2 {color: var(--text-highlight) !important;}
+[data-theme] main > p {color: var(--text-primary) !important;}
+[data-theme] main > .btn {
+  background-color: var(--surface-card) !important;
+  box-shadow: 0px 4px 0px var(--surface-dark) !important;
 }
