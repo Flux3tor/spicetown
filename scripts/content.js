@@ -209,10 +209,7 @@ function addDevlogImprovement() {
   function parser(text) {
     if (!text) return "";
 
-    let html = text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    let html = text;
 
     const codeBlocks = [];
     html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
@@ -221,11 +218,12 @@ function addDevlogImprovement() {
       return id;
     });
 
+    html = html.replace(/^> (.*$)/gim, "<bq>$1</bq>");
+
     html = html
       .replace(/^### (.*$)/gim, "<h3>$1</h3>")
       .replace(/^## (.*$)/gim, "<h2>$1</h2>") // oops
       .replace(/^# (.*$)/gim, "<h1>$1</h1>")
-      .replace(/^> (.*$)/gim, "<bq>$1</bq>") // temporary, then replace it :P
       .replace(/^---$/gim, "<hr/>")
       .replace(/^\s*-\s+(.*)/gim, "<ubli>$1</ubli>")
       .replace(/^\s*\d+\.\s+(.*)/gim, "<obli>$1</obli>");
@@ -233,13 +231,13 @@ function addDevlogImprovement() {
     html = html
       .replace(/(<ubli>.*<\/ubli>\s*)+/g, (m) => `<ul>${m.replace(/ubli/g, "li")}</ul>`)
       .replace(/(<obli>.*<\/obli>\s*)+/g, (m) => `<ol>${m.replace(/obli/g, "li")}</ol>`)
-      .replace(/(<bq>.*<\/bq>\s*)+/g, (m) => `<blockquote>${m.replace(/bq/g, "p")}</blockquote>`);
+      .replace(/(<bq>.*<\/bq>\s*)+/g, (m) => `<blockquote><p>${m.replace(/<\/?bq>/g, "").trim().split('\n').join('</p><p>')}</p></blockquote>`);
 
     html = html.split("\n").map(line => {
       const trimmed = line.trim();
       if (!trimmed) return ""; 
-      if (/^<(h[1-3]|ul|ol|li|blockquote|bq|p|hr|pre)/i.test(trimmed)) return line;
-      return `<p>${line}</p>`;
+      if (/^<(h[1-3]|ul|ol|li|blockquote|p|hr|pre)/i.test(trimmed)) return line;
+      return `<p>${line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`;
     }).join("\n");
 
     html = html
