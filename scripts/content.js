@@ -336,24 +336,24 @@ function addKeybinds() { // :3
 
 // optimize via DRY principle :yay:
 function addImprovedUI() {
-  const prevVotesBtn = document.querySelector(".btn.btn--brown.btn--borderless.votes-new__prev-btn");
-  if (prevVotesBtn) {
-    prevVotesBtn.textContent = "Previous votes";
+  // const prevVotesBtn = document.querySelector(".btn.btn--brown.btn--borderless.votes-new__prev-btn");
+  // if (prevVotesBtn) {
+  //   prevVotesBtn.textContent = "Previous votes";
 
-    const skipBtn = prevVotesBtn.cloneNode(true);
-    skipBtn.textContent = "Skip";
-    skipBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      location.reload();
-    });
+  //   const skipBtn = prevVotesBtn.cloneNode(true);
+  //   skipBtn.textContent = "Skip";
+  //   skipBtn.addEventListener("click", (e) => {
+  //     e.preventDefault();
+  //     location.reload();
+  //   });
     
-    const wrapper = document.createElement("div");
-    wrapper.className = "vote-action__div";
+  //   const wrapper = document.createElement("div");
+  //   wrapper.className = "vote-action__div";
 
-    const mainSection = prevVotesBtn.parentElement.querySelector(".votes-new__main");
-    prevVotesBtn.parentElement.insertBefore(wrapper, mainSection);
-    wrapper.append(prevVotesBtn, skipBtn);
-  }
+  //   const mainSection = prevVotesBtn.parentElement.querySelector(".votes-new__main");
+  //   prevVotesBtn.parentElement.insertBefore(wrapper, mainSection);
+  //   wrapper.append(prevVotesBtn, skipBtn);
+  // }
 
   // const sidebar = document.querySelector("aside.sidebar");
   // if (sidebar) {
