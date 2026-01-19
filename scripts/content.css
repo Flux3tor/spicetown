@@ -660,6 +660,7 @@
 }
 
 .kitchen-setup,
+.kitchen-comic,
 .projects-board__header > .btn,
 .project-list__search-container,
 .shop-goals__container,
@@ -947,12 +948,14 @@
 [data-theme] .kitchen-help::before,
 [data-theme] .kitchen-stats::before,
 [data-theme] .kitchen-announcement > .announcement,
-[data-theme] .projects-new__card::before {
+[data-theme] .projects-new__card::before,
+[data-theme] .kitchen-comic {
   background-color: var(--bg-primary) !important;
 }
 [data-theme] .announcement__content {
   border-color: var(--kitchen-bar-border) !important;
 }
+[data-theme] .kitchen-comic {border-color: var(--accent-darker) !important;}
 
 [data-theme] .tutorial-steps__title,
 [data-theme] .tutorial-steps__progress-text,
@@ -1270,7 +1273,8 @@
   transition: all 200ms ease;
   color: var(--text-primary) !important;
 }
-[data-theme] .shop-item-card::before {
+[data-theme] .shop-item-card::before,
+[data-theme] .kitchen-comic::before {
   background-color: var(--surface-dark) !important;
   background-image: var(
     --accent-image,
