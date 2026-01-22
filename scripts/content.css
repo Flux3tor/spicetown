@@ -969,7 +969,8 @@
 [data-theme] .tutorial-steps__title,
 [data-theme] .tutorial-steps__progress-text,
 [data-theme] .projects-board__subtitle,
-[data-theme] .kitchen-recently-added__subtitle {
+[data-theme] .kitchen-recently-added__subtitle,
+[data-theme] .shop__recently-added-subtitle {
   color: var(--text-primary) !important;
 }
 
@@ -1069,7 +1070,8 @@
   background: var(--create-project-url) center / 100% 100% no-repeat !important;
 }
 
-[data-theme] .explore__header-title {
+[data-theme] .explore__header-title,
+[data-theme] .shop__recently-added-title {
   color: var(--text-highlight) !important;
 }
 [data-theme] .explore__description,
@@ -1306,6 +1308,12 @@
     )
   ) !important;
   background-size: 100px 100px;
+}
+[data-theme] .shop__recently-added {
+  background: linear-gradient(135deg, var(--surface-card) 0%, var(--surface-dark) 100%);
+}
+[data-theme] .shop__recently-added-inner {
+  background-color: var(--bg-primary) !important;
 }
 [data-theme] .shop-item-card .shop-item-card__image {
   background-color: var(--border-color) !important;
