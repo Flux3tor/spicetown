@@ -1211,7 +1211,8 @@
   color: var(--accent) !important;
 }
 [data-theme] .state-card--success .state-card__badge,
-[data-theme] .state-card--success .state-card__icon-circle {
+[data-theme] .state-card--success .state-card__icon-circle,
+[data-theme] .state-card__icon-circle {
   background: var(--border-color) !important;
 }
 [data-theme] .state-card--success .state-card__badge {
