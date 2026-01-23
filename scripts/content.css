@@ -1193,16 +1193,16 @@
 }
 
 [data-theme] .state-card--success {
-  --state-card-accent: var(--accent-darker) !important;
-  background-color: var(--accent-darker) !important;
-  border-color: var(--border-color) !important;
-  /* filter: blur(1.5px) !important; people don't like blur :( */
+  --state-card-accent: var(--surface-dark) !important;
+  background-color: var(--surface-dark) !important;
+  border-color: var(--surface-card) !important;
+  filter: brightness(0.4);
 }
 [data-theme] .state-card--neutral,
 [data-theme] .state-card--warning {
-  --state-card-accent: var(--accent) !important;
-  background-color: var(--accent) !important;
-  border-color: var(--accent-darker) !important;
+  --state-card-accent: var(--accent-darker) !important;
+  background-color: var(--accent-darker) !important;
+  border-color: var(--border-color) !important;
 }
 [data-theme] .state-card--success .state-card__title,
 [data-theme] .state-card--success .state-card__icon-circle {
@@ -1215,10 +1215,10 @@
 [data-theme] .state-card--success .state-card__badge,
 [data-theme] .state-card--success .state-card__icon-circle,
 [data-theme] .state-card__icon-circle {
-  background: var(--border-color) !important;
+  background: var(--surface-card) !important;
 }
 [data-theme] .state-card--success .state-card__badge {
-  color: var(--accent-darker) !important;
+  color: var(--text-highlight) !important;
 }
 [data-theme] .state-card--success .state-card__description {
   color: var(--text-primary) !important;
@@ -1232,11 +1232,11 @@
   color: var(--text-primary) !important;
 }
 [data-theme] .state-card--warning .state-card__badge {
-  background: var(--accent-darker) !important;
+  background: var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 [data-theme] .state-card--warning .state-card__icon-circle {
-  background: var(--accent-darker) !important;
+  background: var(--border-color) !important;
 }
 
 [data-theme] .shop-goals__heading-progress-bar-fill {
