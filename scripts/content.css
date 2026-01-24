@@ -1703,3 +1703,7 @@
 [data-theme] .votes-new__form > div > form > button[type="submit"]::before {
   border-color: var(--surface-dark) !important;
 }
+[data-theme] .sidebar__nav-item-hotkey {
+  background-color: var(--accent-darker) !important;
+  color: var(--text-highlight) !important;
+}
