@@ -1775,6 +1775,7 @@
   color: var(--surface-header) !important;
 }
 [data-theme] .projects-ship__hackatime-item,
+[data-theme] .hackatime-project-selector__project,
 [data-theme] .projects-ship__devlog {
   background-color: var(--surface-dark) !important;
   color: var(--text-highlight) !important;
@@ -1801,4 +1802,17 @@
 [data-theme] .post__time,
 [data-theme] .post__duration {
   color: var(--text-highlight) !important
+}
+[data-theme] .hackatime-project-selector__project-name {
+  color: var(--accent) !important;
+}
+[data-theme] .hackatime-project-selector__project-meta,
+[data-theme] .hackatime-project-selector__project-remove {
+  color: var(--text-highlight) !important;
+}
+[data-theme] .hackatime-project-selector__project-remove:hover {
+  background-color: var(--accent) !important;
+}
+[data-theme] .hackatime-project-selector__project-icon {
+  background-color: var(--accent) !important;
 }
