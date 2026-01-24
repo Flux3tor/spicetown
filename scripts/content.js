@@ -330,6 +330,13 @@ function addKeybinds() { // :3
           }
         }
       })
+      const hotkeyDiv = document.createElement("div");
+      hotkeyDiv.className = "explore__nav-component-hotkey-div";
+      enComponent.appendChild(hotkeyDiv);
+      const hotNum = document.createElement("div");
+      hotNum.textContent = nKey;
+      hotNum.className = "explore__nav-component-hotkey";
+      hotkeyDiv.appendChild(hotNum);
     })
   }
   const nDevlog = document.querySelector(".projects-show__container > .mt-4 > .btn.btn--brown");

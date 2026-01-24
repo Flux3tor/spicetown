@@ -660,7 +660,18 @@
   pointer-events: none;
 }
 
-.sidebar__nav-item:hover .sidebar__nav-item-hotkey-div {
+.explore__nav-component-hotkey-div {
+  position: absolute;
+  top: 100%;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  z-index: 69420;
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.sidebar__nav-item:hover .sidebar__nav-item-hotkey-div,
+.explore__nav-component:hover .explore__nav-component-hotkey-div {
   opacity: 0.5;
 }
 
@@ -672,7 +683,8 @@
   align-items: center;
 }
 
-.sidebar__nav-item-hotkey {
+.sidebar__nav-item-hotkey,
+.explore__nav-component-hotkey {
   background: var(--color-blue-500);
   color: var(--color-bg);
   padding: .25rem .75rem;
@@ -1703,7 +1715,8 @@
 [data-theme] .votes-new__form > div > form > button[type="submit"]::before {
   border-color: var(--surface-dark) !important;
 }
-[data-theme] .sidebar__nav-item-hotkey {
+[data-theme] .sidebar__nav-item-hotkey,
+[data-theme] .explore__nav-component-hotkey {
   background-color: var(--accent-darker) !important;
   color: var(--text-highlight) !important;
 }
