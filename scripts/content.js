@@ -1733,7 +1733,7 @@ async function addPayoutDisplay() {
 
           payout.querySelector(".post__author > span").textContent = "received payout for";
           payout.querySelector(".post__ship-title").textContent = "Received payout!";
-          payout.querySelector(".post__body").innerHTML = `<p>Payout: 🍪${amount}<br><small>(Approx.)</small> Multiplier: ${multiplier}x</p>`;
+          payout.querySelector(".post__body").innerHTML = `<p>Payout: 🍪${amount}<br><small>(Approx.)</small> Multiplier: ${multiplier}x<br>Time shipped: ${convertMToFormat(mins)}</p>`;
 
           shipPost.before(payout);
           transactionIndex = i + 1;
@@ -1762,7 +1762,7 @@ function str_rand(length) {
 function convertMToFormat(mins) {
   let h = Math.floor(mins / 60);
   let m = Math.floor(mins % 60);
-  return `${String(h)} hours and ${String(m)} minutes`;
+  return `${String(h)}h ${String(m)}m`;
 }
 
 async function getFlavortownCSS() { // partially stolen from CoM, my other OLD project :3
