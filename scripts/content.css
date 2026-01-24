@@ -943,7 +943,8 @@
   );
 }
 
-[data-theme] a {
+[data-theme] a,
+[data-theme] .comments-count {
   color: var(--text-highlight) !important;
 }
 
@@ -1790,4 +1791,14 @@
 }
 [data-theme] pre {
   background-color: var(--surface-card) !important;
+}
+[data-theme] .post__body {
+  color: var(--text-primary) !important;
+}
+[data-theme] .post__author span {
+  color: var(--text-primary) !important;
+}
+[data-theme] .post__time,
+[data-theme] .post__duration {
+  color: var(--text-highlight) !important
 }
