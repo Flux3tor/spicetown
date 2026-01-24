@@ -1950,3 +1950,15 @@
 [data-theme] .shop-order__accessories .shop-order__accessory-option-input:checked~.shop-order__accessory-option-block {
   border-color: var(--accent-darker) !important;
 }
+[data-theme] #spicetown-update-banner {
+  background: var(--surface-dark) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--surface-card) !important;
+}
+[data-theme] #spicetown-update-banner #go-update-btn {
+  background-color: var(--surface-card) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme] #spicetown-update-banner #close-update-banner {
+  color: var(--text-primary) !important;
+}
