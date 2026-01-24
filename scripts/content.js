@@ -371,56 +371,24 @@ function addKeybinds() { // :3
 
 // optimize via DRY principle :yay:
 function addImprovedUI() {
-  // const prevVotesBtn = document.querySelector(".btn.btn--brown.btn--borderless.votes-new__prev-btn");
-  // if (prevVotesBtn) {
-  //   prevVotesBtn.textContent = "Previous votes";
+  const prevVotesBtn = document.querySelector(".btn.btn--brown.btn--borderless.votes-new__prev-btn");
+  if (prevVotesBtn) {
+    prevVotesBtn.textContent = "Previous votes";
 
-  //   const skipBtn = prevVotesBtn.cloneNode(true);
-  //   skipBtn.textContent = "Skip";
-  //   skipBtn.addEventListener("click", (e) => {
-  //     e.preventDefault();
-  //     location.reload();
-  //   });
+    const skipBtn = prevVotesBtn.cloneNode(true);
+    skipBtn.textContent = "Skip";
+    skipBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      location.reload();
+    });
     
-  //   const wrapper = document.createElement("div");
-  //   wrapper.className = "vote-action__div";
+    const wrapper = document.createElement("div");
+    wrapper.className = "vote-action__div";
 
-  //   const mainSection = prevVotesBtn.parentElement.querySelector(".votes-new__main");
-  //   prevVotesBtn.parentElement.insertBefore(wrapper, mainSection);
-  //   wrapper.append(prevVotesBtn, skipBtn);
-  // }
-
-  // const sidebar = document.querySelector("aside.sidebar");
-  // if (sidebar) {
-  //   chrome.storage.local.get(["sidebarPinned"], ({sidebarPinned = false}) => {
-  //     const pinBtn = document.createElement("button");
-  //     pinBtn.classList.add("pin-sidebar__btn");
-  //     pinBtn.innerHTML = `
-  //       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pin-icon lucide-pin">
-  //         <path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>
-  //       </svg>
-  //     `;
-
-  //     const icon = pinBtn.querySelector("svg");
-  //     let isPinned = sidebarPinned;
-
-  //     const updateSidebarUI = (pinned) => {
-  //       sidebar.classList.toggle("pinned", pinned);
-  //       sidebar.style.width = pinned ? "var(--sidebar-expanded-width)" : "";
-  //       icon.style.opacity = pinned ? "1" : "0.4";
-  //     };
-
-  //     updateSidebarUI(isPinned);
-      
-  //     pinBtn.addEventListener("click", () => {
-  //       isPinned = !isPinned;
-  //       updateSidebarUI(isPinned);
-  //       chrome.storage.local.set({sidebarPinned: isPinned});
-  //     });
-
-  //     sidebar.appendChild(pinBtn);
-  //   });
-  // }
+    const mainSection = prevVotesBtn.parentElement.querySelector(".votes-new__main");
+    prevVotesBtn.parentElement.insertBefore(wrapper, mainSection);
+    wrapper.append(prevVotesBtn, skipBtn);
+  }
 }
 
 function addExtraProjectInfo() {
