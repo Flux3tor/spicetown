@@ -1187,7 +1187,8 @@
 [data-theme] .project-show-card__byline,
 [data-theme] .project-show-card__stat > span,
 [data-theme] .projects-new__time-preview,
-[data-theme] .project-show-card__stat > svg {
+[data-theme] .project-show-card__stat > svg,
+[data-theme] .file-upload__filename {
   color: var(--text-highlight) !important;
 }
 [data-theme] .projects-board__header > .btn.btn--red,
@@ -1727,4 +1728,7 @@
 }
 [data-theme] .my-votes > table > thead > tr > th {
   background-color: var(--surface-dark) !important;
+}
+[data-theme] .file-upload__progress-bar {
+  background: var(--kitchen-gradient) !important;
 }
