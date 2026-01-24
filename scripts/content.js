@@ -11,6 +11,11 @@ function refreshApiKey() {
 }
 
 async function initialize() {
+  // Apply Theme
+  if (savedBgColor) {
+    applyTheme(savedBgColor);
+  }
+
   const topCollabDiv = document.querySelector(".top-collab img");
   if (topCollabDiv) {
     const spicetownIcon = Object.assign(document.createElement("img"), {
@@ -50,11 +55,6 @@ async function initialize() {
 
   // Display Incompatiability
   incompatiability();
-
-  // Apply Theme
-  if (savedBgColor) {
-    applyTheme(savedBgColor);
-  }
 
   // Grab The Api Key
   refreshApiKey();
