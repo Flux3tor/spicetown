@@ -1716,7 +1716,7 @@ async function addPayoutDisplay() {
 
   turboFrame.addEventListener("turbo:frame-load", () => {
     const transactions = Array.from(document.querySelectorAll("#balance-modal .balance-history__table tbody tr"));
-    const shipPosts = timeline.querySelectorAll(".post.post--ship");
+    const shipPosts = timeline.querySelectorAll(".post.post--ship:not([data-payout-type])");
     let transactionIndex = 0;
     shipPosts.forEach(shipPost => {
       const shipTitle = shipPost.querySelector(".post__author a:nth-of-type(2)")?.textContent;
@@ -1740,11 +1740,14 @@ async function addPayoutDisplay() {
           const multiplier = mins > 0 ? Math.round((amount / (mins / 60)) * 100) / 100 : 0;
           const payout = shipPost.cloneNode(true);
 
+          payout.setAttribute("data-payout-type", "display");
+
           payout.querySelector(".post__author > span").textContent = "received payout for";
           payout.querySelector(".post__ship-title").textContent = "Received payout!";
           payout.querySelector(".post__body").innerHTML = `<p>Payout: 🍪${amount}<br><small>(Approx.)</small> Multiplier: ${multiplier}x<br>Time shipped: ${convertMToFormat(mins)}</p>`;
 
           shipPost.before(payout);
+          shipPost.setAttribute("data-payout-type", "processed");
           transactionIndex = i + 1;
           break;
         }
