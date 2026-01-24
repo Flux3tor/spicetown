@@ -719,6 +719,41 @@
 .emoji-preview-menu::-webkit-scrollbar, .emoji-preview-menu::-webkit-scrollbar-button {
   display: none;
 }
+#spicetown-update-banner {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--color-tan-400);
+  color: var(--color-text-body);
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  z-index: 694202167;
+  box-shadow: 0 .25rem 1rem rgba(0, 0, 0, 0.3);
+  border: 6px solid var(--color-tan-300);
+}
+#spicetown-update-banner strong {
+  display: block;
+  margin-bottom: .4rem;
+  font-size: 1.25rem;
+}
+#spicetown-update-banner p {
+  margin-bottom: .8rem;
+}
+#spicetown-update-banner #go-update-btn {
+  padding: .4rem .8rem;
+  border-radius: 4px;
+  background: var(--color-tan-300);
+  cursor: pointer;
+  border: none;
+  color: var(--color-text-body);
+}
+#spicetown-update-banner #close-update-banner {
+  padding: .4rem .8rem;
+  background: none;
+  cursor: pointer;
+  color: var(--color-text-body);
+  border: none;
+}
 
 /** ANIMATIONS **/
 

@@ -16,14 +16,11 @@ async function initialize() {
     applyTheme(savedBgColor);
   }
 
-  const topCollabDiv = document.querySelector(".top-collab img");
-  if (topCollabDiv) {
-    const spicetownIcon = Object.assign(document.createElement("img"), {
-      src: chrome.runtime.getURL("/images/hc-gh&st-collab.png"),
-      className: "spicetown-icon-header",
-    })
-    spicetownIcon.after(spicetownIcon);
-  }
+  api.runtime.onMessage.addListener((message) => {
+    if (message.type === "SHOW_UPDATE_BANNER") {
+      showUpdateBanner(message.version);
+    }
+  });
 
   // Settings-related functions
   addSpicetownSettings();
@@ -58,6 +55,15 @@ async function initialize() {
 
   // Grab The Api Key
   refreshApiKey();
+
+  const topCollabDiv = document.querySelector(".top-collab img");
+  if (topCollabDiv) {
+    const spicetownIcon = Object.assign(document.createElement("img"), {
+      src: chrome.runtime.getURL("/images/hc-gh&st-collab.png"),
+      className: "spicetown-icon-header",
+    })
+    spicetownIcon.after(spicetownIcon);
+  }
 }
 
 function addDevlogImprovement() {
@@ -1881,6 +1887,29 @@ function addEmojiAutocomplete() {
     menu.style.display = "none";
     input.focus();
   }
+}
+
+function showUpdateBanner(version) {
+  // Prevent duplicate banners
+  if (document.getElementById("spicetown-update-banner")) return;
+
+  const banner = document.createElement("div");
+  banner.id = "spicetown-update-banner";
+  banner.innerHTML = `
+    <strong>This extension is outdated!</strong>
+    <p>Version ${version} is ready to be installed.</p>
+    <button id="go-update-btn">Update Now</button>
+    <button id="close-update-banner">Ignore</button>
+  `;
+
+  document.body.appendChild(banner);
+
+  document.getElementById("go-update-btn").addEventListener("click", () => {
+    api.runtime.sendMessage({type: "OPEN_EXTENSIONS_PAGE"});
+  });
+  document.getElementById("close-update-banner").addEventListener("click", () => {
+    banner.remove();
+  });
 }
 
 function str_rand(length) {
