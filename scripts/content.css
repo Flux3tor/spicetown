@@ -760,6 +760,16 @@
   color: var(--color-text-body);
   border: none;
 }
+.post__votes-container > strong {
+  font-size: 1.25rem;
+}
+.post__votes-container > div {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-teal-400);
+  color: var(--color-blue-600);
+  border-radius: 8px;
+}
 
 /** ANIMATIONS **/
 
@@ -1146,10 +1156,12 @@
 [data-theme] .post .post__chevron,
 [data-theme] .post .comments-section__list,
 [data-theme] .post .comment-form__input,
+[data-theme] .post__votes-container > div,
 [data-theme] .project-show-card .project-extra-info__div {
-  background-color: var(--border-color) !important;
+  background: var(--border-color) !important;
 }
 [data-theme] .post .comment-form__input,
+[data-theme] .post__votes-container > div,
 [data-theme] .post .comments-section__list {
   color: var(--text-highlight) !important;
 }

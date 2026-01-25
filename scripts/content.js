@@ -41,7 +41,8 @@ async function initialize() {
     watchForNewComments,
     addWeeklyGains,
     addEmojiAutocomplete,
-    addPayoutDisplay
+    addPayoutDisplay,
+    addProjectVotes
   ];
   uiEnhancements.forEach(func => func());
 
@@ -1837,11 +1838,44 @@ function updateThemeCache(themeId) {
         themeId: themeId,
         timestamp: Date.now()
     };
-    // Save to localStorage for the theme-engine to find instantly next time
     localStorage.setItem('flavortown-theme-cache', JSON.stringify(cacheData));
-    
-    // Also save to chrome.storage for your background script / settings UI
+
     chrome.storage.local.set({ selectedTheme: themeId });
+}
+
+async function addProjectVotes() {
+  const posts = document.querySelectorAll(".post--ship");
+  posts.forEach(post => {
+    // Get the project name via the project link on the ship post!
+    // hey if ur looking through the code should i keep up with commenting stuff?
+    const projectLink = post.querySelector("a[href^='/projects/']");
+    if (!projectLink || post.dataset.votesLoaded) return;
+
+    const projectName = projectLink.textContent.trim();
+    post.dataset.votesLoaded = "true";
+
+    api.runtime.sendMessage({
+      type: "FETCH_COMMUNITY_VOTES",
+      projectName: projectName
+    }, (votes) => {
+      if (votes && votes.length > 0) {
+        const votesContainer = document.createElement("div");
+        votesContainer.className = "post__votes-container";
+
+        const title = document.createElement("strong");
+        title.textContent = "Public Votes";
+        votesContainer.appendChild(title);
+
+        votes.forEach(vote => {
+          const voteEl = document.createElement("div");
+          voteEl.innerHTML = `<strong>@${vote.voter}:</strong> ${vote.text}`;
+          votesContainer.appendChild(voteEl);
+        });
+
+        post.querySelector(".post__content").appendChild(votesContainer);
+      }
+    });
+  })
 }
 
 function str_rand(length) {
