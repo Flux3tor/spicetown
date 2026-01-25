@@ -11,11 +11,6 @@ function refreshApiKey() {
 }
 
 async function initialize() {
-  // Apply Theme
-  if (savedBgColor) {
-    applyTheme(savedBgColor);
-  }
-
   api.runtime.onMessage.addListener((message) => {
     if (message.type === "SHOW_UPDATE_BANNER") {
       showUpdateBanner(message.version);
@@ -1508,56 +1503,6 @@ async function addThemesPage() {
   }
 }
 
-function applyTheme(themeId) {
-  const body = document.body;
-
-  body.removeAttribute("data-theme");
-  body.style.removeProperty("--theme-bg-image");
-
-  if (themeId && themeId != "bg-color-vanilla") {
-    body.setAttribute("data-theme", themeId);
-
-    if (themeId === "bg-color-ruby") {
-      var bgUrl = chrome.runtime.getURL("/themes/bg-color/ruby/bg.png");
-      body.style.setProperty("--theme-bg-image", `url('${bgUrl}')`);
-      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
-        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://i.ibb.co/YBF6TqZ0/Mask-group-19.png";
-      }
-    } else if (themeId === "bg-color-catppuccin-mocha") {
-      body.style.setProperty("--theme-bg-image", `url('https://i.ibb.co/fYQVfZbb/Mask-group-12.png')`);
-      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
-        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://i.ibb.co/cSZ853Kk/Mask-group-17.png";
-      }
-    } else if (themeId === "bg-color-catppuccin-macchiato") {
-      body.style.setProperty("--theme-bg-image", `url('https://i.ibb.co/C5mZtM9R/Mask-group-13.png')`);
-      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
-        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://i.ibb.co/zhK0H9KW/Mask-group-16.png";
-      }
-    } else if (themeId === "bg-color-dracula") {
-      var bgUrl = chrome.runtime.getURL("/themes/bg-color/dracula/bg.png");
-      body.style.setProperty("--theme-bg-image", `url('${bgUrl}')`);
-    } else if (themeId === "bg-color-charcoal") {
-      var bgUrl = chrome.runtime.getURL("/themes/bg-color/charcoal/bg.png");
-      body.style.setProperty("--theme-bg-image", `url('${bgUrl}')`);
-      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
-        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://hc-cdn.hel1.your-objectstorage.com/s/v3/d6258e630f490ea0_mask.png";
-      }
-    } else if (themeId === "bg-color-leafy") {
-      body.style.setProperty("--theme-bg-image", `url('https://i.ibb.co/qFNQLtjq/Mask-group-21.png')`);
-      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
-        document.querySelector(".sidebar__user-avatar-hat-bg").src = "https://i.ibb.co/S7wr4DvT/Mask-group-20.png";
-      }
-    } else if (themeId === "bg-color-midnight") {
-      var bgUrl = chrome.runtime.getURL("/themes/bg-color/midnight/bg.png");
-      var avatarBgUrl = chrome.runtime.getURL("/themes/bg-color/midnight/user-avatar-hat-bg.png");
-      body.style.setProperty("--theme-bg-image", `url('${bgUrl}')`);
-      if (document.querySelector(".sidebar__user-avatar-hat-bg")) {
-              document.querySelector(".sidebar__user-avatar-hat-bg").src = `url('${avatarBgUrl}')`;
-      }
-    }
-  }
-}
-
 function saveSetting(value) {
   chrome.storage.local.set({'screenshareMode': value});
 }
@@ -1880,6 +1825,18 @@ async function addWeeklyGains() {
       }
     });
   });
+}
+
+function updateThemeCache(themeId) {
+    const cacheData = {
+        themeId: themeId,
+        timestamp: Date.now()
+    };
+    // Save to localStorage for the theme-engine to find instantly next time
+    localStorage.setItem('flavortown-theme-cache', JSON.stringify(cacheData));
+    
+    // Also save to chrome.storage for your background script / settings UI
+    chrome.storage.local.set({ selectedTheme: themeId });
 }
 
 function str_rand(length) {

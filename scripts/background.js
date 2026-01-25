@@ -48,8 +48,6 @@ async function fetchFeed() {
   });
   const data = await response.json();
 
-  console.log(data)
-
   const totals = {};
 
   if (data.ok) {
@@ -74,11 +72,8 @@ async function getSlackId(userId, apiKey) {
     });
     const data = await response.json();
     if (data.slack_id) {
-      console.log(`DEBUG: Fetching API for user ${userId}...`);
       userCache[userId] = data.slack_id;
       return data.slack_id;
-    } else {
-      console.warn(`DEBUG: User ${userId} has no slack_id in API response`, data);
     }
   } catch (error) {console.error("ratelimited/api error", error);}
   return null;
