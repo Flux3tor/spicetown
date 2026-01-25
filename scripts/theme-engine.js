@@ -1,5 +1,7 @@
 (function() {
   let activeTheme = "";
+  let bodyObserver = null;
+
   const init = () => {
     chrome.storage.local.get(['selectedTheme'], (result) => {
       activeTheme = result.selectedTheme || localStorage.getItem("bg-color-theme");
@@ -7,30 +9,53 @@
         startThemeEngine(activeTheme);
       }
     });
+
+    chrome.runtime.onMessage.addListener((request) => {
+      if (request.type === "THEME_UPDATED") {
+        activeTheme = request.themeId;
+        startThemeEngine(activeTheme);
+      }
+    });
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area === "local" && changes.selectedTheme) {
+        activeTheme = changes.selectedTheme.newValue;
+        startThemeEngine(activeTheme);
+      }
+    });
   };
 
   function startThemeEngine(themeId) {
-    const bodyObserver = new MutationObserver(() => {
-      const body = document.body;
-    
-      if (body) {
-        if (body.getAttribute("data-theme") !== themeId) {
-          body.setAttribute("data-theme", themeId);
-        }
-        updateBodyStyles(themeId, body);
-        const hat = body.querySelector(".sidebar__user-avatar-hat-bg");
-        if (hat) {
-          updateHatImage(themeId, hat);
-        }
-      }
-    });
+    activeTheme = themeId;
 
-    bodyObserver.observe(document.documentElement, { 
-      childList: true, 
-      subtree: true, 
-      attributes: true, 
-      attributeFilter: ["data-theme"] 
-    });
+    if (!bodyObserver) {
+      const bodyObserver = new MutationObserver(() => {
+        const body = document.body;
+        if (body) {
+          if (body.getAttribute("data-theme") !== activeTheme) {
+            body.setAttribute("data-theme", activeTheme);
+          }
+          updateBodyStyles(activeTheme, body);
+          const hat = body.querySelector(".sidebar__user-avatar-hat-bg");
+          if (hat) {
+            updateHatImage(activeTheme, hat);
+          }
+        }
+      });
+
+      bodyObserver.observe(document.documentElement, { 
+        childList: true, 
+        subtree: true, 
+        attributes: true, 
+        attributeFilter: ["data-theme"] 
+      });
+    }
+
+    if (document.body) {
+      document.body.setAttribute("data-theme", themeId);
+      updateBodyStyles(themeId, document.body);
+      const hat = document.querySelector(".sidebar__user-avatar-hat-bg");
+      if (hat) updateHatImage(themeId, hat);
+    }
   }
 
   function updateBodyStyles(themeId, body) {
@@ -66,8 +91,12 @@
       "bg-color-midnight": chrome.runtime.getURL("/themes/bg-color/midnight/user-avatar-hat-bg.png")
     };
 
-    if (hatMap[themeId] && hatEl.src !== hatMap[themeId]) {
-      hatEl.src = hatMap[themeId];
+    if (hatMap[themeId]) {
+      if (hatEl.src !== hatMap[themeId]) {
+        hatEl.src = hatMap[themeId];
+      }
+    } else {
+      hatEl.src = "";
     }
   }
   init();

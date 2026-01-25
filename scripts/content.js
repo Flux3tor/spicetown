@@ -1486,19 +1486,24 @@ async function addThemesPage() {
       if (activeOpt) activeOpt.setAttribute("selected", true);
     }
 
-    for (i = 0; i < el.bgColorOptions.length; i++) {
-      el.bgColorOptions[i].addEventListener('click', selectBgColorOption);
-    }
+    el.bgColorOptions.forEach(option => {
+      option.addEventListener("click", selectBgColorOption);
+    });
 
-    function selectBgColorOption(event) {
+    async function selectBgColorOption(event) {
       const selectedId = event.currentTarget.id;
-      const options = document.querySelectorAll('.themes__div-option--bg-color');
-      Array.prototype.forEach.call(options, function (el) {
-        el.setAttribute("selected", false);
-      });
+      
+      el.bgColorOptions.forEach(opt => opt.setAttribute("selected", "false"));
+      event.currentTarget.setAttribute("selected", "true");
+
       localStorage.setItem("bg-color-theme", selectedId);
-      event.currentTarget.setAttribute("selected", true);
-      applyTheme(selectedId);
+      await chrome.storage.local.set({ "selectedTheme": selectedId });
+
+      if (typeof applyTheme === "function") {
+        applyTheme(selectedId);
+      } else {
+        chrome.runtime.sendMessage({ type: "THEME_UPDATED", themeId: selectedId });
+      }
     }
   }
 }
