@@ -44,6 +44,7 @@ async function initialize() {
     addDevlogImageTools,
     addEmojiRendering,
     watchForNewComments,
+    addWeeklyGains,
     addEmojiAutocomplete,
     addPayoutDisplay
   ];
@@ -1842,6 +1843,42 @@ function showUpdateBanner(version) {
   });
   document.getElementById("close-update-banner").addEventListener("click", () => {
     banner.remove();
+  });
+}
+
+async function addWeeklyGains() {
+  const userElements = document.querySelectorAll(".user");
+  const userIds = [];
+  const idToElementMap = {};
+
+  userElements.forEach(element => {
+    const link = element.querySelector("a[href^='/users/']");
+    if (link) {
+      const id = link.getAttribute("href").split("/").pop();
+      userIds.push(id);
+      idToElementMap[id] = element.querySelector("p");
+    }
+  });
+
+  refreshApiKey();
+
+  api.runtime.sendMessage({
+    type: "FETCH_WEEKLY_LEADERBOARD",
+    userIds: userIds,
+    currentApiKey: apiKey
+  }, (weeklyData) => {
+    if (!weeklyData) return;
+    Object.keys(weeklyData).forEach(userId => {
+      const gain = weeklyData[userId];
+      const pTag = idToElementMap[userId];
+
+      if (pTag && !pTag.dataset.weeklyAdded) {
+        const span = document.createElement("small");
+        span.textContent = ` (${gain >= 0 ? '+' : ''}${gain})`;
+        pTag.appendChild(span);
+        pTag.dataset.weeklyAdded = "true";
+      }
+    });
   });
 }
 
