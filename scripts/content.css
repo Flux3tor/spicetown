@@ -787,6 +787,17 @@
   color: inherit;
   opacity: 0.5;
 }
+#file-import-settings {
+  display: none;
+}
+.settings-section {
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 2px solid var(--color-tan-300);
+}
+.settings-section div {
+  margin-top: .5rem;
+}
 
 /** ANIMATIONS **/
 
@@ -1154,6 +1165,7 @@
 [data-theme] .projects-board__grid-item > .project-card {
   background-color: var(--surface-dark) !important;
   border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
 }
 [data-theme] .explore__nav-component {
   color: var(--text-primary);
@@ -2011,5 +2023,8 @@
 [data-theme] #devlog-gen-container input {
   border: solid 5px var(--border-color);
   background: var(--surface-dark);
+  color: var(--text-primary);
+}
+[data-theme] .settings-section {
   color: var(--text-primary);
 }
