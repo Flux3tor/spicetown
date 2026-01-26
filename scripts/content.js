@@ -1356,6 +1356,66 @@ async function addSpicetownSettings() {
     themesNavLabel.textContent = "Themes";
     themesNavLink.appendChild(themesNavLabel);
   }
+
+  const syncSection = document.createElement("div");
+  syncSection.className = "settings-section";
+  syncSection.innerHTML = `
+    <h3>beep boop data management center</h3>
+    <p>export ur settings to move to another device</p>
+    <div>
+      <button id="btn-export-settings" class="btn btn--brown">export settings</button>
+      <label class="btn btn--brown">
+        import settings
+        <input type="file" id="file-import-settings" accept=".json">
+      </label>
+    </div>
+  `;
+  settingsForm.appendChild(syncSection);
+
+  document.getElementById("btn-export-settings").addEventListener("click", async () => {
+    const localStore = await chrome.storage.local.get(null);
+    const exportData = {
+      timestamp: Date.now(),
+      version: 1,
+      storage: localStore,
+      browserLocal: {
+        "bg-color-theme": localStorage.getItem("bg-color-theme")
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `spicetown-backup-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+  document.getElementById("file-import-settings").addEventListener("change", (ev) => {
+    const file = ev.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        if (!data.storage) throw new Error("invalid backup file format!!!!!!!! uh oh");
+        await chrome.storage.local.set(data.storage);
+        if (data.browserLocal) {
+          Object.entries(data.browserLocal).forEach(([key, value]) => {
+            if (value) localStorage.setItem(key, value);
+          });
+        }
+        alert("settings imported successfully and will load after we reload the website!");
+        location.reload();
+      } catch (error) {
+        console.error(error);
+        alert("failed to import settings check console for more details");
+      }
+    };
+    reader.readAsText(file);
+  });
 }
 
 async function addThemesPage() {
@@ -1534,7 +1594,7 @@ function addDevlogGenerator() {
     container.id = "devlog-gen-container";
     container.innerHTML = `
       <div>
-        <input type="text" id="commit-from" placeholder="From Hash">
+        <input type="text" id="commit-from" placeholder="From Hash (does not include this commit)">
         <input type="text" id="commit-to" placeholder="To Hash">
         <button type="button" id="btn-gen-devlog" class="btn btn--brown">add changelog</button>
       </div>
