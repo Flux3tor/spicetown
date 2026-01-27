@@ -1978,6 +1978,18 @@ async function addDevlogStreak() {
   if (!userLink) return;
   const userLinkHref = userLink.pathname;
   try {
+    const cacheKey = `devlog_streak_cache_${userLinkHref}`;
+    const cachedData = await chrome.storage.local.get([cacheKey]);
+    const now = Date.now();
+
+    if (cachedData[cacheKey]) {
+      const {streak, lastChecked} = cachedData[cacheKey];
+      if (now - lastChecked < 360000) {
+        kitchenIndex.querySelector(".state-card__streak").textContent = `${streak} days`;
+        return
+      }; // 10 mins??? if math is mathing
+    }
+
     await refreshApiKey();
     const userResponse = await fetch(`https://flavortown.hackclub.com/api/v1${userLinkHref}`, {
       method: "GET",
@@ -2053,7 +2065,15 @@ async function addDevlogStreak() {
         break;
       }
     }
+
     kitchenIndex.querySelector(".state-card__streak").textContent = `${streak} days`;
+
+    await chrome.storage.local.set({
+      [cacheKey]: {
+        streak: streak,
+        lastChecked: Date.now()
+      }
+    });
   } catch (error) {
     console.error("adding devlog streak did not work because ", error);
   }
