@@ -27,13 +27,14 @@ async function initialize() {
   // UI Enhancements
   const uiEnhancements = [
     addDevlogImprovement,
+    addThemesPage,
+    improveKitchenLayout,
     addProjectSearcher,
     addImprovedUI,
     addExtraProjectInfo,
     addImprovedShop,
     addProjectSearcher,
     addUserExplore,
-    addThemesPage,
     addKeybinds,
     addPayoutDisplay,
     addDevlogImageTools,
@@ -1920,6 +1921,37 @@ async function addProjectVotes() {
   })
 }
 
+async function improveKitchenLayout() {
+  const kitchenIndex = document.querySelector(".kitchen-index");
+  if (!kitchenIndex) return;
+  // remove the not so needed divs
+  kitchenIndex.querySelector(".kitchen-setup").remove();
+  kitchenIndex.querySelector(".kitchen-comic").remove();
+  kitchenIndex.querySelector(".kitchen-help").remove();
+  const lbRank = kitchenIndex.querySelector(".kitchen-stats-card__rank").textContent.replace(/\D/g, "");
+  try {
+    await refreshApiKey();
+    const response = await fetch(`https://flavortown.hackclub.com/api/v1/users`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.error === "rate_limited" || data.error === "unauthorized") {
+      console.error("rate limited or no api key????")
+      return;
+    }
+
+    kitchenIndex.querySelector(".kitchen-stats-card__rank").innerHTML += ` <small>(Top ${parseFloat((lbRank / data.pagination.total_count).toPrecision(2))}%)</small>`;
+  } catch (err) {
+    console.error("i couldnt get users api grrrrrrrrrr >:(", err);
+  }
+}
+
 function str_rand(length) {
     let result = '';
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -1935,26 +1967,6 @@ function convertMToFormat(mins) {
   let h = Math.floor(mins / 60);
   let m = Math.floor(mins % 60);
   return `${String(h)}h ${String(m)}m`;
-}
-
-async function getFlavortownCSS() { // partially stolen from CoM, my other OLD project :3
-  try {
-    const response = await fetch('https://flavortown.hackclub.com/');
-    const html = await response.text();
-
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-
-    const cssLink = Array.from(doc.querySelectorAll('link[rel="stylesheet"]'))
-      .find(link => link.href.includes('application-') && link.href.endsWith('.css'));
-
-    if (cssLink) {
-      console.log(cssLink.href);
-      return cssLink.href;
-    }
-  } catch (err) {
-    console.error("wtf i couldnt get flavortown css THIS FUCKING WEBSITE GRRRRRRR; error: " + err);
-  }
 }
 
 initialize();
