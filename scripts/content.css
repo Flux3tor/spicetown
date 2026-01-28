@@ -786,6 +786,7 @@
 .public-vote-item > div > img {
   height: 1.2em;
   width: 1.2em;
+  border-radius: 4px;
 }
 .public-vote-item > div > small {
   opacity: .8;
@@ -822,6 +823,12 @@
 }
 .state-card__streak {
   font-size: 3rem;
+  font-weight: 600;
+}
+.state-card__streak--done {
+  background-image: linear-gradient(180deg, var(--color-yellow-600) 0%, var(--color-yellow-500) 100%);
+  color: transparent;
+  background-clip: text;
 }
 .btn-view-more-votes {
   display: block;
@@ -2066,4 +2073,7 @@
 }
 [data-theme] .settings-section {
   color: var(--text-primary);
+}
+[data-theme] .state-card__streak--done {
+  background-image: linear-gradient(180deg, var(--accent) 0%, var(--accent-darker) 100%);
 }

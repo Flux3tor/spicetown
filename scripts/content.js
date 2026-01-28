@@ -2001,7 +2001,7 @@ async function improveKitchenLayout() {
   kitchenStreak.innerHTML = `
     <div class="kitchen-stats-card__content">
       <div class="state-card__title">Streak</div>
-      <div class="state-card__streak">Loading...</div>
+      <div class="state-card__streak">loading</div>
     </div>
   `;
   kitchenIndex.querySelector(".kitchen-stats__grid").appendChild(kitchenStreak);
@@ -2047,11 +2047,22 @@ async function addDevlogStreak() {
     const cacheKey = `devlog_streak_cache_${userLinkHref}`;
     const cachedData = await chrome.storage.local.get([cacheKey]);
     const now = Date.now();
+    const todayString = new Date().toISOString().split("T")[0];
+
+    const updateStreakUI = (streakValue, datesSet) => {
+      kitchenIndex.querySelector(".state-card__streak").innerHTML = `${streakValue} <small>days</small>`;
+      if (datesSet.has(todayString)) {
+        kitchenIndex.querySelector(".state-card__streak").classList.add("state-card__streak--done");
+      } else {
+        kitchenIndex.querySelector(".state-card__streak").classList.remove("state-card__streak--done");
+      }
+    };
 
     if (cachedData[cacheKey]) {
-      const {streak, lastChecked} = cachedData[cacheKey];
+      const {streak, lastChecked, dates} = cachedData[cacheKey];
+      const datesSet = new Set(dates || []);
       if (now - lastChecked < 600000) {
-        kitchenIndex.querySelector(".state-card__streak").textContent = `${streak} days`;
+        updateStreakUI(streak, datesSet);
         return
       }; // 10 mins??? if math is mathing (IT WAS 6 MINS; changed it to 10)
     }
@@ -2079,7 +2090,7 @@ async function addDevlogStreak() {
 
     const allDevlogIds = projects.flatMap(project => project.devlog_ids || []).sort((a, b) => b - a);
     const uniqueDates = new Set();
-    const todayString = new Date().toISOString().split("T")[0];
+
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayString = yesterday.toISOString().split("T")[0];
@@ -2108,15 +2119,9 @@ async function addDevlogStreak() {
     }
 
     const activeDates = [...uniqueDates].sort((a, b) => new Date(b) - new Date(a));
-    if (activeDates.length === 0) {
-      console.log("devlog streak is 0 days");
-      return;
-    }
+    if (activeDates.length === 0) return;
 
-    if (activeDates[0] !== todayString && activeDates[0] !== yesterdayString) {
-      console.log("streak: 0");
-      return;
-    }
+    if (activeDates[0] !== todayString && activeDates[0] !== yesterdayString) return;
 
     let streak = 0;
     let checkDate = new Date(activeDates[0]);
@@ -2132,12 +2137,13 @@ async function addDevlogStreak() {
       }
     }
 
-    kitchenIndex.querySelector(".state-card__streak").textContent = `${streak} days`;
+    updateStreakUI(streak, uniqueDates);
 
     await chrome.storage.local.set({
       [cacheKey]: {
         streak: streak,
-        lastChecked: Date.now()
+        lastChecked: Date.now(),
+        dates: [...uniqueDates]
       }
     });
   } catch (error) {
