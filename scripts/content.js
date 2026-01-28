@@ -1890,7 +1890,7 @@ function updateThemeCache(themeId) {
 
 async function addProjectVotes() {
   const posts = document.querySelectorAll(".post--ship");
-  posts.forEach(post => {
+  posts.forEach(async post => {
     // Get the project name via the project link on the ship post!
     // hey if ur looking through the code should i keep up with commenting stuff?
     const projectLink = Array.from(post.querySelectorAll("a[href^='/projects/']"))
@@ -1900,12 +1900,20 @@ async function addProjectVotes() {
     const projectName = projectLink.textContent.trim();
     post.dataset.votesLoaded = "true";
 
-    api.runtime.sendMessage({
-      type: "FETCH_COMMUNITY_VOTES",
-      projectName: projectName
-    }, (votes) => {
-      console.log(`[Votes] Response for ${projectName}:`, votes);
-      if (votes && votes.length > 0) {
+    const cacheKey = `votes_cache_${projectName}`;
+    const cachedData = await chrome.storage.local.get([cacheKey]);
+    const now = Date.now();
+    let votes = null;
+
+    if (cachedData[cacheKey]) {
+      const {data, timestamp} = cachedData[cacheKey];
+      if (now - timestamp < 600000) {
+        votes = data;
+      } // every 6 minutes? (i think so im not sure :P;) [it's 10 minutes now]
+    }
+
+    const renderVotes = (voteList) => {
+      if (voteList && voteList.length > 0) {
         const votesContainer = document.createElement("div");
         votesContainer.className = "post__votes-container";
 
@@ -1913,7 +1921,7 @@ async function addProjectVotes() {
         title.textContent = "Public Votes";
         votesContainer.appendChild(title);
 
-        votes.forEach((vote, index) => {
+        voteList.forEach((vote, index) => {
           const voteEl = document.createElement("div");
           voteEl.className = "public-vote-item";
           if (index >= 5) {
@@ -1924,16 +1932,22 @@ async function addProjectVotes() {
           votesContainer.appendChild(voteEl);
         });
 
-        if (votes.length > 5) {
+        if (voteList.length > 5) {
           const viewMoreBtn = document.createElement("button");
-          viewMoreBtn.textContent = `View ${votes.length - 5} more votes`;
+          viewMoreBtn.textContent = `View ${voteList.length - 5} more votes`;
           viewMoreBtn.className = "btn-view-more-votes";
           viewMoreBtn.addEventListener("click", () => {
-            const hiddenVotes = votesContainer.querySelectorAll(".is-collapsed");
-            hiddenVotes.forEach(element => {
+            const hiddenVotes = Array.from(votesContainer.querySelectorAll(".is-collapsed"));
+            hiddenVotes.slice(0, 5).forEach(element => {
               element.style.display = "block";
+              element.classList.remove("is-collapsed");
             });
-            viewMoreBtn.remove();
+            const stillHidden = votesContainer.querySelectorAll(".is-collapsed").length;
+            if (stillHidden > 0) {
+              viewMoreBtn.textContent = `View ${stillHidden} more votes`
+            } else {
+              viewMoreBtn.remove();
+            }
           });
 
           votesContainer.appendChild(viewMoreBtn);
@@ -1941,8 +1955,29 @@ async function addProjectVotes() {
 
         post.querySelector(".post__content").appendChild(votesContainer);
       }
+    };
+
+    if (votes) {
+      renderVotes(votes);
+      return;
+    }
+
+    api.runtime.sendMessage({
+      type: "FETCH_COMMUNITY_VOTES",
+      projectName: projectName
+    }, async (fetchedVotes) => {
+      if (fetchedVotes) {
+        await chrome.storage.local.set({
+          [cacheKey]: {
+            data: fetchedVotes,
+            timestamp: Date.now()
+          }
+        });
+
+        renderVotes(fetchedVotes);
+      }
     });
-  })
+  });
 }
 
 async function improveKitchenLayout() {
@@ -2007,10 +2042,10 @@ async function addDevlogStreak() {
 
     if (cachedData[cacheKey]) {
       const {streak, lastChecked} = cachedData[cacheKey];
-      if (now - lastChecked < 360000) {
+      if (now - lastChecked < 600000) {
         kitchenIndex.querySelector(".state-card__streak").textContent = `${streak} days`;
         return
-      }; // 10 mins??? if math is mathing
+      }; // 10 mins??? if math is mathing (IT WAS 6 MINS; changed it to 10)
     }
 
     await refreshApiKey();
