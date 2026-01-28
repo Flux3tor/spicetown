@@ -2009,26 +2009,17 @@ async function improveKitchenLayout() {
 
   const lbRank = kitchenIndex.querySelector(".kitchen-stats-card__rank").textContent.replace(/\D/g, "");
   try {
-    await refreshApiKey();
-    const response = await fetch(`https://flavortown.hackclub.com/leaderboard`, {
-      method: 'GET',
-      headers: {
-        "Accept": "text/html"
-      }
-    });
-
-    const html = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const subtitleEl = doc.querySelector("main > .subtitle");
-
-    if (subtitleEl) {
-      const totalUsers = parseInt(subtitleEl.textContent.replace(/\D/g, ""), 10);
-      if (totalUsers && !isNaN(totalUsers)) {
-        const displayedPercent = parseFloat((lbRank / totalUsers).toPrecision(2)) * 100;
-        kitchenIndex.querySelector(".kitchen-stats-card__rank").innerHTML += ` <small>(Top ${displayedPercent}%)</small>`;
-      }
+    const {lb_cache} = await chrome.storage.local.get("lb_cache");
+    let totalUsers = lb_cache?.total;
+    if (!totalUsers || Date.now() - lb_cache.ts > 3600000) { // 1 hour
+      const html = await fetch("https://flavortown.hackclub.com/leaderboard").then(resolve => resolve.text());
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      totalUsers = parseInt(doc.querySelector("main > .subtitle")?.textContent.replace(/\D/g, ""), 10);
+      if (totalUsers) chrome.storage.local.set({lb_cache: {total: totalUsers, ts: Date.now()}});
+    }
+    if (totalUsers) {
+      const displayedPercent = parseFloat((lbRank / totalUsers).toPrecision(2)) * 100;
+      kitchenIndex.querySelector(".kitchen-stats-card__rank").innerHTML += ` <small>(Top ${displayedPercent}%)</small>`;
     }
   } catch (err) {
     console.error("i couldnt get leaderboard page grrrrrrrrrr >:(", err);
