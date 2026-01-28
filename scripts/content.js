@@ -1518,7 +1518,7 @@ function addDevlogGenerator() {
     container.id = "devlog-gen-container";
     container.innerHTML = `
       <div>
-        <input type="text" id="commit-from" placeholder="From Hash (does not include this commit)">
+        <input type="text" id="commit-from" placeholder="From Hash">
         <input type="text" id="commit-to" placeholder="To Hash">
         <button type="button" id="btn-gen-devlog" class="btn btn--brown">add changelog</button>
       </div>
@@ -1548,7 +1548,7 @@ function addDevlogGenerator() {
 
   async function generateDevlog(repoUrl, from, to) {
     let repoPath = repoUrl.replace("https://github.com/", "").replace("http://github.com/", "").split("/").slice(0, 2).join("/");
-    const apiUrl = `https://api.github.com/repos/${repoPath}/compare/${from}...${to}`;
+    const apiUrl = `https://api.github.com/repos/${repoPath}/compare/${from}%5E...${to}`;
     
     try {
       const response = await fetch(apiUrl);
