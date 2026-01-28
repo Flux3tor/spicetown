@@ -762,11 +762,15 @@
 .post__votes-container > strong {
   font-size: 1.25rem;
 }
-.post__votes-container > div {
+.public-vote-item {
   margin-top: 1rem;
   padding: 1rem 1.25rem;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, .1);
   border-radius: 8px;
+}
+.public-vote-item > strong {
+  font-weight: 600;
+  opacity: .8;
 }
 #devlog-gen-container {
   display: flex;
@@ -1199,7 +1203,6 @@
 [data-theme] .post .post__chevron,
 [data-theme] .post .comments-section__list,
 [data-theme] .post .comment-form__input,
-[data-theme] .post__votes-container > div,
 [data-theme] .project-show-card .project-extra-info__div {
   background: var(--border-color) !important;
 }
@@ -1923,7 +1926,10 @@
 [data-theme] pre {
   background-color: var(--surface-card) !important;
 }
-[data-theme] .post__body {
+[data-theme] .post__body,
+[data-theme] .post__ship-title,
+[data-theme] .post__payout-item,
+[data-theme] .post__votes-container > strong {
   color: var(--text-primary) !important;
 }
 [data-theme] .post__author span {

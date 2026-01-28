@@ -1694,7 +1694,7 @@ async function addPayoutDisplay() {
           `;
           shipPost.querySelector(".post__payout-footer").appendChild(timeSinceItem);
           shipPost.setAttribute("data-payout-type", "processed");
-          
+
           transactionIndex = i + 1;
           break;
         }
@@ -1925,7 +1925,7 @@ async function addProjectVotes() {
             voteEl.style.display = "none";
             voteEl.classList.add("is-collapsed");
           }
-          voteEl.innerHTML = `<strong>@${vote.voter}:</strong> ${vote.text}`;
+          voteEl.innerHTML = `<strong>@${vote.voter}</strong> ${vote.text}`;
           votesContainer.appendChild(voteEl);
         });
 
