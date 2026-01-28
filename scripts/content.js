@@ -1493,26 +1493,40 @@ async function addThemesPage() {
   })
 }
 
-function addDevlogGenerator() {
-  if (window.location.pathname.includes('/projects/')) {
-    const actionsContainer = document.querySelector(".project-show-card__actions");
-    if (actionsContainer) {
-      const repoLink = Array.from(actionsContainer.querySelectorAll('a[href*="github.com"]'))
-        .find(a => a.textContent.toLowerCase().includes("repository"));
-      if (repoLink) {
-        const repoUrl = repoLink.href;
-        sessionStorage.setItem("active_repo_url", repoUrl);
-      }
-    }
-  }
-  if (window.location.pathname.includes("/devlogs/new") || document.querySelector("#post_devlog_body")) {
-    injectDevlogTools();
+async function addDevlogGenerator() {
+  const path = window.location.pathname;
+  if (path.includes("/projects/") && !path.includes("/devlogs/")) {
+    const repoLink = Array.from(document.querySelectorAll(".project-show-card__actions a"))
+      .find(a => a.textContent.toLowerCase().includes("repository"));
+    if (repoLink) sessionStorage.setItem("active_repo_url", repoLink.href);
   }
 
-  async function injectDevlogTools() {
+  if (path.includes("/devlogs/new")) {
+    let repoUrl = sessionStorage.getItem("active_repo_url");
+    if (!repoUrl) {
+      const projectId = path.match(/\/projects\/(\d+)/)?.[1];
+      if (projectId) {
+        try {
+          const response = await fetch(`https://flavortown.hackclub.com/projects/${projectId}`);
+          const html = await response.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const repoLink = Array.from(doc.querySelectorAll(".project-show-card__actions a"))
+            .find(a => a.textContent.toLowerCase().includes("repository"));
+          if (repoLink) {
+            repoUrl = repoLink.href;
+            sessionStorage.setItem("active_repo_url", repoUrl);
+          }
+        } catch (error) {
+          console.error("failed to backload a repo url ", error);
+        }
+      }
+    }
+    if (repoUrl) injectDevlogTools(repoUrl);
+  }
+
+  async function injectDevlogTools(repoUrl) {
     const textArea = document.querySelector("#post_devlog_body");
-    const repoUrl = sessionStorage.getItem("active_repo_url");
-    if (!textArea || !repoUrl || document.getElementById("devlog-gen-container")) return;
+    if (!textArea || document.getElementById("devlog-gen-container")) return;
 
     const repoPath = repoUrl.replace(/https?:\/\/github\.com\//, "").split("/").slice(0, 2).join("/");
 
@@ -1535,11 +1549,11 @@ function addDevlogGenerator() {
 
       const fromSelect = document.getElementById("commit-from");
       const toSelect = document.getElementById("commit-to");
-      fromSelect.innerHTML = allCommits.map(commit => `<option value="${commit.sha}">${commit.commit.message.split("\n")[0].substring(0, 30)}... (${commit.sha.substring(0, 7)})</option>`).join("");
+      fromSelect.innerHTML = allCommits.map(commit => `<option value="${commit.sha}">${commit.commit.message.split("\n")[0].substring(0, 16)}... (${commit.sha.substring(0, 7)})</option>`).join("");
       const updateToDropdown =() => {
         const selectedIndex = fromSelect.selectedIndex;
         const validToCommits = allCommits.slice(0, selectedIndex + 1);
-        toSelect.innerHTML = validToCommits.map(commit => `<option value="${commit.sha}">${commit.commit.message.split("\n")[0].substring(0, 30)}... (${commit.sha.substring(0, 7)})</option>`).join("");
+        toSelect.innerHTML = validToCommits.map(commit => `<option value="${commit.sha}">${commit.commit.message.split("\n")[0].substring(0, 16)}... (${commit.sha.substring(0, 7)})</option>`).join("");
       };
       fromSelect.addEventListener("change", updateToDropdown);
       updateToDropdown();
