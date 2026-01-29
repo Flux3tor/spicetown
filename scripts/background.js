@@ -15,14 +15,32 @@ api.runtime.onUpdateAvailable.addListener((details) => {
 
 api.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "GET_SLACK_EMOJIS") {
-    fetch("https://cachet.dunkirk.sh/emojis")
-      .then(res => res.json())
-      .then(data => {
+    const cacheKey = "slack_emoji_cache";
+    chrome.storage.local.get([cacheKey]).then(async (result) => {
+      const now = Date.now();
+      const cached = result[cacheKey];
+      if (cached && (now - cached.timestamp < 86400000)) { // one day
+        return sendResponse({ok: true, emoji: cached.data});
+      }
+
+      try {
+        const response = await fetch("https://cachet.dunkirk.sh/emojis");
+        const data = await response.json();
         const emojiMap = {};
-        data.forEach(e => {if (e.imageUrl) emojiMap[e.name] = e.imageUrl;});
+        data.forEach(emoji => {if (emoji.imageUrl) emojiMap[emoji.name] = emoji.imageUrl;});
+        await chrome.storage.local.set({
+          [cacheKey]: {data: emojiMap, timestamp: now}
+        });
+
         sendResponse({ok: true, emoji: emojiMap});
-      })
-      .catch(error => sendResponse({ok: false, error: error.message}));
+      } catch (error) {
+        if (cached) {
+          sendResponse({ok: true, emoji: cached.data, stale: true});
+        } else {
+          sendResponse({ok: false, error: error.message});
+        }
+      }
+    });
     return true;
   } else if (request.type === "RESIZE_EMOJI") {
     resizeImage(request.url, 24, 24).then(base64 => {
