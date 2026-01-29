@@ -1457,6 +1457,23 @@ async function addThemesPage() {
           <div>
         </div>
       </div>
+    </div>
+      <div class="themes__div-container">
+        <div class="themes__div-label-container">
+          <h2>Custom Theme</h2>
+          <p>Mix your own theme!</p>
+        </div>
+        <div class="themes__custom-editor">
+          <div class="themes__color-grid">
+            <label>primary bg: <input type="color" id="custom-bg-primary" value="#1e1e2e"></label>
+            <label>card bg: <input type="color" id="custom-surface-card" value="#6c7086"></label>
+            <label>accent: <input type="color" id="custom-accent" value="#7ca6e9"></label>
+            <label>text: <input type="color" id="custom-text-primary" value="#bac2de"></label>
+          </div>
+          <button id="save-custom-theme" class="btn btn--brown">Apply</button>
+        </div>
+      </div>
+    </div>
     `
     document.body.insertBefore(themesDiv, document.querySelector(".dev-footer"));
     const elements = {
@@ -1489,6 +1506,22 @@ async function addThemesPage() {
         chrome.runtime.sendMessage({ type: "THEME_UPDATED", themeId: selectedId });
       }
     }
+
+    const saveBtn = document.getElementById("save-custom-theme");
+    saveBtn.addEventListener("click", async () => {
+      const customTheme = {
+        "--bg-primary": document.getElementById("custom-bg-primary").value,
+        "--surface-card": document.getElementById("custom-surface-card").value,
+        "--accent": document.getElementById("custom-accent").value,
+        "--text-primary": document.getElementById("custom-text-primary").value
+      };
+      localStorage.setItem("bg-color-theme", "custom");
+      await chrome.storage.local.set({
+        "selectedTheme": "custom",
+        "customThemeValues": customTheme
+      });
+      chrome.runtime.sendMessage({type: "THEME_UPDATED", themeId: "custom"});
+    });
   })
 }
 

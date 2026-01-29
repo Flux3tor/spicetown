@@ -1100,6 +1100,16 @@
   );
 }
 
+[data-theme="custom"] {
+  --bg-primary: #ffffff;
+  --text-primary: #ffffff;
+  --surface-card: #ffffff;
+  --accent: #ffffff;
+
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
 [data-theme] a,
 [data-theme] .comments-count,
 [data-theme] .btn-view-more-votes {
