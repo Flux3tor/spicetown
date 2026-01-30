@@ -2068,7 +2068,8 @@ async function improveKitchenLayout() {
       if (totalUsers) chrome.storage.local.set({lb_cache: {total: totalUsers, ts: Date.now()}});
     }
     if (totalUsers) {
-      const displayedPercent = parseFloat((lbRank / totalUsers).toPrecision(2)) * 100;
+      const percentValue = (lbRank / totalUsers) * 100;
+      const displayedPercent = Number(percentValue.toPrecision(2));
       kitchenIndex.querySelector(".kitchen-stats-card__rank").innerHTML += ` <small>(Top ${displayedPercent}%)</small>`;
     }
   } catch (err) {
