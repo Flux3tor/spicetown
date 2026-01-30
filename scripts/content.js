@@ -44,7 +44,8 @@ async function initialize() {
     addProjectVotes,
     addDevlogGenerator,
     addDevlogStreak,
-    addNextShipEstimation
+    addNextShipEstimation,
+    addShopItemEstimation
   ];
   uiEnhancements.forEach(func => func());
 
@@ -532,8 +533,7 @@ function addImprovedShop() {
       );
   });
 
-  const sidebarBalance = document.querySelector(".sidebar__user-balance");
-  const userBalance = sidebarBalance ? parseFloat(sidebarBalance.textContent.replace(/[^\d.]/g, '')) : 0;
+  const userBalance = getBalance();
 
   const shopGoalsContainer = document.querySelector(".shop-goals__container");
   const shopGoalsTitle = document.querySelector(".shop-goals__title");
@@ -2239,68 +2239,149 @@ function addNextShipEstimation() {
   calculate();
 }
 
-// coming soon (wip)
-// function addShopItemEstimation() {
-//   document.querySelectorAll(".shop-item-card").forEach(card => {
-//     let isFlipped = false;
-//     let isFlipping = false;
-//     let originalContent = null;
+async function addShopItemEstimation() {
+  const parseTimeToHours = (string) => {
+    const h = parseInt(string.match(/(\d+)h/)?.[1] || 0);
+    const m = parseInt(string.match(/(\d+)m/)?.[1] || 0);
+    const s = parseInt(string.match(/(\d+)s/)?.[1] || 0);
+    return h + (m / 60) + (s / 3600);
+  };
 
-//     card.addEventListener("mouseenter", () => {
-//       if (!isFlipped && !isFlipping) {
-//         isFlipping = true;
+  const projectResponse = await fetch("/projects").then(result => result.text());
+  const parser = new DOMParser();
+  const projectDoc = parser.parseFromString(projectResponse, "text/html");
 
-//         originalContent = Array.from(card.childNodes).map(node => node.cloneNode(true));
+  const projectCards = projectDoc.querySelectorAll(".project-card");
+  const multipliers = {};
+  const projectData = [];
+  projectCards.forEach(card => {
+    const name = card.querySelector(".project-card__title").textContent.trim();
+    const link = card.querySelector(".project-card__title-link")?.getAttribute("href");
+    const timeString = card.querySelector(".project-card__stats h5:last-child").textContent.trim();
+    const hours = parseTimeToHours(timeString);
+    projectData.push({name, link, hours});
+  });
 
-//         card.style.setProperty("transform", "scaleX(-1)", "important");
-//         isFlipped = true;
+  await Promise.all(projectData.map(async (project) => {
+    if (!project.link) return;
+    let alreadyShippedHours = 0;
+    try {
+      const html = await fetch(project.link).then(result => result.text());
+      const doc = parser.parseFromString(html, "text/html");
+      const payoutItems = doc.querySelectorAll(".post__payout-item");
+      payoutItems.forEach(item => {
+        const label = item.querySelector(".post__payout-label")?.textContent;
+        if (label && label.includes("Multiplier")) {
+          const value = item.querySelector(".post__payout-value")?.textContent.match(/([\d.]+)/);
+          if (value) multipliers[project.name] = parseFloat(value[1]);
+        }
+        if (label && label.includes("Hours")) {
+          const value = item.querySelector(".post__payout-value")?.textContent.match(/([\d.]+)/);
+          if (value) alreadyShippedHours += parseFloat(value[1]);
+        }
+      });
 
-//         setTimeout(() => {
-//           isFlipping = false;
-//         }, 200);
+      multipliers[project.name + "_shipped_hours"] = alreadyShippedHours;
+    } catch (error) {
+      console.error("failed to fetch project ", project.name);
+    }
+  }));
 
-//         card.innerHTML = ""; 
-//       }
-//     });
+  const projectNames = Object.keys(multipliers).filter(key => !key.endsWith("_shipped_hours"));
+  const validRates = projectNames.map(name => multipliers[name]);
+  const globalAverageMultiplier = Math.min(validRates.length > 0 ? validRates.reduce((a, b) => a + b, 0) / validRates.length : 10, 30);
 
-//     const resetCard = () => {
-//       isFlipping = true;
-//       card.style.transform = "";
-//       isFlipped = false;
+  let estimatedNonShippedCookies = 0;
+  projectData.forEach(project => {
+    const totalHours = project.hours;
+    const shippedHours = multipliers[project.name + "_shipped_hours"] || 0;
+    const pendingHours = Math.max(0, totalHours - shippedHours);
+    const multiplier = multipliers[project.name] || globalAverageMultiplier;
+    estimatedNonShippedCookies += pendingHours * multiplier;
+  });
 
-//       if (originalContent) {
-//         card.innerHTML = '';
-//         originalContent.forEach(node => card.appendChild(node));
-//       }
+  const currentBalance = parseInt(document.querySelector(".sidebar__user-balance")?.textContent.replace(/\D/g, "") || "0");
+  const estimatedBalance = currentBalance + estimatedNonShippedCookies;
 
-//       setTimeout(() => {
-//         isFlipping = false;
-//       }, 200);
-//     };
+  console.log(estimatedBalance, multipliers, globalAverageMultiplier);
 
-//     card.addEventListener("mousemove", (event) => {
-//       if (isFlipping) return;
+  const allItems = Array.from(document.querySelectorAll(".shop-item-card")).map(card => ({card, price: parseInt(card.querySelector(".shop-item-card__price")?.textContent.replace(/\D/g, "") || "0")})).sort((a, b) => a.price - b.price);
 
-//       const rect = card.getBoundingClientRect();
-//       const buffer = 5;
-//       const isOutside = 
-//         event.clientX < rect.left - buffer || 
-//         event.clientX > rect.right + buffer || 
-//         event.clientY < rect.top - buffer || 
-//         event.clientY > rect.bottom + buffer;
+  allItems.forEach(({card, price}) => {
+    let isFlipped = false;
+    let isFlipping = false;
 
-//       if (isOutside && isFlipped) {
-//         resetCard();
-//       }
-//     });
+    card.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      if (isFlipping) return;
 
-//     card.addEventListener("mouseleave", () => {
-//       if (!isFlipping && isFlipped) {
-//         resetCard();
-//       }
-//     });
-//   });
-// }
+      const cookieNeeded = price - estimatedBalance;
+      const hoursNeeded = cookieNeeded > 0 ? (cookieNeeded / globalAverageMultiplier).toFixed(1) : 0;
+
+      if (!isFlipped) {
+        const balance = getBalance();
+        const priceText = card.querySelector(".shop-item-card__price")?.textContent || "0";
+        const price = parseInt(priceText.replace(/\D/g, ""), 10);
+
+        const canAffordAmount = Math.floor(balance / price);
+        const canAffordAmountEstimated = Math.floor(estimatedBalance / price);
+
+        isFlipping = true;
+
+        const currentHeight = card.clientHeight;
+        card.style.minHeight = `${currentHeight}px`;
+        
+        Array.from(card.children).forEach(child => {
+          child.dataset.originalDisplay = window.getComputedStyle(child).display;
+          child.style.display = "none";
+          child.dataset.og = "true";
+        });
+
+        const estimationDiv = document.createElement("div");
+        estimationDiv.className = "shop-item-estimation-overlay";
+        if (cookieNeeded > 0) {
+          estimationDiv.innerHTML = `
+            You need
+            <p class="shop-item-estimation-can-afford">~${hoursNeeded}h</p>
+            more to buy this item!
+          `
+        } else {
+          estimationDiv.innerHTML = `
+            You can buy this
+            <p class="shop-item-estimation-can-afford">${canAffordAmount}x <small>(~${canAffordAmountEstimated}x)</small></p>
+            with your cookies
+          `;
+        }
+        card.appendChild(estimationDiv);
+
+        setTimeout(() => {isFlipping = false;}, 300);
+        card.style.setProperty("transform", "scaleX(-1)", "important");
+        isFlipped = true;
+      } else {
+        resetCard();
+      }
+    });
+
+    const resetCard = () => {
+      if (!isFlipped || isFlipping) return;
+      
+      isFlipping = true;
+      card.style.transform = "";
+      isFlipped = false;
+
+      Array.from(card.children).forEach(child => {
+        if (child.dataset.og === "true") {
+          child.style.display = child.dataset.originalDisplay || "";
+          delete child.dataset.og;
+          delete child.dataset.originalDisplay;
+        } else {
+          child.remove();
+        }
+      });
+      setTimeout(() => {isFlipping = false;}, 300);
+    };
+  });
+}
 
 function str_rand(length) {
     let result = '';
@@ -2317,6 +2398,11 @@ function convertMToFormat(mins) {
   let h = Math.floor(mins / 60);
   let m = Math.floor(mins % 60);
   return `${String(h)}h ${String(m)}m`;
+}
+
+const getBalance = () => {
+  const balanceBtn = document.querySelector(".sidebar__user-balance");
+  return parseInt(balanceBtn?.textContent.replace(/\D/g, "") || "0", 10);
 }
 
 initialize();

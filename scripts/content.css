@@ -844,6 +844,21 @@
 .shop-item-card {
   transform-origin: center !important;
   pointer-events: auto !important;
+  transition: transform 300ms ease !important;
+}
+.shop-item-estimation-overlay {
+  transform: scaleX(-1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+  color: var(--color-tan-400);
+}
+.shop-item-estimation-can-afford {
+  font-size: 2.5rem;
 }
 
 /** ANIMATIONS **/
@@ -1561,6 +1576,9 @@
     )
   ) !important;
   background-size: 100px 100px;
+}
+[data-theme] .shop-item-card {
+  background-color: var(--surface-dark) !important;
 }
 [data-theme] .shop__recently-added {
   background: linear-gradient(135deg, var(--surface-card) 0%, var(--surface-dark) 100%);
