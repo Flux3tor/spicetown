@@ -2303,8 +2303,6 @@ async function addShopItemEstimation() {
   const currentBalance = parseInt(document.querySelector(".sidebar__user-balance")?.textContent.replace(/\D/g, "") || "0");
   const estimatedBalance = currentBalance + estimatedNonShippedCookies;
 
-  console.log(estimatedBalance, multipliers, globalAverageMultiplier);
-
   const allItems = Array.from(document.querySelectorAll(".shop-item-card")).map(card => ({card, price: parseInt(card.querySelector(".shop-item-card__price")?.textContent.replace(/\D/g, "") || "0")})).sort((a, b) => a.price - b.price);
 
   allItems.forEach(({card, price}) => {
@@ -2315,19 +2313,32 @@ async function addShopItemEstimation() {
       event.preventDefault();
       if (isFlipping) return;
 
-      const cookieNeeded = price - estimatedBalance;
-      const hoursNeeded = cookieNeeded > 0 ? (cookieNeeded / globalAverageMultiplier).toFixed(1) : 0;
+      const updateEstimation = (selectedName, textElement) => {
+        let activeMultiplier, targetBalance;
+        if (selectedName === "average") {
+          activeMultiplier = globalAverageMultiplier;
+          targetBalance = estimatedBalance;
+        } else {
+          activeMultiplier = Math.min(multipliers[selectedName] || globalAverageMultiplier, 30);
+          const project = projectData.find(p => p.name === selectedName);
+          const totalHours = project?.hours || 0;
+          const shippedHours = multipliers[selectedName + "_shipped_hours"] || 0;
+          const pendingHours = Math.max(0, totalHours - shippedHours);
+          targetBalance = currentBalance + (pendingHours * activeMultiplier);
+        }
+
+        const cookieNeeded = price - targetBalance;
+        const hoursNeeded = cookieNeeded > 0 ? (cookieNeeded / activeMultiplier).toFixed(1) : 0;
+        const canAfford = Math.floor(targetBalance / price);
+        const canActuallyAfford = Math.floor(currentBalance / price);
+
+        textElement.innerHTML = cookieNeeded > 0 
+          ? `<div>You need <p class="shop-item-estimation-can-afford">~${hoursNeeded}h</p> more to buy this!</div>` 
+          : `<div>You can buy this <p class="shop-item-estimation-can-afford">${canActuallyAfford}x (~${canAfford}x)</p> with your cookies</div>`;
+      };
 
       if (!isFlipped) {
-        const balance = getBalance();
-        const priceText = card.querySelector(".shop-item-card__price")?.textContent || "0";
-        const price = parseInt(priceText.replace(/\D/g, ""), 10);
-
-        const canAffordAmount = Math.floor(balance / price);
-        const canAffordAmountEstimated = Math.floor(estimatedBalance / price);
-
         isFlipping = true;
-
         const currentHeight = card.clientHeight;
         card.style.minHeight = `${currentHeight}px`;
         
@@ -2339,20 +2350,31 @@ async function addShopItemEstimation() {
 
         const estimationDiv = document.createElement("div");
         estimationDiv.className = "shop-item-estimation-overlay";
-        if (cookieNeeded > 0) {
-          estimationDiv.innerHTML = `
-            You need
-            <p class="shop-item-estimation-can-afford">~${hoursNeeded}h</p>
-            more to buy this item!
-          `
-        } else {
-          estimationDiv.innerHTML = `
-            You can buy this
-            <p class="shop-item-estimation-can-afford">${canAffordAmount}x <small>(~${canAffordAmountEstimated}x)</small></p>
-            with your cookies
-          `;
-        }
+
+        const messageSpan = document.createElement("span");
+        estimationDiv.appendChild(messageSpan);
+
+        const projectSelect = document.createElement("select");
+
+        const optionAverage = document.createElement("option");
+        optionAverage.value = "average";
+        optionAverage.textContent = "All Projects (avg)";
+        projectSelect.appendChild(optionAverage);
+
+        projectNames.forEach(name => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = `Only ${name}`;
+          projectSelect.appendChild(option);
+        });
+
+        projectSelect.addEventListener("change", (e) => updateEstimation(e.target.value, messageSpan));
+        projectSelect.addEventListener("contextmenu", (e) => e.stopPropagation());
+
+        estimationDiv.appendChild(projectSelect);
         card.appendChild(estimationDiv);
+
+        updateEstimation("average", messageSpan);
 
         setTimeout(() => {isFlipping = false;}, 300);
         card.style.setProperty("transform", "scaleX(-1)", "important");

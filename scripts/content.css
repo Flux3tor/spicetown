@@ -807,7 +807,18 @@
   width: fit-content; 
   cursor: pointer;
 }
-#devlog-gen-container select:focus {
+.shop-item-estimation-overlay select {
+  padding: var(--space-xs) var(--space-s);
+  border-radius: calc(.6 * var(--border-radius));
+  border: solid 3px var(--color-brown-400);
+  background: var(--color-brown-700);
+  font-size: var(--font-size-m);
+  color: var(--color-bg);
+  width: fit-content;
+  cursor: pointer;
+}
+#devlog-gen-container select:focus,
+.shop-item-estimation-overlay select:focus {
   outline: none;
   box-shadow: none;
 }
@@ -859,6 +870,11 @@
 }
 .shop-item-estimation-can-afford {
   font-size: 2.5rem;
+}
+.shop-item-estimation-overlay {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /** ANIMATIONS **/
@@ -2099,10 +2115,14 @@
 [data-theme] .users > .user > .content > p > small {
   color: var(--text-primary) !important;
 }
-[data-theme] #devlog-gen-container select {
+[data-theme] #devlog-gen-container select,
+[data-theme] .shop-item-estimation-overlay select {
   border: solid 5px var(--border-color);
   background: var(--surface-dark);
   color: var(--text-primary);
+}
+[data-theme] .shop-item-estimation-overlay {
+  color: var(--text-primary) !important;
 }
 [data-theme] .settings-section {
   color: var(--text-primary);
