@@ -1534,28 +1534,36 @@ async function addDevlogGenerator() {
     if (repoLink) sessionStorage.setItem("active_repo_url", repoLink.href);
   }
 
-  if (path.includes("/devlogs/new")) {
-    let repoUrl = sessionStorage.getItem("active_repo_url");
-    if (!repoUrl) {
-      const projectId = path.match(/\/projects\/(\d+)/)?.[1];
-      if (projectId) {
-        try {
-          const response = await fetch(`https://flavortown.hackclub.com/projects/${projectId}`);
-          const html = await response.text();
-          const doc = new DOMParser().parseFromString(html, "text/html");
-          const repoLink = Array.from(doc.querySelectorAll(".project-show-card__actions a"))
-            .find(a => a.textContent.toLowerCase().includes("repository"));
-          if (repoLink) {
-            repoUrl = repoLink.href;
-            sessionStorage.setItem("active_repo_url", repoUrl);
+  const checkForTextArea = async () => {
+    const textArea = document.querySelector("#post_devlog_body");
+    if (textArea && !document.getElementById("devlog-gen-container")) {
+      let repoUrl = sessionStorage.getItem("active_repo_url");
+      if (!repoUrl) {
+        const projectId = path.match(/\/projects\/(\d+)/)?.[1];
+        if (projectId) {
+          try {
+            const response = await fetch(`https://flavortown.hackclub.com/projects/${projectId}`);
+            const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            const repoLink = Array.from(doc.querySelectorAll(".project-show-card__actions a"))
+              .find(a => a.textContent.toLowerCase().includes("repository"));
+            if (repoLink) {
+              repoUrl = repoLink.href;
+              sessionStorage.setItem("active_repo_url", repoUrl);
+            }
+          } catch (error) {
+            console.error("failed to backload a repo url ", error);
           }
-        } catch (error) {
-          console.error("failed to backload a repo url ", error);
         }
       }
+      if (repoUrl) injectDevlogTools(repoUrl, textArea);
     }
-    if (repoUrl) injectDevlogTools(repoUrl);
-  }
+  };
+
+  const observer = new MutationObserver(() => checkForTextArea());
+  observer.observe(document.body, {childList: true, subtree: true});
+
+  checkForTextArea();
 
   async function injectDevlogTools(repoUrl) {
     const textArea = document.querySelector("#post_devlog_body");
@@ -1574,7 +1582,10 @@ async function addDevlogGenerator() {
       </div>
       <small>repository: ${repoPath}</small>
     `;
-    textArea.parentElement.parentElement.parentElement.insertBefore(container, document.querySelector(".projects-new__field.projects-new__devlog-text"));
+
+    // fixed horrible code :skulk:
+    const targetField = textArea.closest(".projects-new__field") || textArea.parentElement;
+    targetField.parentNode.insertBefore(container, targetField);
 
     try {
       const response = await fetch(`https://api.github.com/repos/${repoPath}/commits?per_page=50`);
@@ -2419,6 +2430,80 @@ async function addShopItemEstimation() {
       });
       setTimeout(() => {isFlipping = false;}, 300);
     };
+  });
+}
+
+function addInlineDevlogCreator() {
+  const addDevlogBtn = document.querySelector("a[href*='/devlogs/new']");
+  if (!addDevlogBtn) return;
+
+  addDevlogBtn.addEventListener("click", async (event) =>  {
+    event.preventDefault();
+
+    const originalText = addDevlogBtn.innerHTML;
+    addDevlogBtn.textContent = "Loading Inline Editor...";
+    addDevlogBtn.style.opacity = "0.5";
+    addDevlogBtn.style.pointerEvents = "none";
+
+    try {
+      const response = await fetch(addDevlogBtn.href);
+      const html = await response.text();
+      const doc = new DOMParser().parseFromString(html, "text/html");
+
+      const formContainer = doc.querySelector(".projects-new__container");
+
+      if (formContainer) {
+        formContainer.style.width = "100%";
+
+        const closeBtn = document.createElement("button");
+        closeBtn.textContent = "✕ Close Inline Editor";
+        closeBtn.className = "btn btn--red";
+        closeBtn.style.marginBottom = "1rem";
+        closeBtn.onclick = () => {
+          formContainer.remove();
+          originalActionContainer.style.display = "flex";
+          addDevlogBtn.style.pointerEvents = "auto";
+
+        };
+        formContainer.prepend(closeBtn);
+
+        const originalActionContainer = addDevlogBtn.parentElement;
+        originalActionContainer.style.display = "none";
+        originalActionContainer.parentNode.insertBefore(formContainer, originalActionContainer.nextSibling);
+
+        if (typeof addShopItemEstimation === "function") {
+          addDevlogImprovement();
+          addDevlogGenerator();
+        }
+
+        const form = formContainer.querySelector("form");
+        form.onsubmit = async (submitEvent) => {
+          submitEvent.preventDefault();
+          const submitBtn = form.querySelector("[type='submit']");
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Shipping...";
+
+          const formData = new FormData(form);
+          const postResponse = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {"Accept": "text/html"}
+          });
+
+          if (postResponse.ok) {
+            window.location.reload();
+          } else {
+            alert("error shipping devlog!");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create Devlog";
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      addDevlogBtn.innerHTML = originalText;
+    }
   });
 }
 

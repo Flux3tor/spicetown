@@ -882,6 +882,9 @@
   bottom: 1%;
   opacity: .5;
 }
+.projects-new__card {
+  padding: 0 !important;
+}
 
 /** ANIMATIONS **/
 
