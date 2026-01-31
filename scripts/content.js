@@ -522,6 +522,14 @@ function addImprovedShop() {
 
   let progressMode = "cumulative";
 
+  chrome.storage.local.get(["shop_progress_mode"], (result) => {
+    if (result.shop_progress_mode) {
+      progressMode = result.shop_progress_mode;
+      modeToggleButton.textContent = progressMode.charAt(0).toUpperCase() + progressMode.slice(1);
+      calculateAllProgress();
+    }
+  });
+
   const modeToggleButton = document.createElement("button");
   modeToggleButton.classList.add("btn", "btn--brown");
   modeToggleButton.textContent = "Cumulative";
@@ -620,6 +628,9 @@ function addImprovedShop() {
   let activeEditingItem = null; // track which item is being edited and then sell your user data (joke)
 
   const calculateAllProgress = async () => {
+    const modeData = await chrome.storage.local.get(["shop_progress_mode"]);
+    if (modeData.shop_progress_mode) progressMode = modeData.shop_progress_mode;
+
     let totalRequiredCost = 0;
     let runningBalance = userBalance;
 
@@ -795,6 +806,7 @@ function addImprovedShop() {
   modeToggleButton.addEventListener("click", () => {
     progressMode = (progressMode === "cumulative") ? "individual" : "cumulative";
     modeToggleButton.textContent = progressMode.charAt(0).toUpperCase() + progressMode.slice(1);
+    chrome.storage.local.set({"shop_progress_mode": progressMode});
     calculateAllProgress();
   });
 
