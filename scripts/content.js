@@ -2335,22 +2335,34 @@ async function addShopItemEstimation() {
     return h + (m / 60) + (s / 3600);
   };
 
-  const projectResponse = await fetch("/projects").then(result => result.text());
-  const parser = new DOMParser();
-  const projectDoc = parser.parseFromString(projectResponse, "text/html");
+  const cache = await chrome.storage.local.get(["estimation_cache"]);
+  let cachedMultipliers = cache.estimation_cache?.multipliers || {};
+  let cachedProjectData = cache.estimation_cache?.projectData || [];
 
-  const projectCards = projectDoc.querySelectorAll(".project-card");
-  const multipliers = {};
+  const multipliers = {...cachedMultipliers};
   const projectData = [];
-  projectCards.forEach(card => {
-    const name = card.querySelector(".project-card__title").textContent.trim();
-    const link = card.querySelector(".project-card__title-link")?.getAttribute("href");
-    const timeString = card.querySelector(".project-card__stats h5:last-child").textContent.trim();
-    const hours = parseTimeToHours(timeString);
-    projectData.push({name, link, hours});
-  });
 
-  await Promise.all(projectData.map(async (project) => {
+  const parser = new DOMParser();
+  let projectCards;
+
+  try {
+    const projectResponse = await fetch("/projects").then(result => result.text());
+    const projectDoc = parser.parseFromString(projectResponse, "text/html");
+    projectCards = projectDoc.querySelectorAll(".project-card");
+
+    projectCards.forEach(card => {
+      const name = card.querySelector(".project-card__title").textContent.trim();
+      const link = card.querySelector(".project-card__title-link")?.getAttribute("href");
+      const timeString = card.querySelector(".project-card__stats h5:last-child").textContent.trim();
+      const hours = parseTimeToHours(timeString);
+      projectData.push({name, link, hours});
+    });
+  } catch (error) {
+    console.error("failed to fetch project list, using full cache as fallback!", error);
+    if (cachedProjectData.length > 0) projectData.push(...cachedProjectData);
+  }
+
+  for (const project of projectData) {
     if (!project.link) return;
     let alreadyShippedHours = 0;
     try {
@@ -2371,9 +2383,17 @@ async function addShopItemEstimation() {
 
       multipliers[project.name + "_shipped_hours"] = alreadyShippedHours;
     } catch (error) {
-      console.error("failed to fetch project ", project.name);
+      console.error("failed to fetch project ", project.name, error);
     }
-  }));
+  };
+
+  chrome.storage.local.set({
+    estimation_cache: {
+      multipliers,
+      projectData,
+      lastUpdated: Date.now()
+    }
+  });
 
   const projectNames = Object.keys(multipliers).filter(key => !key.endsWith("_shipped_hours"));
   const validRates = projectNames.map(name => multipliers[name]);
