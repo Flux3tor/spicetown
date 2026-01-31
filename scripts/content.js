@@ -644,9 +644,7 @@ function addImprovedShop() {
         derivedPrice = parseFloat(priceTextRaw.replace(/[^\d.]/g, ''));
       } else {
         const remaining = parseFloat(progressTxt.textContent.replace(/[^\d.]/g, '')) || 0;
-        const isComplete = fill.style.width === "100%";
-        if (isComplete) derivedPrice = 0;
-        else derivedPrice = remaining + userBalance;
+        derivedPrice = (fill.style.width === "100%") ? 0 : remaining + userBalance;
       }
 
       const storage = await chrome.storage.local.get([`shop_goal_qty_${id}`]);
@@ -654,8 +652,9 @@ function addImprovedShop() {
       const itemTotal = derivedPrice * qty;
       
       totalRequiredCost += itemTotal;
-
-      const contribution = Math.min(runningBalance, itemTotal);
+      
+      const availableFunds = (progressMode === "individual") ? userBalance : runningBalance;
+      const contribution = Math.min(availableFunds, itemTotal);
       const itemPercent = itemTotal === 0 ? 100 : (contribution / itemTotal) * 100;
 
       if (fill) fill.style.width = `${itemPercent}%`;
@@ -668,7 +667,7 @@ function addImprovedShop() {
       const emptyColor = "rgba(255, 255, 255, 0.5)";
       item.style.background = `linear-gradient(to right, ${fillColor} ${itemPercent}%, ${emptyColor} ${itemPercent}%)`;
 
-      runningBalance = Math.max(0, runningBalance - itemTotal);
+      if (progressMode === "cumulative") runningBalance = Math.max(0, runningBalance - itemTotal);
     }
     
     const percent = totalRequiredCost === 0 ? 100 : Math.min(100, (userBalance / totalRequiredCost) * 100);
@@ -789,7 +788,15 @@ function addImprovedShop() {
   const shopGoalsDiv = document.createElement("div");
   shopGoalsDiv.classList.add("shop-goals__div");
 
-  shopGoalsTitle.after(allProgressWrapper); // i love this function!!!!!!! this makes life way easier then
+  shopGoalsTitle.after(modeToggleButton);
+  modeToggleButton.after(allProgressWrapper);
+
+  modeToggleButton.addEventListener("click", () => {
+    progressMode = (progressMode === "cumulative") ? "individual" : "cumulative";
+    modeToggleButton.textContent = progressMode.charAt(0).toUpperCase() + progressMode.slice(1);
+    calculateAllProgress();
+  });
+
   allProgressWrapper.after(shopGoalsDiv);
   shopGoalsDiv.appendChild(itemsContainer);
   shopGoalsDiv.appendChild(shopGoalEditorDiv);
