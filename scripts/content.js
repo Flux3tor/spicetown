@@ -664,8 +664,9 @@ function addImprovedShop() {
       }
 
       const fillColor = itemPercent >= 100 ? "var(--completed-color)" : "var(--progress-color)";
-      const emptyColor = "rgba(255, 255, 255, 0.5)";
-      item.style.background = `linear-gradient(to right, ${fillColor} ${itemPercent}%, ${emptyColor} ${itemPercent}%)`;
+      item.style.setProperty("--goal-fill", fillColor);
+      item.style.setProperty("--goal-empty", "rgba(255, 255, 255, 0.5)");
+      item.style.setProperty("--goal-percent", `${itemPercent}%`);
 
       if (progressMode === "cumulative") runningBalance = Math.max(0, runningBalance - itemTotal);
     }

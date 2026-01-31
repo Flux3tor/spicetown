@@ -367,10 +367,17 @@
   max-width: 100%;
   box-sizing: border-box;
 }
+@property --goal-percent {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
 .shop-goals__item {
-  /* background: linear-gradient(135deg, var(--color-yellow-300) 0%, var(--color-yellow-400) 100%) !important; */
+  --goal-percent: 0%;
+  transition: --goal-percent 1s cubic-bezier(0.25, 1, 0.5, 1);
+  background: linear-gradient(to right, var(--goal-fill) var(--goal-percent), var(--goal-empty) var(--goal-percent)) !important;
   max-width: 100% !important;
-  transition: all 150ms ease;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
