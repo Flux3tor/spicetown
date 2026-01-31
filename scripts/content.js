@@ -1583,14 +1583,24 @@ async function addDevlogGenerator() {
       <small>repository: ${repoPath}</small>
     `;
 
-    // fixed horrible code :skulk:
     const targetField = textArea.closest(".projects-new__field") || textArea.parentElement;
     targetField.parentNode.insertBefore(container, targetField);
+    
+    const fromSelect = document.getElementById("commit-from");
+    const toSelect = document.getElementById("commit-to");
+
+    const updateToDropdown = (commitsArray) => {
+      const selectedIndex = fromSelect.selectedIndex;
+      const renderOptions = (commits) => commits.map(commit => 
+        `<option value="${commit.sha}">${commit.commit.message.split("\n")[0].substring(0, 20)}... (${commit.sha.substring(0, 7)})</option>`
+      ).join("");
+      toSelect.innerHTML = renderOptions(commitsArray.slice(0, selectedIndex + 1));
+    };
 
     try {
       refreshApiKey();
-      const [commitsResult, projectResult] = await Promise.all([
-        fetch(`https://api.github.com/repos/${repoPath}/commits?per_page=50`),
+      const [branchesResult, projectResult] = await Promise.all([
+        fetch(`https://api.github.com/repos/${repoPath}/branches`),
         fetch(`https://flavortown.hackclub.com/api/v1/projects/${projectId}`, {
           method: "GET",
           headers: {
@@ -1600,11 +1610,17 @@ async function addDevlogGenerator() {
         })
       ]);
 
-      const allCommits = await commitsResult.json();
+      const branches = await branchesResult.json();
       const projectData = await projectResult.json();
 
-      let lastDevlogDate = null;
+      const branchSelect = document.createElement("select");
+      branchSelect.id = "commit-branch-selector";
+      branchSelect.style.width = "100%";
+      branchSelect.style.marginBottom = "5px";
+      branchSelect.innerHTML = branches.map(branch => `<option value="${branch.name}">${branch.name}</option>`).join("");
+      container.prepend(branchSelect);
 
+      let lastDevlogDate = null;
       if (projectData.devlog_ids?.length > 0) {
         const lastId = projectData.devlog_ids[projectData.devlog_ids.length - 1];
         const devlogResult = await fetch(`https://flavortown.hackclub.com/api/v1/devlogs/${lastId}`, {
@@ -1618,26 +1634,31 @@ async function addDevlogGenerator() {
         lastDevlogDate = new Date(devlogData.created_at);
       }
 
-      const fromSelect = document.getElementById("commit-from");
-      const toSelect = document.getElementById("commit-to");
+      const loadCommitsForBranch = async (branchName) => {
+        fromSelect.innerHTML = "<option>loading commits...</option>";
+        const result = await fetch(`https://api.github.com/repos/${repoPath}/commits?per_page=50&sha=${branchName}`);
+        const commits = await result.json();
 
-      const renderOptions = (commits) => commits.map(commit => `<option value="${commit.sha}">${commit.commit.message.split("\n")[0].substring(0, 20)} (${commit.sha.substring(0, 7)})</option>`).join("");
-      fromSelect.innerHTML = renderOptions(allCommits);
+        const renderOptions = (commits) => commits.map(commit => 
+          `<option value="${commit.sha}">${commit.commit.message.split("\n")[0].substring(0, 20)}... (${commit.sha.substring(0, 7)})</option>`
+        ).join("");
+        
+        fromSelect.innerHTML = renderOptions(commits);
 
-      const updateToDropdown = () => {
-        const selectedIndex = fromSelect.selectedIndex;
-        toSelect.innerHTML = renderOptions(allCommits.slice(0, selectedIndex + 1));
+        if (lastDevlogDate) {
+          const firstNewIdx = commits.findIndex(commit => new Date(commit.commit.author.date) <= lastDevlogDate);
+          fromSelect.selectedIndex = firstNewIdx > 0 ? firstNewIdx - 1 : 0;
+        } else {
+          fromSelect.selectedIndex = Math.min(commits.length - 1, 5);
+        }
+
+        fromSelect.onchange = () => updateToDropdown(commits);
+        updateToDropdown(commits);
       };
 
-      fromSelect.addEventListener("change", updateToDropdown);
-      if (lastDevlogDate) {
-        const firstNewCommitIndex = allCommits.findIndex(commit => new Date(commit.commit.author.date) <= lastDevlogDate);
-        fromSelect.selectedIndex = firstNewCommitIndex > 0 ? firstNewCommitIndex - 1 : 0;
-      } else {
-        fromSelect.selectedIndex = Math.min(allCommits.length - 1, 5);
-      }
+      branchSelect.addEventListener("change", () => loadCommitsForBranch(branchSelect.value));
+      await loadCommitsForBranch(branchSelect.value);
 
-      updateToDropdown();
     } catch (error) {
       console.error("smarter devlog generator failed::::::", error);
       document.getElementById("commit-from").innerHTML = `<option>Failed to load</option>`;
