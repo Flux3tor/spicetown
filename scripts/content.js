@@ -45,7 +45,8 @@ async function initialize() {
     addDevlogGenerator,
     addDevlogStreak,
     addNextShipEstimation,
-    addShopItemEstimation
+    addShopItemEstimation,
+    addInlineDevlogCreator
   ];
   uiEnhancements.forEach(func => func());
 
@@ -2367,6 +2368,22 @@ async function addShopItemEstimation() {
           option.textContent = `Only ${name}`;
           projectSelect.appendChild(option);
         });
+
+        const itemName = document.createElement("span");
+        itemName.className = "shop-item-estimation-item-serial";
+        const title = card.querySelector(".shop-item-card__title").textContent.trim();
+
+        const processedName = title.split(" ")
+          .map(word => {
+            if (/^\d+$/.test(word)) return word;
+            return word.charAt(0);
+          })
+          .join("-")
+          .toUpperCase()
+
+        itemName.textContent = `${processedName}-${str_rand(7).toUpperCase()}`;
+
+        estimationDiv.appendChild(itemName);
 
         projectSelect.addEventListener("change", (e) => updateEstimation(e.target.value, messageSpan));
         projectSelect.addEventListener("contextmenu", (e) => e.stopPropagation());

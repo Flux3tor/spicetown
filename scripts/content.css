@@ -876,6 +876,12 @@
   flex-direction: column;
   gap: 1.5rem;
 }
+.shop-item-estimation-item-serial {
+  position: absolute;
+  font-weight: 300;
+  bottom: 1%;
+  opacity: .5;
+}
 
 /** ANIMATIONS **/
 
@@ -1273,6 +1279,7 @@
 [data-theme] .project-show-card .project-card__banner-image,
 [data-theme] .project-card__banner-image,
 [data-theme] .post .post__chevron,
+[data-theme] .post__viewport,
 [data-theme] .post .comments-section__list,
 [data-theme] .post .comment-form__input,
 [data-theme] .project-show-card .project-extra-info__div {
