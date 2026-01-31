@@ -2041,6 +2041,16 @@ function updateThemeCache(themeId) {
 }
 
 async function addProjectVotes() {
+  const parseShippedTime = (timeString) => {
+    const now = new Date();
+    const number = parseInt(timeString.match(/\d+/)?.[0] || 0);
+    if (timeString.includes("minute")) return now.setMinutes(now.getMinutes() - number)
+    else if (timeString.includes("hour")) return now.setHours(now.getHours() - number);
+    else if (timeString.includes("day")) return now.setDate(now.getDate() - number);
+    else if (timeString.includes("month")) return now.setMonth(now.getMonth() - number);
+    return 0;
+  };
+
   const posts = document.querySelectorAll(".post--ship");
   posts.forEach(async post => {
     // Get the project name via the project link on the ship post!
@@ -2126,14 +2136,22 @@ async function addProjectVotes() {
       projectName: projectName
     }, async (fetchedVotes) => {
       if (fetchedVotes) {
+        const shippedTimeString = post.querySelector(".post__time")?.textContent || "";
+        const shippedTimestamp = parseShippedTime(shippedTimeString);
+
+        const relevantVotes = fetchedVotes.filter(vote => {
+          const voteTime = parseShippedTime(vote.timeAgo);
+          return voteTime >= (shippedTimestamp - 3600000);
+        });
+
         await chrome.storage.local.set({
           [cacheKey]: {
-            data: fetchedVotes,
+            data: relevantVotes,
             timestamp: Date.now()
           }
         });
 
-        renderVotes(fetchedVotes);
+        renderVotes(relevantVotes);
       }
     });
   });
