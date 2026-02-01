@@ -757,6 +757,13 @@ async function addImprovedShop() {
 
     const pricePerUnit = derivedPrice;
 
+    shopGoalItemDiv.addEventListener("auxclick", (event) => {
+      if (event.button === 1) {
+        event.preventDefault();
+        window.open(`https://flavortown.hackclub.com/shop/order?shop_item_id=${shopGoalItemID}`, "_blank");
+      }
+    });
+
     const updateShopItemPrice = (quantity, availableBalance) => {
       const newTotalRequired = pricePerUnit * quantity;
 
