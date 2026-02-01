@@ -933,6 +933,34 @@
   flex-direction: row;
   gap: .5rem;
 }
+.shop-goals__project-selector {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 1rem;
+  scrollbar-width: thin;
+  width: 100%;
+}
+.shop-goals__project-selector > .btn {
+  filter: brightness(0.5);
+  transition: all 300ms ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-block;
+}
+.shop-goals__project-selector > .btn--active {
+  filter: brightness(1);
+}
+.shop-goals__project-selector > .btn:not(.btn--active):hover {
+  filter: brightness(0.65) !important;
+}
+.shop-goals__project-selector::-webkit-scrollbar {
+  height: 6px;
+}
+.shop-goals__project-selector::-webkit-scrollbar-thumb {
+  background: var(--brown-color, #5c4033);
+  border-radius: 10px;
+}
 
 /** ANIMATIONS **/
 
