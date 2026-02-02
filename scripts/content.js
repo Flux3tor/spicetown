@@ -223,53 +223,54 @@ function addDevlogImprovement() {
   function parser(text) {
     if (!text) return "";
 
-    let html = text;
+    let html = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     const codeBlocks = [];
-    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
-      const id = `__CODEBLOCK_${codeBlocks.length}__`;
-      codeBlocks.push(`<pre class="flavortown-md-pre"><code><span>${code.trim()}</span></code></pre>`);
-      return id;
+    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, language, code) => {
+      const id = `TOKENCODEBLOCK${codeBlocks.length}TOKEN`;
+      codeBlocks.push(`<pre><code class="${language}"><span>${code.trim()}</span></code></pre>`);
+      return `\n\n${id}\n\n`;
     });
-
-    html = html.replace(/^> (.*$)/gim, "<bq>$1</bq>");
 
     html = html
       .replace(/^### (.*$)/gim, "<h3>$1</h3>")
-      .replace(/^## (.*$)/gim, "<h2>$1</h2>") // oops
+      .replace(/^## (.*$)/gim, "<h2>$1</h2>")
       .replace(/^# (.*$)/gim, "<h1>$1</h1>")
       .replace(/^---$/gim, "<hr/>")
-      .replace(/^\s*-\s+(.*)/gim, "<ubli>$1</ubli>")
-      .replace(/^\s*\d+\.\s+(.*)/gim, "<obli>$1</obli>");
+      .replace(/^\s*[-*]\s+(.*)(\n)?/gim, "<ubli>$1</ubli>")
+      .replace(/^\s*\d+\.\s+(.*)(\n)?/gim, "<obli>$1</obli>")
+      .replace(/^> (.*$)/gim, "<bq>$1</bq>");
 
     html = html
-      .replace(/(<ubli>.*<\/ubli>\s*)+/g, (m) => `<ul>${m.replace(/ubli/g, "li")}</ul>`)
-      .replace(/(<obli>.*<\/obli>\s*)+/g, (m) => `<ol>${m.replace(/obli/g, "li")}</ol>`)
-      .replace(/(<bq>.*<\/bq>\s*)+/g, (m) => `<blockquote><p>${m.replace(/<\/?bq>/g, "").trim().split('\n').join('</p><p>')}</p></blockquote>`);
+      .replace(/(<ubli>.*<\/ubli>\s*)+/g, m => `<ul>${m.replace(/ubli/g, "li").replace(/\n/g, "")}</ul>`)
+      .replace(/(<obli>.*<\/obli>\s*)+/g, m => `<ol>${m.replace(/obli/g, "li").replace(/\n/g, "")}</ol>`)
+      .replace(/(<bq>.*<\/bq>\s*)+/g, m => `<blockquote>${m.replace(/<\/?bq>/g, "").trim().split('\n').map(l => `<p>${l}</p>`).join('')}</blockquote>`);
 
-    html = html.split("\n").map(line => {
-      const trimmed = line.trim();
-      if (!trimmed) return ""; 
-      if (/^<(h[1-3]|ul|ol|li|blockquote|p|hr|pre)/i.test(trimmed)) return line;
-      return `<p>${line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`;
+    html = html.split(/\n\n+/).map(block => {
+      const trimmed = block.trim();
+      if (/^<(h[1-6]|ul|ol|blockquote|pre|hr)/i.test(trimmed) || trimmed.startsWith("TOKENCODEBLOCK")) {
+        return trimmed;
+      }
+      return `<p>${trimmed.replace(/\n/g, "<br/>")}</p>`;
     }).join("\n");
 
     html = html
-      .replace(/\*\*\*_(.*?)_\*\*\*/gim, "<strong><em>$1</em></strong>") // what drugs was i on when i typed
-      .replace(/\*\*_(.*?)_\*\*/gim, "<strong><em>$1</em></strong>") // <emphasis></emphasis> sob
+      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
+      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      .replace(/\_(.*?)\_/g, "<em>$1</em>")
+      .replace(/__(.*?)__/g, "<strong>$1</strong>")
+      .replace(/_(.*?)_/g, "<em>$1</em>")
+      .replace(/\+\+(.*?)\+\+/g, "<u>$1</u>")
       .replace(/~~(.*?)~~/g, "<del>$1</del>")
-      .replace(/`([^`]+)`/g, "<code>$1</code>")
-      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" />')
-      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+      .replace(/`([^`]+)`/g, "<code>$1</code>");
 
     codeBlocks.forEach((block, i) => {
-      html = html.replace(`__CODEBLOCK_${i}__`, block);
+      html = html.replace(`TOKENCODEBLOCK${i}TOKEN`, block);
     });
 
-    return html.replace(/<p>(__CODEBLOCK_.*)<\/p>/g, "$1").trim();
+    return html;
   }
   const updatePreview = () => {
     previewContainer.innerHTML = parser(devlogTextContainer.value); // wowie parser
