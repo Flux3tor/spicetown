@@ -38,7 +38,6 @@ async function initialize() {
     addKeybinds,
     addExtraShipInfo,
     addDevlogImageTools,
-    watchForNewComments,
     addWeeklyGains,
     addEmojiAutocomplete,
     addProjectVotes,
@@ -2038,26 +2037,6 @@ async function fetchSlackEmojis() {
         resolve(false);
       }
     });
-  });
-}
-
-function watchForNewComments() {
-  const observer = new MutationObserver((changes) => {
-    for (const change of changes) {
-      change.addedNodes.forEach(node => {
-        if (node.nodeType === 1) {
-          const hasComments = node.classList?.contains("comment") || node.querySelector(".comment");
-          if (hasComments) {
-            setTimeout(addEmojiRendering, 50);
-          }
-        }
-      })
-    }
-  });
-
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
   });
 }
 
