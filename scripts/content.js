@@ -285,75 +285,65 @@ function addDevlogImprovement() {
 
 function addKeybinds() { // :3
   document.querySelectorAll(".sidebar__nav-item-hotkey-div, .explore__nav-component-hotkey-div").forEach(element => element.remove());
-
-  const sidebarItems = document.querySelectorAll(".sidebar__nav-list > .sidebar__nav-item > .sidebar__nav-link");
-  sidebarItems.forEach((sidebarItem, i) => {
-    const nKey = (i + 1).toString();
+  const sidebarLinks = document.querySelectorAll(".sidebar__nav-list > .sidebar__nav-item > .sidebar__nav-link");
+  sidebarLinks.forEach((sidebarItem, i) => {
+    const numberKey = (i + 1).toString();
     const hotkeyDiv = document.createElement("div");
     hotkeyDiv.className = "sidebar__nav-item-hotkey-div";
-    const hotCtrl = document.createElement("p");
-    hotCtrl.textContent = "Ctrl";
-    hotCtrl.className = "sidebar__nav-item-hotkey";
-    const hotNum = document.createElement("p");
-    hotNum.textContent = nKey;
-    hotNum.className = "sidebar__nav-item-hotkey";
-
-    hotkeyDiv.appendChild(hotCtrl);
-    hotkeyDiv.appendChild(hotNum);
+    hotkeyDiv.innerHTML = `<p class="sidebar__nav-item-hotkey">Ctrl</p><p class="sidebar__nav-item-hotkey">${numberKey}</p>`;
     sidebarItem.parentElement.appendChild(hotkeyDiv);
   });
 
-  const projectsBoardGridItems = document.querySelectorAll(".projects-board__grid .projects-board__grid-item .project-card__banner-frame");
-  if (projectsBoardGridItems) {
-    projectsBoardGridItems.forEach((pbgItem, i) => {
-      const nKey = i + 1;
-      document.addEventListener("keydown", (e) => {
-        if (!e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) {
-          if ((e.key >= "1" && e.key <= "9") || (e.key >= "1" && e.key <= "9" && e.location === KeyboardEvent.DOM_KEY_LOCATION_NUMPAD)) {
-            const pressed = parseInt(e.key, 10);
-            if (pressed === nKey) {
-              e.preventDefault();
-              pbgItem.click();
-            }
-          }
-        }
-      })
-    })
-  }
-  const exploreNavComponent = document.querySelectorAll(".explore__nav-component");
-  if (exploreNavComponent) {
-    exploreNavComponent.forEach((enComponent, i) => {
-      const nKey = i + 1;
-      document.addEventListener("keydown", (e) => {
-        if (!e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) {
-          if ((e.key >= "1" && e.key <= "9") || (e.key >= "1" && e.key <= "9" && e.location === KeyboardEvent.DOM_KEY_LOCATION_NUMPAD)) {
-            const pressed = parseInt(e.key, 10);
-            if (pressed === nKey) {
-              e.preventDefault();
-              enComponent.click();
-            }
-          }
-        }
-      })
-      const hotkeyDiv = document.createElement("div");
-      hotkeyDiv.className = "explore__nav-component-hotkey-div";
-      enComponent.appendChild(hotkeyDiv);
-      const hotNum = document.createElement("div");
-      hotNum.textContent = nKey;
-      hotNum.className = "explore__nav-component-hotkey";
-      hotkeyDiv.appendChild(hotNum);
-    })
-  }
-  const nDevlog = document.querySelector(".projects-show__container > .mt-4 > .btn.btn--brown");
-  if (nDevlog) {
-    document.addEventListener("keydown", (e) => {
-      if (e.ctrlKey && !e.shiftKey && e.altKey && !e.metaKey) {
-        if (e.key === "n") {
-          e.preventDefault();
-          nDevlog.click();
+  const exploreNav = document.querySelectorAll(".explore__nav-component");
+  exploreNav.forEach((exploreNavComponent, i) => {
+    const numberKey = i + 1;
+    const hotkeyDiv = document.createElement("div");
+    hotkeyDiv.className = "explore__nav-component-hotkey-div";
+    hotkeyDiv.innerHTML = `<div class="explore__nav-component-hotkey">${numberKey}</div>`;
+    exploreNavComponent.appendChild(hotkeyDiv);
+  });
+
+  if (!window.hasKeybinds) {
+    document.addEventListener("keydown", (event) => {
+      if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA" || event.target.isContentEditable) return;
+      const isNumber = event.key >= "1" && event.key <= "9";
+      if (!isNumber) return;
+
+      const index = parseInt(event.key, 10) - 1;
+
+      if (event.ctrlKey && !event.shiftKey && !event.altKey && !event.metaKey) {
+        const currentLinks = document.querySelectorAll(".sidebar__nav-list > .sidebar__nav-item > .sidebar__nav-link");
+        if (currentLinks[index]) {
+          event.preventDefault();
+          currentLinks[index].click();
         }
       }
-    })
+
+      if (!event.ctrlKey && !event.shiftKey && !event.altKey && !event.metaKey) {
+        const projects = document.querySelectorAll(".projects-board__grid .projects-board__grid-item .project-card__banner-frame");
+        const explore = document.querySelectorAll(".explore__nav-component");
+
+        if (projects.length > 0 && projects[index]) {
+          event.preventDefault();
+          projects[index].click();
+        } else if (explore.length > 0 && explore[index]) {
+          event.preventDefault();
+          explore[index].click();
+        }
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.altKey && event.key.toLowerCase() === "n") {
+        const newDevlog = document.querySelector(".projects-show__container > .mt-4 > .btn.btn--brown");
+        if (newDevlog) {
+          event.preventDefault();
+          newDevlog.click();
+        }
+      }
+    });
+
+    window.hasKeybinds = true;
   }
 }
 
