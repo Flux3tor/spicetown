@@ -1158,7 +1158,6 @@ body.sidebar-editing #sidebar-banner {
   z-index: 2;
   width: 100%;
   min-height: 6rem;
-  line-height: var(--line-height-body);
   padding-top: var(--space-m);
 }
 .devlog-editor-wrapper {
@@ -2979,4 +2978,7 @@ body[data-theme="bg-color-aurora"] {
 }
 [data-theme] #editing-banner > * {
   color: var(--text-primary) !important;
+}
+[data-theme] .post__body blockquote {
+  border-color: var(--accent) !important;
 }

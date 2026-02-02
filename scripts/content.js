@@ -114,8 +114,8 @@ function addDevlogImprovement() {
   if (inputLabel) {
     inputLabel.innerHTML = `
       <div class="devlog-tabs">
-        <button class="devlog-tab active" data-tab="write">Write</button>
-        <button class="devlog-tab" data-tab="preview">Preview</button>
+        <button type="button" class="devlog-tab active" data-tab="write">Write</button>
+        <button type="button" class="devlog-tab" data-tab="preview">Preview</button>
       </div>
     `;
   }
@@ -275,12 +275,15 @@ function addDevlogImprovement() {
       .replace(/^---$/gim, "<hr/>")
       .replace(/^\s*[-*]\s+(.*)(\n)?/gim, "<ubli>$1</ubli>")
       .replace(/^\s*\d+\.\s+(.*)(\n)?/gim, "<obli>$1</obli>")
-      .replace(/^> (.*$)/gim, "<bq>$1</bq>");
+      .replace(/^&gt;[ ]?(.*)$/gim, "<bq>$1</bq>");
 
     html = html
       .replace(/(<ubli>.*<\/ubli>\s*)+/g, m => `<ul>${m.replace(/ubli/g, "li").replace(/\n/g, "")}</ul>`)
       .replace(/(<obli>.*<\/obli>\s*)+/g, m => `<ol>${m.replace(/obli/g, "li").replace(/\n/g, "")}</ol>`)
-      .replace(/(<bq>.*<\/bq>\s*)+/g, m => `<blockquote>${m.replace(/<\/?bq>/g, "").trim().split('\n').map(l => `<p>${l}</p>`).join('')}</blockquote>`);
+      .replace(/(<bq>.*<\/bq>\s*)+/g, m => {
+        const content = m.replace(/<\/?bq>/g, "").trim();
+        return `<blockquote><p>${content.split('\n').join('</p><p>')}</p></blockquote>`;
+      });
 
     html = html.split(/\n\n+/).map(block => {
       const trimmed = block.trim();
@@ -291,7 +294,7 @@ function addDevlogImprovement() {
     }).join("\n");
 
     html = html
-      .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
+      .replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="devlog-image-wrapper"><img src="$2" alt="$1" loading="lazy" /></div>')
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
