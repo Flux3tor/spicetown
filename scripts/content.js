@@ -2798,7 +2798,7 @@ function addInlineDevlogCreator() {
           submitEvent.preventDefault();
           const submitBtn = form.querySelector("[type='submit']");
           submitBtn.disabled = true;
-          submitBtn.textContent = "Shipping...";
+          submitBtn.textContent = "Creating...";
 
           const formData = new FormData(form);
           const postResponse = await fetch(form.action, {
