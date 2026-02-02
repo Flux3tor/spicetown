@@ -290,7 +290,9 @@ function addDevlogImprovement() {
       if (/^<(h[1-6]|ul|ol|blockquote|pre|hr)/i.test(trimmed) || trimmed.startsWith("TOKENCODEBLOCK")) {
         return trimmed;
       }
-      return `<p>${trimmed.replace(/\n/g, "<br/>")}</p>`;
+      let processedBlock = trimmed.replace(/\n/g, "<br/>");
+      processedBlock = processedBlock.replace(/(<\/h[1-6]>)\s*<br\/>/gi, "$1");
+      return `<p>${processedBlock}</p>`;
     }).join("\n");
 
     html = html
