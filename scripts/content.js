@@ -285,34 +285,25 @@ function addDevlogImprovement() {
 }
 
 function addKeybinds() { // :3
+  document.querySelectorAll(".sidebar__nav-item-hotkey-div, .explore__nav-component-hotkey-div").forEach(element => element.remove());
+
   const sidebarItems = document.querySelectorAll(".sidebar__nav-list > .sidebar__nav-item > .sidebar__nav-link");
-  if (sidebarItems) {
-    sidebarItems.forEach((sItem, i) => {
-      const nKey = i + 1;
-      document.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) { // "omg the metaverse" - some company idk
-          if ((e.key >= "1" && e.key <= "9") || (e.key >= "1" && e.key <= "9" && e.location === KeyboardEvent.DOM_KEY_LOCATION_NUMPAD)) { // in cased u r a weirdo and use numpad
-            const pressed = parseInt(e.key, 10);
-            if (pressed === nKey) {
-              e.preventDefault();
-              sItem.click();
-            }
-          }
-        }
-      })
-      const hotkeyDiv = document.createElement("div");
-      hotkeyDiv.className = "sidebar__nav-item-hotkey-div";
-      sItem.parentElement.appendChild(hotkeyDiv);
-      const hotCtrl = document.createElement("p");
-      hotCtrl.textContent = "Ctrl";
-      hotCtrl.className = "sidebar__nav-item-hotkey";
-      hotkeyDiv.appendChild(hotCtrl);
-      const hotNum = document.createElement("p");
-      hotNum.textContent = nKey;
-      hotNum.className = "sidebar__nav-item-hotkey";
-      hotkeyDiv.appendChild(hotNum);
-    })
-  }
+  sidebarItems.forEach((sidebarItem, i) => {
+    const nKey = (i + 1).toString();
+    const hotkeyDiv = document.createElement("div");
+    hotkeyDiv.className = "sidebar__nav-item-hotkey-div";
+    const hotCtrl = document.createElement("p");
+    hotCtrl.textContent = "Ctrl";
+    hotCtrl.className = "sidebar__nav-item-hotkey";
+    const hotNum = document.createElement("p");
+    hotNum.textContent = nKey;
+    hotNum.className = "sidebar__nav-item-hotkey";
+
+    hotkeyDiv.appendChild(hotCtrl);
+    hotkeyDiv.appendChild(hotNum);
+    sidebarItem.parentElement.appendChild(hotkeyDiv);
+  });
+
   const projectsBoardGridItems = document.querySelectorAll(".projects-board__grid .projects-board__grid-item .project-card__banner-frame");
   if (projectsBoardGridItems) {
     projectsBoardGridItems.forEach((pbgItem, i) => {
@@ -2884,8 +2875,10 @@ async function addSidebarEditor() {
     const allItems = [...navList.children, ...slots.children];
     const itemMap = new Map(allItems.map(li => [getItemId(li), li]));
 
-    if (visible) visible.forEach(id => { if(itemMap.has(id)) navList.appendChild(itemMap.get(id)); });
-    if (hidden) hidden.forEach(id => { if(itemMap.has(id)) slots.appendChild(itemMap.get(id)); });
+    if (visible) visible.forEach(id => {if(itemMap.has(id)) navList.appendChild(itemMap.get(id));});
+    if (hidden) hidden.forEach(id => {if(itemMap.has(id)) slots.appendChild(itemMap.get(id));});
+
+    addKeybinds();
   };
 
   const toggleEditMode = (forceOff = false) => {
@@ -2907,7 +2900,10 @@ async function addSidebarEditor() {
       }
     });
 
-    if (!isEditing) saveState();
+    if (!isEditing) {
+      saveState();
+      addKeybinds();
+    };
   };
 
   const toggleInventory = (forceOff = false) => {

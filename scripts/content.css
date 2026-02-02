@@ -1042,9 +1042,12 @@
 #editing-banner > button:hover {
   filter: brightness(1);
 }
+.sidebar__nav-item {
+  transition: all 100ms ease;
+}
 body.sidebar-editing .sidebar__nav-item {
   cursor: grab !important;
-  border: 2px dashed var(--color-bg);;
+  border: 2px dashed var(--color-bg);
   padding: .25rem 0rem;
   border-radius: 8px;
 }
@@ -1111,6 +1114,14 @@ body.sidebar-editing #sidebar-banner {
 }
 #sidebar-inventory .sidebar__nav-item > .sidebar__nav-link--active .sidebar__nav-icon-wrapper {
   background: none;
+}
+.sidebar__edit-btn {
+  opacity: 0;
+  transition: all 180ms ease;
+}
+.sidebar:hover .sidebar__edit-btn,
+.sidebar--pinned .sidebar__edit-btn {
+  opacity: 1;
 }
 
 /** ANIMATIONS **/
@@ -1436,8 +1447,14 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .shop-item-card__bow::after {
   background-color: var(--accent) !important;
 }
+[data-theme] #sidebar-inventory .sidebar__nav-item > .sidebar__nav-link--active::before {
+  background: none !important;
+}
 [data-theme] .sidebar__nav-link--active > .sidebar__nav-icon-wrapper {
   background: var(--accent-darker) !important;
+}
+[data-theme] #sidebar-inventory .sidebar__nav-item > .sidebar__nav-link--active .sidebar__nav-icon-wrapper {
+  background: none !important;
 }
 [data-theme] .sidebar > .pin-sidebar__btn > svg {
   color: var(--accent) !important;
