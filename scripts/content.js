@@ -722,6 +722,28 @@ async function addImprovedShop() {
 
   let activeEditingItem = null; // track which item is being edited and then sell your user data (joke)
 
+  const animateValue = (element, start, end, duration, isPercentage = false) => {
+    if (!element) return;
+    let startTimestamp = null;
+
+    const startNumber = start ?? (parseFloat(element.textContent.replace(/[^\d.]/g, "")) || 0);
+    
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const current = progress * (end - startNumber) + startNumber;
+
+      if (isPercentage) {
+        element.textContent = `${(Math.round((current + Number.EPSILON) * 100) / 100).toLocaleString()}%`;
+      } else {
+        element.textContent = Math.floor(current).toLocaleString();
+      }
+
+      if (progress < 1) window.requestAnimationFrame(step);
+    };
+    window.requestAnimationFrame(step);
+  };
+
   const calculateAllProgress = async () => {
     const currentRegion = getRegion();
     const allStorage = await chrome.storage.local.get(null);
@@ -818,6 +840,24 @@ async function addImprovedShop() {
       
       const availableFunds = (progressMode === "individual") ? effectiveBalance : runningBalance;
       const contribution = Math.min(availableFunds, itemTotal);
+
+      if (progressTxt && !progressTxt.textContent.includes("Ready")) {
+        const endNeeded = Math.max(0, itemTotal - contribution);
+        const prefix = useProjected ? "🍪~" : "🍪";
+
+        const startNeeded = parseFloat(progressTxt.textContent.replace(/[^\d.]/g, "")) || 0;
+
+        let startTime = null;
+        const itemStep = (time) => {
+          if (!startTime) startTime = time;
+          const p = Math.min((time - startTime) / 500, 1);
+          const value = Math.floor(p * (endNeeded - startNeeded) + startNeeded);
+          progressTxt.textContent = `${prefix}${value.toLocaleString()} more needed`;
+          if (p < 1) window.requestAnimationFrame(itemStep);
+        };
+        window.requestAnimationFrame(itemStep);
+      }
+
       const itemPercent = itemTotal === 0 ? 100 : (contribution / itemTotal) * 100;
 
       if (fill) fill.style.width = `${itemPercent}%`;
