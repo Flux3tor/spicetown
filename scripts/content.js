@@ -2513,7 +2513,7 @@ async function improveKitchenLayout() {
   kitchenStreak.innerHTML = `
     <div class="kitchen-stats-card__content">
       <div class="state-card__title">Streak</div>
-      <div class="state-card__streak">loading</div>
+      <div class="state-card__streak">↺</div>
     </div>
   `;
   kitchenIndex.querySelector(".kitchen-stats__grid").appendChild(kitchenStreak);

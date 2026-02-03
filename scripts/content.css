@@ -1572,10 +1572,15 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .user-card,
 [data-theme] .project-show-card,
 [data-theme] .btn--brown,
+[data-theme] .btn.btn-primary,
 [data-theme] .projects-board__grid-item > .project-card {
   background-color: var(--surface-dark) !important;
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
+  transition: background-color 300ms ease !important;
+}
+[data-theme] .btn.btn-primary:hover {
+  background-color: var(--surface-card) !important;
 }
 [data-theme] .explore__nav-component {
   color: var(--text-primary);
@@ -2086,6 +2091,7 @@ body.sidebar-editing #sidebar-banner {
 }
 
 [data-theme] .modal,
+[data-theme] .shop-suggestion-modal,
 [data-theme] .ship-feedback-modal > div:not([data-action]) {
   background: var(--surface-dark) !important;
   border-color: var(--surface-dark) !important;
@@ -2093,7 +2099,8 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .ship-feedback-modal > div:not([data-action]) > div > span {
   background-color: var(--accent-darker) !important;
 }
-[data-theme] .modal__title {
+[data-theme] .modal__title,
+[data-theme] .shop-suggestion-modal__title {
   color: var(--text-highlight) !important;
   background-color: var(--surface-header) !important;
 }
@@ -2113,10 +2120,14 @@ body.sidebar-editing #sidebar-banner {
   > tbody
   > tr
   > td:not(.balance-history__amount--positive),
-[data-theme] .balance-history__table > tbody > tr > td > a {
+[data-theme] .balance-history__table > tbody > tr > td > a,
+[data-theme] .shop-suggestion-modal__field > label {
   color: var(--text-primary) !important;
 }
 [data-theme] .settings-form__input,
+[data-theme] #shop_suggestion_item,
+[data-theme] #shop_suggestion_explanation,
+[data-theme] #shop_suggestion_link,
 [data-theme] .api-key-display {
   background-color: var(--surface-dark) !important;
   border-color: var(--border-color) !important;
@@ -2614,7 +2625,8 @@ body[data-theme="bg-color-aurora"] {
 [data-theme="bg-color-aurora"] .dialog,
 [data-theme="bg-color-aurora"] .overlay,
 [data-theme="bg-color-aurora"] .transaction-history,
-[data-theme="bg-color-aurora"] .shop-modal {
+[data-theme="bg-color-aurora"] .shop-modal,
+[data-theme="bg-color-aurora"] .shop-suggestion-modal {
   background: #1C2230 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -3013,4 +3025,19 @@ body[data-theme="bg-color-aurora"] {
 }
 [data-theme] .post__votes-container {
   border-color: var(--accent);
+}
+[data-theme] .shop-suggestion-modal__description {
+  color: var(--text-highlight) !important;
+}
+[data-theme] .shop-suggestion-modal__field > textarea,
+[data-theme] .shop-suggestion-modal__field > input {
+  color: var(--text-primary) !important;
+}
+[data-theme] .shop-suggestion-modal__field > textarea::placeholder,
+[data-theme] .shop-suggestion-modal__field > input::placeholder {
+  opacity: 0.5;
+  color: var(--text-primary) !important;
+}
+[data-theme] .shop-suggestion-modal__close {
+  color: var(--text-primary) !important;
 }
