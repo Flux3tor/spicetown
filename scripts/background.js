@@ -143,17 +143,17 @@ async function fetchVotes(projectName) {
         voteComment = msg.blocks[3].text.text;
       }
 
-      const genericRegex = /\b(ok|good|great|nice|nicr|cool)\b/i;
-      if (genericRegex.test(voteComment.trim())) {
-        return null;
-      }
+      const genericRegex = /^\s*(ok|good|great|nice|nicr|cool)[!?.]*\s*$/i;
+      const isShort = voteComment.split(/\s+/).length <= 2;
+      const isGeneric = genericRegex.test(voteComment.trim()) || isShort;
 
       return {
         voter: displayName,
         image: profilePic,
         text: voteComment,
         ts: msg.ts,
-        timeAgo: formatTimeAgo(msg.ts * 1000)
+        timeAgo: formatTimeAgo(msg.ts * 1000),
+        isGeneric: isGeneric
       };
     });
 

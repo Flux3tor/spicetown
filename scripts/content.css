@@ -770,7 +770,7 @@
   color: var(--color-text-body);
   border: none;
 }
-.post__votes-container > strong {
+.post__votes-container > .post__votes-header > strong {
   font-size: 1.25rem;
 }
 .public-vote-item {
@@ -1168,6 +1168,15 @@ body.sidebar-editing #sidebar-banner {
 }
 .file-upload .file-upload__preview-image {
   height: auto !important;
+}
+.post__votes-header {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.post__votes-container {
+  padding-block: 2rem;
+  border-top: var(--color-bg) solid 2px;
 }
 
 /** ANIMATIONS **/
@@ -2985,4 +2994,10 @@ body[data-theme="bg-color-aurora"] {
 }
 [data-theme] .post__body blockquote {
   border-color: var(--accent) !important;
+}
+[data-theme] .post__votes-container > label {
+  color: var(--text-primary) !important;
+}
+[data-theme] .post__votes-container {
+  border-color: var(--accent);
 }

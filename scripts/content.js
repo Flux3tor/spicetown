@@ -2362,8 +2362,6 @@ async function addProjectVotes() {
 
   const posts = document.querySelectorAll(".post--ship");
   posts.forEach(async post => {
-    // Get the project name via the project link on the ship post!
-    // hey if ur looking through the code should i keep up with commenting stuff?
     const projectLink = Array.from(post.querySelectorAll("a[href^='/projects/']"))
       .find(a => !a.textContent.toLowerCase().includes("repository"));
     if (!projectLink || post.dataset.votesLoaded) return;
@@ -2380,25 +2378,46 @@ async function addProjectVotes() {
       const {data, timestamp} = cachedData[cacheKey];
       if (now - timestamp < 600000) {
         votes = data;
-      } // every 6 minutes? (i think so im not sure :P;) [it's 10 minutes now]
+      }
     }
 
     const renderVotes = (voteList) => {
       if (voteList && voteList.length > 0) {
+        if (post.querySelector(".post__votes-container")) return;
+
         const votesContainer = document.createElement("div");
         votesContainer.className = "post__votes-container";
+        
+        const publicVotesHeader = document.createElement("div");
+        publicVotesHeader.className = "post__votes-header";
+        votesContainer.appendChild(publicVotesHeader);
 
         const title = document.createElement("strong");
         title.textContent = "Public Votes";
-        votesContainer.appendChild(title);
+        publicVotesHeader.appendChild(title);
 
-        voteList.forEach((vote, index) => {
+        const genericVotesLabel = document.createElement("label");
+        genericVotesLabel.innerHTML = `
+          <input type="checkbox" class="show-generic-toggle"> Show generic votes
+        `;
+        publicVotesHeader.appendChild(genericVotesLabel);
+
+        const listWrapper = document.createElement("div");
+        listWrapper.className = "post__votes-list";
+        votesContainer.appendChild(listWrapper);
+
+        const viewMoreBtn = document.createElement("button");
+        viewMoreBtn.className = "btn-view-more-votes";
+        viewMoreBtn.style.display = "none";
+        votesContainer.appendChild(viewMoreBtn);
+
+        const sortedVotes = [...voteList].sort((a, b) => (a.isGeneric === b.isGeneric) ? 0 : a.isGeneric ? 1 : -1);
+
+        sortedVotes.forEach((vote, index) => {
           const voteEl = document.createElement("div");
           voteEl.className = "public-vote-item";
-          if (index >= 5) {
-            voteEl.style.display = "none";
-            voteEl.classList.add("is-collapsed");
-          }
+          if (vote.isGeneric) voteEl.classList.add("is-generic-vote");
+
           voteEl.innerHTML = `
             <div>
               <img src="${vote.image}"/>
@@ -2407,30 +2426,45 @@ async function addProjectVotes() {
             </div>
             ${vote.text}
           `;
-          votesContainer.appendChild(voteEl);
+          listWrapper.appendChild(voteEl);
         });
 
-        if (voteList.length > 5) {
-          const viewMoreBtn = document.createElement("button");
-          viewMoreBtn.textContent = `View ${voteList.length - 5} more votes`;
-          viewMoreBtn.className = "btn-view-more-votes";
-          viewMoreBtn.addEventListener("click", () => {
-            const hiddenVotes = Array.from(votesContainer.querySelectorAll(".is-collapsed"));
-            hiddenVotes.slice(0, 5).forEach(element => {
+        let visibleLimit = 5;
+
+        const refreshVisibility = () => {
+          const isGenericChecked = genericVotesLabel.querySelector("input").checked;
+          const allItems = Array.from(listWrapper.querySelectorAll(".public-vote-item"));
+
+          const eligibleItems = allItems.filter(element => {
+            const isGeneric = element.classList.contains("is-generic-vote");
+            return isGenericChecked || !isGeneric;
+          });
+
+          allItems.forEach(element => element.style.display = "none");
+
+          eligibleItems.forEach((element, index) => {
+            if (index < visibleLimit) {
               element.style.display = "block";
-              element.classList.remove("is-collapsed");
-            });
-            const stillHidden = votesContainer.querySelectorAll(".is-collapsed").length;
-            if (stillHidden > 0) {
-              viewMoreBtn.textContent = `View ${stillHidden} more votes`
-            } else {
-              viewMoreBtn.remove();
             }
           });
 
-          votesContainer.appendChild(viewMoreBtn);
-        }
+          const hiddenCount = eligibleItems.length - visibleLimit;
+          if (hiddenCount > 0) {
+            viewMoreBtn.style.display = "block";
+            viewMoreBtn.textContent = `View ${hiddenCount} more votes`;
+          } else {
+            viewMoreBtn.style.display = "none";
+          }
+        };
 
+        genericVotesLabel.querySelector("input").addEventListener("change", refreshVisibility);
+
+        viewMoreBtn.addEventListener("click", () => {
+          visibleLimit += 5;
+          refreshVisibility();
+        });
+
+        refreshVisibility();
         post.querySelector(".post__content").appendChild(votesContainer);
       }
     };
