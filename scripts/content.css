@@ -1572,6 +1572,7 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .user-card,
 [data-theme] .project-show-card,
 [data-theme] .btn--brown,
+[data-theme] .btn.btn--red,
 [data-theme] .btn.btn-primary,
 [data-theme] .projects-board__grid-item > .project-card {
   background-color: var(--surface-dark) !important;
