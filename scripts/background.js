@@ -143,6 +143,11 @@ async function fetchVotes(projectName) {
         voteComment = msg.blocks[3].text.text;
       }
 
+      const genericRegex = /\b(ok|good|great|nice|nicr|cool)\b/i;
+      if (genericRegex.test(voteComment.trim())) {
+        return null;
+      }
+
       return {
         voter: displayName,
         image: profilePic,
@@ -152,7 +157,8 @@ async function fetchVotes(projectName) {
       };
     });
 
-    return await Promise.all(votePromises);
+    const results = await Promise.all(votePromises);
+    return results.filter(vote => vote !== null);
   } catch (error) {
     return [];
   }
