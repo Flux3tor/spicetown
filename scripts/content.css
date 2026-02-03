@@ -1190,6 +1190,9 @@ body.sidebar-editing #sidebar-banner {
   padding-block: 2rem;
   border-top: var(--color-bg) solid 2px;
 }
+.comment__body img {
+  vertical-align: middle;
+}
 
 /** ANIMATIONS **/
 

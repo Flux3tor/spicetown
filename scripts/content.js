@@ -2268,7 +2268,7 @@ function addEmojiAutocomplete() {
   function insertEmoji(input, name, originalUrl) {
     const text = input.value;
     const cursorPos = input.selectionStart;
-    const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=24&h=24&fit=contain`;
+    const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=20&h=20&fit=contain`;
     const emojiMarkdown = `![${name}](${proxyUrl}) `;
     const before = text.slice(0, cursorPos).replace(/:[a-z0-9_\-+]*$/, emojiMarkdown);
     const after = text.slice(cursorPos);
