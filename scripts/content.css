@@ -157,7 +157,7 @@
 }
 
 .themes__div-option:not([selected="true"]) {
-  filter: brightness(0.25)
+  filter: brightness(0.7);
 }
 
 /* .ruby-modified__proj-create-card {
