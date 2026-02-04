@@ -1442,7 +1442,8 @@ async function addUserExplore() {
       ".project-list__search-container",
       "#project-list",
       ".explore__pagination",
-      ".explore__list"
+      ".explore__list",
+      ".explore__nav--sort"
     ];
 
     elementsToHide.forEach(selector => {
