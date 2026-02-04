@@ -1769,6 +1769,7 @@ async function addThemesPage() {
   themesNavItem.addEventListener("click", (event) => {
     event.preventDefault();
     window.history.pushState({}, "", "/themes");
+    if (document.querySelector("main")) document.querySelector("main").remove();
     Array.from(document.body.children).forEach(node => {
       if (node.tagName.toLowerCase() === "div") node.remove();
     });
@@ -3014,6 +3015,44 @@ async function addSidebarEditor() {
   inventory.id = "sidebar-inventory";
   inventory.innerHTML = `<h3>Hidden Items</h3><div class="inventory-slots"></div>`;
   document.body.appendChild(inventory);
+
+  const isActive = (path) => window.location.pathname === path ? "sidebar__nav-link--active" : "";
+
+  const leaderboardHTML = `
+    <li class="sidebar__nav-item">
+      <a class="sidebar__nav-link ${isActive("/leaderboard")}" href="/leaderboard">
+        <span class="sidebar__nav-icon-wrapper" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sidebar__nav-icon">
+            <path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/>
+          </svg>
+        </span>
+        <span class="sidebar__nav-label">
+          Leaderboard
+        </span>
+      </a>
+    </li>
+  `;
+
+  const achievementsHTML =`
+    <li class="sidebar__nav-item">
+      <a class="sidebar__nav-link ${isActive("/my/achievements")}" href="/my/achievements">
+        <span class="sidebar__nav-icon-wrapper" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sidebar__nav-icon">
+            <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/>
+          </svg>
+        </span>
+        <span class="sidebar__nav-label">
+          Achivevements
+        </span>
+      </a>
+    </li>
+  `;
+
+  const slots = inventory.querySelector(".inventory-slots");
+  if (slots.children.length === 0) {
+    slots.insertAdjacentHTML("beforeend", leaderboardHTML);
+    slots.insertAdjacentHTML("beforeend", achievementsHTML);
+  }
 
   const inventoryBtn = document.createElement("button");
   inventoryBtn.className = "sidebar__inventory-btn";
