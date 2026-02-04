@@ -1749,6 +1749,7 @@ async function addThemesPage() {
 
   const sidebarNavList = document.querySelector(".sidebar__nav-list");
   const themesNavItem = document.createElement("li");
+  themesNavItem.className = "sidebar__nav-item";
   themesNavItem.innerHTML = `
     <li class="sidebar__nav-list">
       <a class="sidebar__nav-link" href="/themes">
