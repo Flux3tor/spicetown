@@ -1194,6 +1194,12 @@ body.sidebar-editing #sidebar-banner {
 .comment__body img {
   vertical-align: middle;
 }
+.explore__nav {
+  justify-content: center !important;
+  gap: 1.5rem !important;
+  width: fit-content !important;
+  background: none !important;
+}
 
 /** ANIMATIONS **/
 
@@ -1448,9 +1454,44 @@ body.sidebar-editing #sidebar-banner {
   --input-sub-text: #f8f8f2;
 
   --create-project-url: url("https://i.ibb.co/zW5dFTfc/image.png");
-    --projects-show-timeline-url: ursl(
-    'data:image/svg+xml,<svg width="8" height="90" viewBox="0 0 4 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="4" height="30" rx="2" fill="%23b88bee"/></svg>'
+    --projects-show-timeline-url: url(
+    'data:image/svg+xml,<svg width="8" height="90" viewBox="0 0 4 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="4" height="30" rx="2" fill="%23f8f8f2"/></svg>'
   );
+}
+
+/** Onyx THEME **/
+[data-theme="bg-color-onyx"] {
+  --bg-primary: #181818;
+  --text-primary: #e9e9e9;
+  --text-highlight: #fdfdfd;
+
+  --surface-header: #3b3b3b;
+  --surface-header-backdrop: #2e2e2e;
+  --surface-card: #333333;
+  --surface-dark: #1d1d1d;
+
+  --accent: #272727;
+  --accent-darker: #242424;
+  --border-color: #121212;
+  --accent-muted: #424242;
+  --accent-semi-transparent: hsla(0, 0%, 21%, 0.3);
+
+  --kitchen-bar-border: #161616;
+  --kitchen-bar-bg: #111111;
+  --kitchen-gradient: linear-gradient(90deg, #161616 0%, #111111 100%);
+
+  --input-main-bg: #383838;
+  --input-sub-bg: #1f1f1f;
+  --input-sub-text: #111111;
+
+  --create-project-url: url("https://hc-cdn.hel1.your-objectstorage.com/s/v3/dd434c974c09b148_outline.png");
+  --projects-show-timeline-url: url(
+    'data:image/svg+xml,<svg width="8" height="90" viewBox="0 0 4 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="4" height="30" rx="2" fill="%23272727"/></svg>'
+  );
+
+  --accent-image: url("https://hc-cdn.hel1.your-objectstorage.com/s/v3/cb0b4ddb0ba5d286_texture.png");
+  --star-color: #444444;
+  --music-player-bg: var(--accent);
 }
 
 [data-theme="custom"] {
@@ -1570,7 +1611,6 @@ body.sidebar-editing #sidebar-banner {
   background: var(--kitchen-gradient) !important;
 }
 
-[data-theme] .explore__nav,
 [data-theme] .post,
 [data-theme] .project-card,
 [data-theme] .user-card,
@@ -1579,6 +1619,10 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .btn.btn--red,
 [data-theme] .projects-board__grid-item > .project-card {
   background-color: var(--surface-dark) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme] .explore__nav {
   border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
 }

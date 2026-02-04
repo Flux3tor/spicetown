@@ -1816,6 +1816,9 @@ async function addThemesPage() {
             <div class="themes__div-option themes__div-option--bg-color" name="bg-color-option" id="bg-color-leafy">
               <p class="themes__div-option-name">Leafy</p>
             </div>
+            <div class="themes__div-option themes__div-option--bg-color" name="bg-color-option" id="bg-color-onyx">
+              <p class="themes__div-option-name">Onyx</p>
+            </div>
           <div>
         </div>
       </div>
