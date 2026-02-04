@@ -2158,54 +2158,33 @@ function applyUISync() {
 }
 
 async function addExtraShipInfo() {
-  const posts = document.querySelectorAll(".post.post--ship:not([data-extra-info-added])");
-  if (posts.length === 0) return;
+  const shipPosts = document.querySelectorAll(".post.post--ship:not([data-payout-type])");
+  if (shipPosts.length === 0) return;
 
-  let runningMins = totalTime;
-  const allPosts = Array.from(document.querySelectorAll(".post"));
-
-  allPosts.forEach((post) => {
-    if (post.classList.contains("post--devlog")) {
-      const duration = post.querySelector(".post__duration")?.textContent || "";
-      const hours = parseInt(duration.match(/(\d+)h/)?.[1] || 0);
-      const minutes = parseInt(duration.match(/(\d+)m/)?.[1] || 0);
-      const postMins = (hours * 60) + minutes;
-      runningMins -= postMins;
+  shipPosts.forEach(shipPost => {
+    let mins = 0;
+    let next = shipPost.nextElementSibling;
+    while (next && !next.classList.contains("post--ship")) {
+      if (next.classList.contains("post--devlog")) {
+        const d = next.querySelector(".post__duration")?.textContent || "";
+        const h = d.match(/(\d+)h/)?.[1] || 0;
+        const m = d.match(/(\d+)m/)?.[1] || 0;
+        mins += (parseInt(h) * 60) + parseInt(m);
+      }
+      next = next.nextElementSibling;
     }
 
-    if (post.classList.contains("post--ship") && !post.hasAttribute("data-extra-info-added")) {
-      let shipSpecificMins = 0;
-      let next = post.nextElementSibling;
-      while (next && !next.classList.contains("post--ship")) {
-        if (next.classList.contains("post--devlog")) {
-          const duration = next.querySelector(".post__duration")?.textContent || "";
-          const hours = parseInt(duration.match(/(\d+)h/)?.[1] || 0);
-          const minutes = parseInt(duration.match(/(\d+)m/)?.[1] || 0);
-          shipSpecificMins += (hours * 60) + minutes;
-        }
-        next = next.nextElementSibling;
-      }
+    const timeSinceItem = document.createElement("div");
+    timeSinceItem.className = "post__payout-item";
+    timeSinceItem.innerHTML = `
+      <span class="post__payout-label">Time since:</span>
+      <span class="post__payout-value">${convertMToFormat(totalTime - mins)}</span>
+    `;
 
-      const footer = post.querySelector(".post__payout-footer");
-      if (footer) {
-        const timeSinceItem = document.createElement("div");
-        timeSinceItem.className = "post__payout-item";
-        timeSinceItem.innerHTML = `
-          <span class="post__payout-label">Time since:</span>
-          <span class="post__payout-value">${convertMToFormat(shipSpecificMins)}</span>
-        `;
-
-        const timeShippedItem = document.createElement("div");
-        timeShippedItem.className = "post__payout-item";
-        timeShippedItem.innerHTML = `
-          <span class="post__payout-label">Time shipped:</span>
-          <span class="post__payout-value">${convertMToFormat(runningMins)}</span>
-        `;
-
-        footer.appendChild(timeSinceItem);
-        footer.appendChild(timeShippedItem);
-        post.setAttribute("data-extra-info-added", "true");
-      }
+    const footer = shipPost.querySelector(".post__payout-footer");
+    if (footer) {
+      footer.appendChild(timeSinceItem);
+      shipPost.setAttribute("data-payout-type", "processed");
     }
   });
 }
