@@ -148,11 +148,6 @@
     <td>✓</td>
   </tr>
   <tr>
-    <td>User Explore</td>
-    <td>×</td>
-    <td>✓</td>
-  </tr>
-  <tr>
     <td>Inline Devlogging</td>
     <td>Partial (Dec 21)</td>
     <td>✓ (Jan 31)</td>
