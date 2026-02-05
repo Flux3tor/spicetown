@@ -277,6 +277,11 @@
     <td>✓</td>
     <td>×</td>
   </tr>
+  <tr>
+    <td>Ship Effiency Graph</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
 </table>
 
 Footnotes for the statuses will be here soon. If you have any issues with this being biased, feel free to contact me on Slack!
