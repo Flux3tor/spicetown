@@ -123,11 +123,6 @@
     <td>✓</td>
   </tr>
   <tr>
-    <td>Extra Proj. Info</td>
-    <td>Partial</td>
-    <td>✓</td>
-  </tr>
-  <tr>
     <td>Themes</td>
     <td>Partial</td>
     <td>✓</td>
@@ -174,8 +169,8 @@
   </tr>
   <tr>
     <td>Markdown Editor</td>
-    <td>✓ (Different)</td>
-    <td>✓ (Different)</td>
+    <td>✓</td>
+    <td>✓</td>
   </tr>
   <tr>
     <td>Markdown Previewer</td>
@@ -186,6 +181,11 @@
     <td>Better Shop Goals</td>
     <td>✓ (Different)</td>
     <td>✓ (Different)</td>
+  </tr>
+  <tr>
+    <td>Extra Proj. Info</td>
+    <td>✓</td>
+    <td>✓</td>
   </tr>
   <tr>
     <td>Exposed Achievements</td>
