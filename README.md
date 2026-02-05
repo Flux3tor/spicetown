@@ -20,6 +20,7 @@
 <ul>
   <li><a href="#features">Features</a>
     <ul>
+      <li><a href="#utils-comparison">Utils Comparison</a></li>
       <li><a href="#project-stats+">Project Stats+</a>
         <ul>
           <li><a href="#examples-project-stats+">Examples</a></li>
@@ -63,6 +64,227 @@
 
 <h2 id="features">Features</h2>
 <p>Spicetown-integrated features are the main focus of Spicetown. These usually try to improve the flow of Flavortown. Currently, there are <b>3</b> features available for public use. Feel free to contribute and add new features!</p>
+
+<h3 id="utils-comparison">Utils Comparison</h3>
+<table>
+  <tr>
+    <th>Feature</th>
+    <th>Utils</th>
+    <th>Spicetown</th>
+  </tr>
+  <tr>
+    <td>Screenshare Mode</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Copyable API Key</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Website</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Random Project</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Hotkeys</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Fade-in Animation</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>User Explore</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Streaks</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Sidebar Editor</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>User Searching</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Pocket Watcher</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Shop Item Extra Info</td>
+    <td>Partial</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Markdown Editor</td>
+    <td>Partial</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Markdown Previewer</td>
+    <td>Flawed</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Public Votes</td>
+    <td>Partial</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Extra Proj. Info</td>
+    <td>Partial</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Themes</td>
+    <td>Flawed</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>User Explore</td>
+    <td>×</td>
+    <td>✓</td>
+  </tr>
+  <tr>
+    <td>Inline Devlogging</td>
+    <td>Partial (Dec 21)</td>
+    <td>✓ (Jan 31)</td>
+  </tr>
+  <tr>
+    <td>Changelog Generator</td>
+    <td>✓ (Jan 31)</td>
+    <td>✓ (Jan 25)</td>
+  </tr>
+  <tr>
+    <td>Data Management</td>
+    <td>✓ (Jan 24)</td>
+    <td>✓ (Jan 25)</td>
+  </tr>
+  <tr>
+    <td>Project Searching</td>
+    <td>✓ (Dec 24)</td>
+    <td>✓ (Dec 23)</td>
+  </tr>
+  <tr>
+    <td>Emojis Rendering</td>
+    <td>✓ (Jan 25)</td>
+    <td>✓ (Jan 24)</td>
+  </tr>
+  <tr>
+    <td>Next Ship Payout Estimation</td>
+    <td>✓ (Jan 31)</td>
+    <td>✓ (Jan 28)</td>
+  </tr>
+  <tr>
+    <td>Themes (Count)</td>
+    <td>6</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td>Better Shop Goals</td>
+    <td>✓ (Different)</td>
+    <td>✓ (Different)</td>
+  </tr>
+  <tr>
+    <td>Exposed Achievements</td>
+    <td>✓</td>
+    <td>× (Removed)</td>
+  </tr>
+  <tr>
+    <td>Better Kitchen</td>
+    <td>✓</td>
+    <td>Partial</td>
+  </tr>
+  <tr>
+    <td>Extra Ship Info</td>
+    <td>✓</td>
+    <td>Partial</td>
+  </tr>
+  <tr>
+    <td>Custom Theme</td>
+    <td>✓</td>
+    <td>Flawed</td>
+  </tr>
+  <tr>
+    <td>Auto-claim Achievements</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Admin Theming</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Better Vote History</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Doomscroll Devlogs</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>shots.so Integration</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Better Achievements</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Raycast</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Devlog Editing Version History</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Speed Reading</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Better Leaderboard</td>
+    <td>✓</td>
+    <td>Partial</td>
+  </tr>
+  <tr>
+    <td>Link Finder</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+  <tr>
+    <td>Screenshot Annotator</td>
+    <td>✓</td>
+    <td>×</td>
+  </tr>
+</table>
+
+Footnotes for the statuses will be here soon. If you have any issues with this being biased, feel free to contact me on Slack!
 
 <h3 id="project-stats+">Project Stats+</h3>
 <i><u>Also known as "Extra Project Stats"</u></i>
