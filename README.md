@@ -203,6 +203,11 @@
     <td>Partial</td>
   </tr>
   <tr>
+    <td>Better Leaderboard</td>
+    <td>✓</td>
+    <td>Partial</td>
+  </tr>
+  <tr>
     <td>Custom Theme</td>
     <td>✓</td>
     <td>Flawed</td>
@@ -251,11 +256,6 @@
     <td>Speed Reading</td>
     <td>✓</td>
     <td>×</td>
-  </tr>
-  <tr>
-    <td>Better Leaderboard</td>
-    <td>✓</td>
-    <td>Partial</td>
   </tr>
   <tr>
     <td>Link Finder</td>
