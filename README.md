@@ -279,7 +279,7 @@
   </tr>
 </table>
 
-**Shop Item Extra Info**: 
+***Checked by Utils owner, Hridya***
 
 <h3 id="project-stats+">Project Stats+</h3>
 <i><u>Also known as "Extra Project Stats"</u></i>
