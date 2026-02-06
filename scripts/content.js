@@ -47,7 +47,8 @@ async function initialize() {
     addShopItemEstimation,
     addInlineDevlogCreator,
     addSidebarEditor,
-    addPocketWatcher
+    addPocketWatcher,
+    autoClaimAchievements
   ];
   uiEnhancements.forEach(func => func());
 
@@ -3314,6 +3315,21 @@ function addUserSearcher() {
     } else {
       targetElement.innerHTML = html;
     }
+  }
+}
+
+async function autoClaimAchievements() {
+  const lastClaim = localStorage.getItem("auto_achievements_last_claim");
+  const now = Date.now();
+  if (lastClaim && (now - lastClaim < 600000)) return;
+  try {
+    const response = await fetch(`https://flavortown.hackclub.com/my/achievements`);
+    if (response.ok) {
+      localStorage.setItem("auto_achievements_last_claim", now);
+      console.log("tried to auto claim achievements!");
+    }
+  } catch (error) {
+    console.error("failed to auto claim achievements", error);
   }
 }
 
