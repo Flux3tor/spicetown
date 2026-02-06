@@ -1200,6 +1200,9 @@ body.sidebar-editing #sidebar-banner {
   width: fit-content !important;
   background: none !important;
 }
+.sidebar__nav-label {
+  text-overflow: ellipsis;
+}
 
 /** ANIMATIONS **/
 
@@ -3098,4 +3101,73 @@ body[data-theme="bg-color-aurora"] {
 }
 [data-theme] .explore__nav--type.explore__nav--desktop {
   border-color: var(--border-color) !important;
+}
+[data-theme] .achievements__stats {
+  background: var(--surface-dark) !important;
+}
+[data-theme] .achievements__stats-text {
+  color: var(--text-primary) !important;
+}
+[data-theme] .achievements__stats-count {
+  color: var(--accent) !important;
+}
+[data-theme] .achievements__stats-total {
+  color: inherit !important;
+}
+[data-theme] .achievements__stats-bar,
+[data-theme] .achievements__progress-bar {
+  background-color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+[data-theme] .achievements__stats-fill,
+[data-theme] .achievements__progress-fill {
+  background: var(--kitchen-gradient) !important;
+}
+[data-theme] .achievements__card {background-color: var(--surface-dark) !important;}
+[data-theme] .achievements__card::before {
+  background-color: var(--surface-dark) !important;
+  background-image: var(
+    --accent-image,
+    linear-gradient(
+      rgba(255, 255, 255, 0.05) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(255, 255, 255, 0.05) 75%,
+      rgba(255, 255, 255, 0.05)
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(255, 255, 255, 0.05) 75%,
+      rgba(255, 255, 255, 0.05)
+    )
+  ) !important;
+  background-size: 80px 80px;
+}
+[data-theme] .achievements__card--earned .achievements__icon {
+  background-color: var(--border-color) !important;
+}
+[data-theme] .achievements__card:not(.achievements__card--earned) .achievements__icon {
+  background-color: var(--accent) !important;
+}
+[data-theme] .achievements__name {
+  color: var(--accent) !important;
+}
+[data-theme] .achievements__description,
+[data-theme] .achievements__progress-text {
+  color: var(--text-primary) !important;  
+}
+[data-theme] .achievements__icon-svg {
+  fill: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme] .achievements__reward {
+  background-color: var(--accent) !important;
+  color: var(--surface-dark) !important;
+}
+[data-theme] .achievements__earned-at {
+  background-color: var(--accent-darker) !important;
+  color: var(--text-primary) !important; 
 }
