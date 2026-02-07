@@ -1203,6 +1203,52 @@ body.sidebar-editing #sidebar-banner {
 .sidebar__nav-label {
   text-overflow: ellipsis;
 }
+.achievements__toast {
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-tan-400);
+  color: var(--color-text-body);
+  padding: .75rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  z-index: 99999999999999999999999999999999999999; /* this should be enough :) */
+  transition: top 500ms ease;
+}
+.achievements__toast.show {
+  top: 20px;
+}
+.achievements__toast-content {
+  transition: opacity 400ms ease;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.achievements__toast-content.fade-out {
+  opacity: 0;
+}
+.achievements__toast-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.achievements__toast-icon svg, 
+.achievements__toast-icon img {
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px;
+  filter: none !important;
+  opacity: 1 !important;
+  object-fit: contain;
+}
+.achievements__toast-icon svg path {
+  fill: currentColor;
+}
 
 /** ANIMATIONS **/
 

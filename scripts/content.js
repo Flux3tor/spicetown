@@ -3321,16 +3321,76 @@ function addUserSearcher() {
 async function autoClaimAchievements() {
   const lastClaim = localStorage.getItem("auto_achievements_last_claim");
   const now = Date.now();
-  if (lastClaim && (now - lastClaim < 600000)) return;
+
+  if (lastClaim && (now - parseInt(lastClaim) < 60000)) return;
+
   try {
     const response = await fetch(`https://flavortown.hackclub.com/my/achievements`);
-    if (response.ok) {
-      localStorage.setItem("auto_achievements_last_claim", now);
-      console.log("tried to auto claim achievements!");
-    }
+    if (!response.ok) return;
+
+    const html = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const earnedCards = doc.querySelectorAll(".achievements__card--earned");
+    const known = JSON.parse(localStorage.getItem("known_achievements") || "[]");
+
+    earnedCards.forEach((card, index) => {
+      const slug = card.dataset.slug;
+      if (slug && !known.includes(slug)) {
+        const name = card.querySelector(".achievements__name")?.textContent || "Achievement!";
+        const iconContainer = card.querySelector(".achievements__icon") || card.querySelector(".achievements__image");
+        const iconHTML = iconContainer ? iconContainer.innerHTML : "";
+
+        const reward = card.querySelector(".achievements__reward")?.textContent || "+0 🍪";
+
+        setTimeout(() => showAchievementToast(name, iconHTML, reward), index * 400);
+        
+        known.push(slug);
+      }
+    });
+
+    localStorage.setItem("known_achievements", JSON.stringify(known));
+    localStorage.setItem("auto_achievements_last_claim", now.toString());
   } catch (error) {
     console.error("failed to auto claim achievements", error);
   }
+}
+
+function showAchievementToast(name, iconHTML, reward) {
+  let container = document.getElementById("achievements__toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "achievements__toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "achievements__toast";
+
+  const content = document.createElement("div");
+  content.className = "achievements__toast-content";
+  content.innerHTML = `
+    <div class="achievements__toast-icon">${iconHTML}</div>
+    <span>${name}</span>
+  `;
+
+  toast.appendChild(content);
+  container.appendChild(toast);
+
+  setTimeout(() => toast.classList.add("show"), 100);
+
+  setTimeout(() => content.classList.add("fade-out"), 2200);
+
+  setTimeout(() => {
+    content.innerHTML = `<span class="achievements__toast-reward">${reward}</span>`;
+    content.classList.remove("fade-out");
+  }, 2500);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 500);
+  }, 5000);
 }
 
 function str_rand(length) {
