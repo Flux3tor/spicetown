@@ -48,7 +48,8 @@ async function initialize() {
     addInlineDevlogCreator,
     addSidebarEditor,
     addPocketWatcher,
-    autoClaimAchievements
+    autoClaimAchievements,
+    addVoteDiscardGuard
   ];
   uiEnhancements.forEach(func => func());
 
@@ -3391,6 +3392,62 @@ function showAchievementToast(name, iconHTML, reward) {
     toast.classList.remove("show");
     setTimeout(() => toast.remove(), 500);
   }, 5000);
+}
+
+function addVoteDiscardGuard() {
+  const submitBtn = document.querySelector(".btn-submit");
+  const projectLinks = document.querySelectorAll(".votes-new__project-buttons a");
+  
+  if (!submitBtn || projectLinks.length === 0) return;
+
+  const entryTime = Date.now();
+  const waitTime = 30000;
+  const clickedLinks = new Set();
+  const totalLinksRequired = projectLinks.length;
+
+  const updateButtonState = () => {
+    const elapsed = Date.now() - entryTime;
+    const remaining = Math.ceil((waitTime - elapsed) / 1000);
+    const hasClickedAll = clickedLinks.size >= totalLinksRequired;
+
+    if (elapsed < waitTime) {
+      submitBtn.disabled = true;
+      submitBtn.innerText = `Wait ${remaining}s...`;
+    } else if (!hasClickedAll) {
+      submitBtn.disabled = true;
+      const needed = totalLinksRequired - clickedLinks.size;
+      submitBtn.innerText = `Check ${needed} more link${needed > 1 ? 's' : ''}...`;
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = "1";
+      submitBtn.style.cursor = "pointer";
+      submitBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" role="img" class="btn-submit__icon">
+          <path d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0" fill="currentColor"></path>
+        </svg>
+        Submit
+      `;
+      return true;
+    }
+    return false;
+  };
+
+  projectLinks.forEach(link => {
+    const trackClick = () => {
+      clickedLinks.add(link.href);
+      updateButtonState();
+    };
+    link.addEventListener("click", trackClick);
+    link.addEventListener("auxclick", trackClick);
+  });
+  
+  submitBtn.disabled = true;
+  submitBtn.style.opacity = "0.5";
+  submitBtn.style.cursor = "not-allowed";
+
+  const timer = setInterval(() => {
+    if (updateButtonState()) clearInterval(timer);
+  }, 1000);
 }
 
 function str_rand(length) {
