@@ -1298,7 +1298,8 @@ body.sidebar-editing #sidebar-banner {
 .kitchen-announcement,
 .sidequest-card,
 .votes-new__main,
-.projects-new__form {
+.projects-new__form,
+.projects-show__payout-votes {
   opacity: 0;
   animation: 1.5s fade-in 300ms ease forwards;
 }
@@ -3216,4 +3217,25 @@ body[data-theme="bg-color-aurora"] {
 [data-theme] .achievements__earned-at {
   background-color: var(--accent-darker) !important;
   color: var(--text-primary) !important; 
+}
+[data-theme] .projects-show__payout-votes-title {
+  color: var(--text-primary) !important;
+}
+[data-theme] .projects-show__payout-votes-progress {
+  background-color: var(--surface-dark) !important;
+  border-color: var(--surface-card) !important;
+}
+[data-theme] .projects-show__payout-votes-progress::-webkit-progress-bar {
+  background-color: var(--surface-dark) !important;
+}
+[data-theme] .projects-show__payout-votes-progress::-webkit-progress-value {
+  background-color: var(--surface-card) !important;
+}
+[data-theme] .projects-show__payout-votes-text {
+  color: var(--text-primary) !important;
+}
+[data-theme] .tooltip {
+  background-color: var(--surface-dark) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--surface-card) !important;
 }
