@@ -49,7 +49,8 @@ async function initialize() {
     addSidebarEditor,
     addPocketWatcher,
     autoClaimAchievements,
-    addVoteDiscardGuard
+    addVoteDiscardGuard,
+    addVoteKeybinds
   ];
   uiEnhancements.forEach(func => func());
 
@@ -3448,6 +3449,53 @@ function addVoteDiscardGuard() {
   const timer = setInterval(() => {
     if (updateButtonState()) clearInterval(timer);
   }, 1000);
+}
+
+
+function addVoteKeybinds() {
+  const categories = document.querySelectorAll(".vote-category");
+  if (categories.length === 0) return;
+
+  document.addEventListener("keydown", (event) => {
+    if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") return;
+    
+    const score = parseInt(event.key);
+    if (score >= 1 && score <= 6) {
+      for (let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+        const stars = category.querySelectorAll("input[type='radio']");
+        const isRated = Array.from(stars).some(star => star.checked);
+
+        if (!isRated) {
+          const targetStar = category.querySelector(`input[value="${score}"]`);
+          if (targetStar) {
+            targetStar.checked = true;
+            targetStar.dispatchEvent(new Event("change", {bubbles: true}));
+            const nextCategory = categories[i + 1];
+            if (nextCategory) {
+              nextCategory.scrollIntoView({behavior: "smooth", block: "center"});
+            } else {
+              const submitBtn = document.querySelector(".btn-submit");
+              if (submitBtn) submitBtn.scrollIntoView({behavior: "smooth", block: "center"});
+            }
+            break;
+          }
+        }
+      }
+    }
+  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.transition = "opacity 0.2s ease";
+        entry.target.style.opacity = "1";
+      } else {
+        entry.target.style.opacity = "0.5";
+      }
+    });
+  }, {threshold: 0.6});
+
+  categories.forEach(category => observer.observe(category));
 }
 
 function str_rand(length) {
