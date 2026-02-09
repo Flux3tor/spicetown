@@ -49,8 +49,8 @@ async function initialize() {
     addSidebarEditor,
     addPocketWatcher,
     autoClaimAchievements,
-    addVoteDiscardGuard,
-    addVoteKeybinds
+    addVoteKeybinds,
+    addBetterVoting
   ];
   uiEnhancements.forEach(func => func());
 
@@ -1548,92 +1548,12 @@ async function addUserExplore() {
   exploreNav.querySelector(".explore__nav--type.explore__nav--desktop").appendChild(usersComponent);
 }
 
-// function addAchievementInfo() { // deprecate
-//   const achievementGridDiv = document.querySelector(".achievements__grid");
-//   if (!achievementGridDiv) return;
-//   const achievementMap = {
-//     "Anyone Can Cook!": "Sign up to Flavortown",
-//     "Very Fried": "Verify your identity",
-//     "Home Cookin'": "Make your first project",
-//     "Recipe Notes": "Post a devlog",
-//     "Yapper": "Comment on a devlog",
-//     "Off the Menu": "Buy something from the shop (NOT free stickers)",
-//     "Regular Customer": "Buy 5 items from the shop",
-//     "VIP Diner": "Buy 10 items from the shop",
-//     "Line Cook": "Have 5 or more projects",
-//     "Order Up!": "Ship your first project",
-//     "Michelin Star": "Have your project approved for shipping",
-//     "Cookbook Author": "Post 10 devlogs",
-//     "Scrapbook usage?!": "Use scrapbook in a devlog",
-//     "Cooking": "Get 'fire' project status, given out by Flavortown devs",
-//     "Accept cookies": "Spam the cookie ? amount of times."
-//   };
-//   const secretMap = {
-//     "15": {name: "Cookbook Author", desc: "Post 10 devlogs", reward: "15"},
-//     "16": {name: "Scrapbook usage?!", desc: "Use scrapbook in a devlog"},
-//     "17": {name: "Cooking", desc: "Get 'fire' project status, given out by Flavortown devs", reward: "5"},
-//     "18": {name: "Accept cookies", desc: "Spam the cookie for a certain amount."} // isnt in fucking source code :(
-//   };
-//   const achievementCards = achievementGridDiv.querySelectorAll(".achievements__card");
-//   achievementCards.forEach((achievementCard, index) => {
-//     const achievementCardNameEl = achievementCard.querySelector(".achievements__name");
-//     const achievementCardDescriptionEl = achievementCard.querySelector(".achievements__description");
-//     const achievementCardRewardEl = achievementCard.querySelector(".achievements__reward.achievements__reward--secret");
-
-//     if (!achievementCardNameEl || !achievementCardDescriptionEl) return;
-
-//     const achievementCardName = achievementCardNameEl.textContent.trim();
-//     const position = (index + 1).toString(); // fuck 0-index
-
-//     if (achievementCardName === "???" && secretMap[position]) {
-//       achievementCardNameEl.textContent = secretMap[position].name;
-//       achievementCardDescriptionEl.textContent = secretMap[position].desc;
-//       if (achievementCardRewardEl && secretMap[position].reward) {
-//         achievementCardRewardEl.textContent = `+${secretMap[position].reward} 🍪`;
-//       }
-//     } else if (achievementMap[achievementCardName]) {
-//       achievementCardDescriptionEl.textContent = achievementMap[achievementCardName];
-//     }
-//   })
-// }
-
 async function addSpicetownSettings() {
   const settingsForm = await document.querySelector(".settings-form");
   if (!settingsForm) return;
   const modalActions = await settingsForm.querySelector(".modal__actions");
   const saveBtn = await modalActions.querySelector(".modal__actions-close");
 
-  // screenshare mode
-  // const screenshareModeDiv = document.createElement("div");
-  // screenshareModeDiv.classList.add("settings-form__field");
-
-  // const screenshareModeCheckbox = document.createElement("label");
-  // screenshareModeCheckbox.classList.add("settings-form__checkbox");
-  // screenshareModeDiv.appendChild(screenshareModeCheckbox);
-
-  // const screenshareModeBoxInput = document.createElement("input");
-  // screenshareModeBoxInput.type = "checkbox";
-  // screenshareModeBoxInput.name = "screenshare_mode";
-  // screenshareModeBoxInput.id = "screenshare_mode";
-  // screenshareModeBoxInput.value = 1;
-  // screenshareModeCheckbox.appendChild(screenshareModeBoxInput);
-
-  // const screenshareModeTitle = document.createElement("span");
-  // screenshareModeTitle.textContent = "Screenshare Mode"
-  // screenshareModeCheckbox.appendChild(screenshareModeTitle);
-
-  // const screenshareModeHint = document.createElement("small");
-  // screenshareModeHint.classList.add("settings-form__hint");
-  // screenshareModeHint.textContent = "Replace sensitive information blurring with secure, black boxes"
-  // screenshareModeDiv.appendChild(screenshareModeHint);
-
-  // settingsForm.insertBefore(screenshareModeDiv, modalActions);
-
-  // saveBtn.addEventListener("click", function() {
-  //   saveSetting(screenshareModeBoxInput.checked);
-  // });
-
-  // settings v2
   const apiKeyDisplay = document.querySelector(".api-key-display");
   if (apiKeyDisplay) {
     const apiKeyContainer = apiKeyDisplay.parentElement
@@ -3395,63 +3315,6 @@ function showAchievementToast(name, iconHTML, reward) {
   }, 5000);
 }
 
-function addVoteDiscardGuard() {
-  const submitBtn = document.querySelector(".btn-submit");
-  const projectLinks = document.querySelectorAll(".votes-new__project-buttons a");
-  
-  if (!submitBtn || projectLinks.length === 0) return;
-
-  const entryTime = Date.now();
-  const waitTime = 30000;
-  const clickedLinks = new Set();
-  const totalLinksRequired = projectLinks.length;
-
-  const updateButtonState = () => {
-    const elapsed = Date.now() - entryTime;
-    const remaining = Math.ceil((waitTime - elapsed) / 1000);
-    const hasClickedAll = clickedLinks.size >= totalLinksRequired;
-
-    if (elapsed < waitTime) {
-      submitBtn.disabled = true;
-      submitBtn.innerText = `Wait ${remaining}s...`;
-    } else if (!hasClickedAll) {
-      submitBtn.disabled = true;
-      const needed = totalLinksRequired - clickedLinks.size;
-      submitBtn.innerText = `Check ${needed} more link${needed > 1 ? 's' : ''}...`;
-    } else {
-      submitBtn.disabled = false;
-      submitBtn.style.opacity = "1";
-      submitBtn.style.cursor = "pointer";
-      submitBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" role="img" class="btn-submit__icon">
-          <path d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0" fill="currentColor"></path>
-        </svg>
-        Submit
-      `;
-      return true;
-    }
-    return false;
-  };
-
-  projectLinks.forEach(link => {
-    const trackClick = () => {
-      clickedLinks.add(link.href);
-      updateButtonState();
-    };
-    link.addEventListener("click", trackClick);
-    link.addEventListener("auxclick", trackClick);
-  });
-  
-  submitBtn.disabled = true;
-  submitBtn.style.opacity = "0.5";
-  submitBtn.style.cursor = "not-allowed";
-
-  const timer = setInterval(() => {
-    if (updateButtonState()) clearInterval(timer);
-  }, 1000);
-}
-
-
 function addVoteKeybinds() {
   const categories = document.querySelectorAll(".vote-category");
   if (categories.length === 0) return;
@@ -3496,6 +3359,95 @@ function addVoteKeybinds() {
   }, {threshold: 0.6});
 
   categories.forEach(category => observer.observe(category));
+}
+
+function addBetterVoting() {
+  const submitBtn = document.querySelector(".btn-submit");
+  const projectLinks = document.querySelectorAll(".votes-new__project-buttons a");
+  const demoAnchor = document.querySelector("a[aria-label='Demo']");
+  const repoAnchor = document.querySelector("a[aria-label='Repo']");
+
+  if (!submitBtn || projectLinks.length === 0) return;
+
+  let openedTabs = [];
+  let hasLaunched = false;
+  const clickedLinks = new Set();
+  const entryTime = Date.now();
+  const waitTime = 30000;
+
+  const openTabs = (event) => {
+    if (hasLaunched || event.target.closest('a, button')) return;
+    
+    [demoAnchor, repoAnchor].forEach(anchor => {
+      if (anchor) {
+        const originalOpen = window.open;
+        window.open = (...args) => {
+          const tab = originalOpen(...args);
+          if (tab) openedTabs.push(tab);
+          return tab;
+        };
+
+        anchor.click();
+
+        window.open = originalOpen;
+      }
+    });
+
+    hasLaunched = true;
+    updateUI();
+  };
+
+  const closeTabs = () => {
+    openedTabs.forEach(tab => {
+      if (tab && !tab.closed) tab.close();
+    });
+  };
+
+  const updateUI = () => {
+    const elapsed = Date.now() - entryTime;
+    const remaining = Math.ceil((waitTime - elapsed) / 1000);
+    const hasClickedAll = clickedLinks.size >= projectLinks.length;
+
+    if (elapsed < waitTime) {
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = "0.5";
+      submitBtn.style.cursor = "not-allowed";
+      submitBtn.innerText = `Wait ${remaining}s...`;
+      return false;
+    } 
+    
+    if (!hasClickedAll) {
+      submitBtn.disabled = true;
+      submitBtn.innerText = `Click background to open links...`;
+      return false;
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = "1";
+    submitBtn.style.cursor = "pointer";
+    submitBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" class="btn-submit__icon">
+        <path d="M21.546 5.111a1.5 1.5 0 0 1 0 2.121L10.303 18.475a1.6 1.6 0 0 1-2.263 0L2.454 12.89a1.5 1.5 0 1 1 2.121-2.121l4.596 4.596L19.424 5.111a1.5 1.5 0 0 1 2.122 0" fill="currentColor"></path>
+      </svg>
+      Submit
+    `;
+    return true;
+  };
+
+  document.addEventListener("mousedown", openTabs);
+
+  projectLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      clickedLinks.add(link.href);
+      updateUI();
+    });
+  });
+
+  submitBtn.addEventListener("click", closeTabs);
+
+  const timer = setInterval(() => {
+    if (updateUI()) clearInterval(timer);
+  }, 1000);
 }
 
 function str_rand(length) {
