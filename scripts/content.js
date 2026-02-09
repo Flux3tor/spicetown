@@ -3380,16 +3380,9 @@ function addBetterVoting() {
     
     [demoAnchor, repoAnchor].forEach(anchor => {
       if (anchor) {
-        const originalOpen = window.open;
-        window.open = (...args) => {
-          const tab = originalOpen(...args);
-          if (tab) openedTabs.push(tab);
-          return tab;
-        };
-
-        anchor.click();
-
-        window.open = originalOpen;
+        const thingy = window.open(anchor.href, "_blank");
+        if (thingy) openedTabs.push(thingy);
+        clickedLinks.add(anchor.href);
       }
     });
 
@@ -3443,7 +3436,7 @@ function addBetterVoting() {
     });
   });
 
-  submitBtn.addEventListener("click", closeTabs);
+  submitBtn.addEventListener("mousedown", closeTabs);
 
   const timer = setInterval(() => {
     if (updateUI()) clearInterval(timer);

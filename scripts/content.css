@@ -2161,6 +2161,9 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .votes-new__project-card-content > h1 {
   color: var(--accent) !important;
 }
+[data-theme] .votes-new__project-card-content > p {
+  color: var(--text-primary) !important;
+}
 [data-theme] .votes-new__devlogs::-webkit-scrollbar-thumb {
   background: var(--surface-dark) !important;
 }
