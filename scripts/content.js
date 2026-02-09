@@ -50,7 +50,8 @@ async function initialize() {
     addPocketWatcher,
     autoClaimAchievements,
     addVoteKeybinds,
-    addBetterVoting
+    addBetterVoting,
+    addBetterVoteHistory
   ];
   uiEnhancements.forEach(func => func());
 
@@ -3441,6 +3442,48 @@ function addBetterVoting() {
   const timer = setInterval(() => {
     if (updateUI()) clearInterval(timer);
   }, 1000);
+}
+
+function addBetterVoteHistory() {
+  const table = document.querySelector(".my-votes > table");
+  if (!table) return;
+
+  const headerRow = table.querySelector("thead tr");
+  if (headerRow) {
+    const copyHeader = document.createElement("th");
+    copyHeader.textContent = "Copy";
+    headerRow.appendChild(copyHeader);
+  }
+
+  const rows = table.querySelectorAll("tbody tr");
+  rows.forEach(row => {
+    const cells = row.querySelectorAll("td");
+    if (cells.length < 6) return;
+
+    const originality = cells[2].textContent.split("/")[0].trim();
+    const technical = cells[3].textContent.split("/")[0].trim();
+    const usability = cells[4].textContent.split("/")[0].trim();
+    const storytelling = cells[5].textContent.split("/")[0].trim();
+
+    const actionCell = document.createElement("td");
+    const copyBtn = document.createElement("button");
+
+    copyBtn.textContent = "Copy";
+    copyBtn.className = "btn btn--brown";
+    copyBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      navigator.clipboard.writeText(`${originality}/${technical}/${usability}/${storytelling}`).then(() => {
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+        }, 1500);
+      });
+    });
+
+    actionCell.appendChild(copyBtn);
+    row.appendChild(actionCell);
+  });
 }
 
 function str_rand(length) {

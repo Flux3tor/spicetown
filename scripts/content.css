@@ -1249,6 +1249,9 @@ body.sidebar-editing #sidebar-banner {
 .achievements__toast-icon svg path {
   fill: currentColor;
 }
+.my-votes table th {
+  padding-inline: 1rem !important;
+}
 
 /** ANIMATIONS **/
 
