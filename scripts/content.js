@@ -3412,7 +3412,7 @@ function addBetterVoting() {
     
     if (!hasClickedAll) {
       submitBtn.disabled = true;
-      submitBtn.innerText = `Click background to open links...`;
+      submitBtn.innerText = `Check the project links...`;
       return false;
     }
 

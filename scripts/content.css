@@ -2580,7 +2580,7 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .shop-item-card__sale-badge {
   border-color: var(--border-color) !important;
   background-color: var(--surface-card) !important;
-  color: var(--surface-dark) !important;
+  color: var(--text-primary) !important;
 }
 [data-theme] .shop-item-card--on-sale {
   border-color: var(--border-color) !important;
@@ -3244,4 +3244,59 @@ body[data-theme="bg-color-aurora"] {
   background-color: var(--surface-dark) !important;
   color: var(--text-primary) !important;
   border-color: var(--surface-card) !important;
+}
+[data-theme] .post__chevron-icon {
+  color: var(--text-primary) !important;
+}
+[data-theme] .shop-item-card__order-button > p {
+  color: var(--surface-dark) !important;
+}
+[data-theme] .votes-new__balance-text--positive,
+[data-theme] .votes-new__balance-text--negative {
+  position: relative !important;
+  z-index: 1 !important;
+  color: var(--text-primary) !important;
+  background: none !important;
+}
+[data-theme] .votes-new__balance-text--positive::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .1;
+  z-index: -1;
+  background: var(--accent);
+  border-radius: 8px;
+}
+[data-theme] .votes-new__balance-text--negative::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .1;
+  z-index: -1;
+  background: var(--surface-dark);
+  border-radius: 8px;
+}
+[data-theme] .votes-new__ai-declaration {
+  position: relative !important;
+  z-index: 1 !important;
+  color: var(--text-primary) !important;
+  background: none !important;
+}
+[data-theme] .votes-new__ai-declaration::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .1;
+  z-index: -1;
+  background: var(--accent);
+  border-radius: 8px;
 }
