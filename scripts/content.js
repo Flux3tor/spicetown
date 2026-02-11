@@ -2490,17 +2490,50 @@ async function addDevlogStreak() {
     const updateStreakUI = (streakValue, datesSet) => {
       const element = kitchenIndex.querySelector(".state-card__streak");
       if (!element) return;
+      const doneToday = datesSet.has(todayString);
       element.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="39" height="47" viewBox="0 0 39 47" fill="none" class="achievements__icon-svg">
-          <linearGradient id="streak-gradient" x2="0" y2="1">
-            <stop offset="0%" stop-color="var(--initial)"/>
-            <stop offset="100%" stop-color="var(--end)"/>
-          </linearGradient>
-          <path d="M31.2138 43.3002C29.9396 44.2804 28.2733 45.2115 26.362 45.8977C25.9699 46.0447 25.5778 45.6526 25.6758 45.2605C25.9699 44.0353 26.1659 42.7611 26.1659 41.4379C26.1659 34.6257 21.3631 28.8427 19.6968 26.9804C19.3538 26.6373 18.8147 26.6373 18.5206 26.9804C16.8543 28.7937 12.0515 34.5767 12.0515 41.4379C12.0515 42.9571 12.2965 44.4764 12.6886 45.8486C12.7866 46.2407 12.4436 46.6328 12.0515 46.5348C8.76793 45.6526 6.12147 44.2314 5.14131 43.4472C-2.84707 36.6841 -0.053587 26.0492 3.67105 20.4623C7.78776 14.1402 12.6886 8.74927 12.4436 1.20197C12.3946 0.319816 13.3747 -0.268285 14.1589 0.123782C20.0341 3.08453 24.1626 9.32042 25.555 14.5857C25.6633 14.9952 26.1944 15.096 26.452 14.7598C27.6297 13.2234 28.1335 11.1737 28.1753 9.33737C28.1753 8.30819 29.4985 7.7691 30.2336 8.55323C35.8206 14.5813 44.4461 32.9594 31.2138 43.3002Z" fill="currentColor"></path>
-        </svg>
-        ${streakValue}
+        <div class="state-card__streak--inner">  
+          <svg xmlns="http://www.w3.org/2000/svg" width="39" height="47" viewBox="0 0 39 47" fill="none" class="achievements__icon-svg">
+            <linearGradient id="streak-gradient" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--initial)"/>
+              <stop offset="100%" stop-color="var(--end)"/>
+            </linearGradient>
+            <path d="M31.2138 43.3002C29.9396 44.2804 28.2733 45.2115 26.362 45.8977C25.9699 46.0447 25.5778 45.6526 25.6758 45.2605C25.9699 44.0353 26.1659 42.7611 26.1659 41.4379C26.1659 34.6257 21.3631 28.8427 19.6968 26.9804C19.3538 26.6373 18.8147 26.6373 18.5206 26.9804C16.8543 28.7937 12.0515 34.5767 12.0515 41.4379C12.0515 42.9571 12.2965 44.4764 12.6886 45.8486C12.7866 46.2407 12.4436 46.6328 12.0515 46.5348C8.76793 45.6526 6.12147 44.2314 5.14131 43.4472C-2.84707 36.6841 -0.053587 26.0492 3.67105 20.4623C7.78776 14.1402 12.6886 8.74927 12.4436 1.20197C12.3946 0.319816 13.3747 -0.268285 14.1589 0.123782C20.0341 3.08453 24.1626 9.32042 25.555 14.5857C25.6633 14.9952 26.1944 15.096 26.452 14.7598C27.6297 13.2234 28.1335 11.1737 28.1753 9.33737C28.1753 8.30819 29.4985 7.7691 30.2336 8.55323C35.8206 14.5813 44.4461 32.9594 31.2138 43.3002Z" fill="currentColor"></path>
+          </svg>
+          ${streakValue}
+        </div>
+        <small id="streak-remaining-timer"></small>
       `;
-      element.classList.toggle("state-card__streak--done", datesSet.has(todayString));
+      element.classList.toggle("state-card__streak--done", doneToday);
+
+      if (!doneToday) {
+        startCountdown();
+      }
+    };
+
+    const startCountdown = () => {
+      const timerDisplay = document.getElementById("streak-remaining-timer");
+      if (!timerDisplay) return;
+
+      const updateClock = () => {
+        const now = new Date();
+        const tomorrow = new Date();
+        tomorrow.setHours(24, 0, 0, 0);
+
+        const difference = tomorrow - now;
+        if (difference > 0 && difference <= 4 * 60 * 60 * 1000) {
+          const hours = Math.floor(difference / 3600000).toString().padStart(2, "0");
+          const minutes = Math.floor((difference % 3600000) / 60000).toString().padStart(2, "0");
+          const seconds = Math.floor((difference % 60000) / 1000).toString().padStart(2, "0");
+          timerDisplay.innerHTML = `${hours}:${minutes}:${seconds} remaining`;
+          timerDisplay.style.display = "block";
+        } else {
+          timerDisplay.style.display = "none";
+        }
+      };
+
+      updateClock();
+      setInterval(updateClock, 1000);
     };
 
     const cached = await chrome.storage.local.get([cacheKey]);

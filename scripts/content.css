@@ -841,7 +841,7 @@
 .settings-section div {
   margin-top: .5rem;
 }
-.state-card__streak {
+.state-card__streak--inner {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1251,6 +1251,9 @@ body.sidebar-editing #sidebar-banner {
 }
 .my-votes table th {
   padding-inline: 1rem !important;
+}
+#streak-remaining-timer {
+  display: none;
 }
 
 /** ANIMATIONS **/
