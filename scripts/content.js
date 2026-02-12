@@ -929,7 +929,8 @@ async function addImprovedShop() {
     const shopGoalsLink = shopGoalItemDiv.querySelector(".shop-goals__link");
     const shopGoalsProgressTxt = shopGoalItemDiv.querySelector(".shop-goals__progress-text");
     const shopGoalsProgressBarFill = shopGoalItemDiv.querySelector(".shop-goals__progress-fill");
-    const itemName = shopGoalItemDiv.querySelector(".shop-goals__name").textContent;
+    const itemName = shopGoalItemDiv.querySelector(".shop-goals__name").textContent.trim();
+    chrome.storage.local.set({ [`shop_goal_name_${shopGoalItemID}`]: itemName });
 
     shopGoalItemDiv.setAttribute("draggable", "true");
 
@@ -1105,6 +1106,8 @@ async function addImprovedShop() {
       ...accessorySelections
     });
 
+    autoReconcile();
+
     shopGoalEditorDiv.style.display = "none";
     await calculateAllProgress();
     window.location.reload(); 
@@ -1112,13 +1115,10 @@ async function addImprovedShop() {
 
   editorRemoveBtn.addEventListener("click", () => {
     if (!activeEditingItem) return;
-    const originalRemoveBtn = activeEditingItem.div.querySelector(".shop-goals__remove");
-    if (originalRemoveBtn) {
-      originalRemoveBtn.click();
-      shopGoalEditorDiv.style.display = "none";
-      activeEditingItem = null;
-      window.location.reload(); // reload needed or else the inject DOM gets overwriten!!!!!!!!!!!!!!!!!!!!!!!!!
-    }
+    const id = activeEditingItem.id;
+    chrome.storage.local.remove([`shop_goal_qty_${id}`, `shop_goal_name_${id}`], () => {
+      window.location.reload();
+    });
   });
 
   const shopGoalsDiv = document.createElement("div");
@@ -1206,6 +1206,75 @@ async function addImprovedShop() {
     }
     calculateAllProgress();
   });
+
+  async function autoReconcile() {
+    try {
+      const response = await fetch("https://flavortown.hackclub.com/shop/my_orders");
+      const html = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      const orderItems = doc.querySelectorAll(".my-orders__item");
+      const storage = await chrome.storage.local.get(null);
+      const goalIds = Object.keys(storage)
+        .filter(key => key.startsWith("shop_goal_name_"))
+        .map(key => key.replace("shop_goal_name_", ""));
+      const processedOrders = storage["processed_orders"] || [];
+      let priorityOrder = storage["shop_goal_priority_order"] || [];
+      let workingQtys = {}; 
+      goalIds.forEach(id => {workingQtys[id] = storage[`shop_goal_qty_${id}`] || 0;});
+      let hasChanges = false;
+      let idsToRemove = [];
+      orderItems.forEach((order, index) => {
+        const orderName = order.querySelector(".my-orders__item-name")?.textContent.trim();
+        const headerText = order.querySelector(".my-orders__header-bar")?.textContent || "";
+        const idMatch = headerText.match(/#\s*(\d+)/);
+        const orderId = idMatch ? idMatch[1] : `fallback_${index}`;
+        const statusRaw = order.querySelector(".my-orders__status")?.textContent || "";
+        const status = statusRaw.replace(/\s+/g, ' ').trim().toLowerCase();
+        const qtyLabel = Array.from(order.querySelectorAll('.my-orders__label')).find(element => element.textContent.includes('Quantity'));
+        const qtyPurchased = qtyLabel ? parseInt(qtyLabel.nextElementSibling?.textContent.trim()) : 1;
+        if (processedOrders.includes(orderId)) return;
+        goalIds.forEach(id => {
+          const savedGoalName = storage[`shop_goal_name_${id}`];
+          if (savedGoalName && savedGoalName.toLowerCase() === orderName?.toLowerCase()) {
+            if (["fulfilled", "placed", "shipped", "pending"].includes(status)) {
+              workingQtys[id] = Math.max(0, workingQtys[id] - qtyPurchased);
+              if (workingQtys[id] <= 0) idsToRemove.push(id);
+              processedOrders.push(orderId);
+              hasChanges = true;
+            }
+          }
+        });
+      });
+      if (hasChanges) {
+        const finalSave = {"processed_orders": processedOrders};
+        const keysToRemove = [];
+        idsToRemove.forEach(id => {
+          const nativeRemoveBtn = document.querySelector(`.shop-goals__remove[data-item-id="${id}"]`);
+          if (nativeRemoveBtn) nativeRemoveBtn.click();
+          priorityOrder = priorityOrder.filter(pId => pId !== id);
+          Object.keys(storage).forEach(key => {
+            if (key.endsWith(`_${id}`)) keysToRemove.push(key);
+          });
+          const element = document.querySelector(`.shop-goals__item[data-item-id="${id}"]`);
+          if (element) element.remove();
+        });
+        finalSave["shop_goal_priority_order"] = priorityOrder;
+        goalIds.forEach(id => {
+          if (!idsToRemove.includes(id)) {
+            finalSave[`shop_goal_qty_${id}`] = workingQtys[id];
+          }
+        });
+        if (keysToRemove.length > 0) await chrome.storage.local.remove(keysToRemove);
+        await chrome.storage.local.set(finalSave);
+        if (typeof calculateAllProgress === "function") calculateAllProgress();
+      }
+    } catch (error) {
+      console.error("error with reconciling: ", error);
+    }
+  }
+
+  autoReconcile();
 }
 
 async function addProjectSearcher() {
@@ -1651,7 +1720,7 @@ async function addSpicetownSettings() {
       try {
         const data = JSON.parse(event.target.result);
         if (!data.storage) throw new Error("invalid backup file format!!!!!!!! uh oh");
-        await chrome.storage.local.set(data.storage);
+          (data.storage);
         if (data.browserLocal) {
           Object.entries(data.browserLocal).forEach(([key, value]) => {
             if (value) localStorage.setItem(key, value);
