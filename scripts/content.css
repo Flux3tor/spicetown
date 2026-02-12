@@ -1255,6 +1255,38 @@ body.sidebar-editing #sidebar-banner {
 #streak-remaining-timer {
   display: none;
 }
+.sidebar {
+  --sidebar-expanded-width: 317.5px !important;
+}
+.sidebar__nav-link {
+  position: relative !important;
+  overflow: visible !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.sidebar__nav-label {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.sidebar__nav-link--active::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: -1 !important;
+  background-color: var(--color-blue-500) !important;
+  background-image: url("/assets/mask/sidebar-active-4673ec9f.webp") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border-radius: calc(var(--border-radius)/1.5) !important;
+  transition: width 180ms ease !important;
+}
 
 /** ANIMATIONS **/
 
