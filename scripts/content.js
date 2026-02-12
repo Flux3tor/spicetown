@@ -1720,7 +1720,7 @@ async function addSpicetownSettings() {
       try {
         const data = JSON.parse(event.target.result);
         if (!data.storage) throw new Error("invalid backup file format!!!!!!!! uh oh");
-          (data.storage);
+        await chrome.storage.local.set(data.storage);
         if (data.browserLocal) {
           Object.entries(data.browserLocal).forEach(([key, value]) => {
             if (value) localStorage.setItem(key, value);
