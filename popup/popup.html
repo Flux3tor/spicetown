@@ -1,7 +1,30 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <link rel="stylesheet" href="popup.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+  </head>
   <body>
-    <h1>spicetown is working.</h1>
-    <p>this pop-up will be used for something in the future. keep an eye out! <b>join #spicetown btw!</b></p>
+    <div class="settings-section">
+      <h1>Settings</h2>
+      <h2>Keybinds</h3>
+      <div class="keybind-item">
+        <label>New Devlog</label>
+        <select id="keybind-new-devlog">
+          <option>Alt + Ctrl + N</option>
+        </select>
+      </div>
+      <div class="keybind-item">
+        <label>Sidebar Modifier</label>
+        <select id="keybind-sidebar-modifier">
+          <option value="ctrlKey">Ctrl</option>
+          <option value="altKey">Alt</option>
+        </select>
+      </div>
+      <button id="save-keybinds" class="btn">Save</button>
+    </div>
+    <script src="popup.js"></script>
   </body>
 </html>

@@ -1337,7 +1337,8 @@ body.sidebar-editing #sidebar-banner {
 .sidequest-card,
 .votes-new__main,
 .projects-new__form,
-.projects-show__payout-votes {
+.projects-show__payout-votes,
+.projects-board__notice {
   opacity: 0;
   animation: 1.5s fade-in 300ms ease forwards;
 }
@@ -3334,4 +3335,9 @@ body[data-theme="bg-color-aurora"] {
   z-index: -1;
   background: var(--accent);
   border-radius: 8px;
+}
+[data-theme] .projects-board__notice {
+  background: var(--accent) repeating-conic-gradient(from 0deg, rgba(0, 0, 0, 0.02) 0deg 90deg, transparent 90deg 180deg) !important;
+  outline-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
 }

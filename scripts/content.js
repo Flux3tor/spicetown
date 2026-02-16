@@ -337,14 +337,18 @@ function addDevlogImprovement() {
   });
 }
 
-function addKeybinds() { // :3
+async function addKeybinds() { // :3
+  const settings = await chrome.storage.local.get({
+    keybind_sidebar_modifier: "ctrlKey"
+  });
+
   document.querySelectorAll(".sidebar__nav-item-hotkey-div, .explore__nav-component-hotkey-div").forEach(element => element.remove());
+  const modifierLabel = settings.keybind_sidebar_modifier.replace("Key", "");
   const sidebarLinks = document.querySelectorAll(".sidebar__nav-list > .sidebar__nav-item > .sidebar__nav-link");
   sidebarLinks.forEach((sidebarItem, i) => {
-    const numberKey = (i + 1).toString();
     const hotkeyDiv = document.createElement("div");
     hotkeyDiv.className = "sidebar__nav-item-hotkey-div";
-    hotkeyDiv.innerHTML = `<p class="sidebar__nav-item-hotkey">Ctrl</p><p class="sidebar__nav-item-hotkey">${numberKey}</p>`;
+    hotkeyDiv.innerHTML = `<p class="sidebar__nav-item-hotkey">${modifierLabel}</p><p class="sidebar__nav-item-hotkey">${i + 1}</p>`;
     sidebarItem.parentElement.appendChild(hotkeyDiv);
   });
 
@@ -365,7 +369,7 @@ function addKeybinds() { // :3
 
       const index = parseInt(event.key, 10) - 1;
 
-      if (event.ctrlKey && !event.shiftKey && !event.altKey && !event.metaKey) {
+      if (isNumber && event[settings.keybind_sidebar_modifier]) {
         const currentLinks = document.querySelectorAll(".sidebar__nav-list > .sidebar__nav-item > .sidebar__nav-link");
         if (currentLinks[index]) {
           event.preventDefault();
@@ -3589,14 +3593,14 @@ function addBetterVoteHistory() {
 }
 
 function str_rand(length) {
-    let result = '';
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
-    for (let i = 0; i < length; i++) {
-        const randomInd = Math.floor(Math.random() * characters.length);
-        result += characters.charAt(randomInd);
-    }
-    return result;
+  for (let i = 0; i < length; i++) {
+      const randomInd = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomInd);
+  }
+  return result;
 }
 
 function convertMToFormat(mins) {
