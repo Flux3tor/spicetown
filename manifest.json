@@ -19,7 +19,8 @@
     "*://flavortown.hackclub.com/*",
     "https://slack.com/*",
     "https://cachet.dunkirk.sh/emojis",
-    "https://*.slack-edge.com/*"
+    "https://*.slack-edge.com/*",
+    "https://logpheus.gizzy.gay/*"
   ],
   "action": {
     "default_popup": "popup/popup.html"

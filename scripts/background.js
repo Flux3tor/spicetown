@@ -70,6 +70,25 @@ api.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse(votes);
     });
     return true;
+  } else if (request.type === "LOGPHEUS_SYNC") {
+    const {url, method, apiKey, payload} = request;
+    fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        sendResponse({ok: res.ok, status: res.status, data});
+      })
+      .catch((e) => {
+        sendResponse({ok: false, error: e.message});
+      });
+    return true;
   }
 });
 

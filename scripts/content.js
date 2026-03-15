@@ -627,8 +627,27 @@ async function addImprovedShop() {
   projectedToggleButton.classList.add("btn", "btn--brown");
   projectedToggleButton.textContent = "Actual";
 
+  const logpheusToggleButton = document.createElement("button");
+  logpheusToggleButton.classList.add("btn", "btn--brown");
+  logpheusToggleButton.textContent = "Don't send data to Logpheus";
+
+  chrome.storage.local.get(["goals_logpheus_sync"], (result) => {
+    logpheusToggleButton.textContent = result.goals_logpheus_sync ? "Send data to Logpheus" : "Don't send data to Logpheus";
+    logpheusToggleButton.classList.toggle("btn--active", !!result.goals_logpheus_sync);
+  });
+
+  logpheusToggleButton.addEventListener("click", async () => {
+    const result = await chrome.storage.local.get(["goals_logpheus_sync"]);
+    const newValue = !result.goals_logpheus_sync;
+    await chrome.storage.local.set({goals_logpheus_sync: newValue});
+    logpheusToggleButton.textContent = newValue ? "Send data to Logpheus" : "Don't send data to Logpheus";
+    logpheusToggleButton.classList.toggle("btn--active", newValue);
+    if (newValue) await syncGoalsToLogpheus(document.querySelectorAll(".shop-goals__item"));
+  });
+
   const buttonGroup = document.createElement("div");
   buttonGroup.classList.add("shop-goals__controls");
+  buttonGroup.appendChild(logpheusToggleButton);
   buttonGroup.appendChild(modeToggleButton);
   buttonGroup.appendChild(projectedToggleButton);
 
@@ -908,6 +927,8 @@ async function addImprovedShop() {
     allTotalText.textContent = targetTotal.toLocaleString();
 
     if (allFill) allFill.style.width = `${percent}%`;
+    
+    syncGoalsToLogpheus(Array.from(currentItems));
   }
 
   let useProjected = false;
@@ -1210,6 +1231,54 @@ async function addImprovedShop() {
     }
     calculateAllProgress();
   });
+
+  async function syncGoalsToLogpheus(shopItems) {
+    const {goals_logpheus_sync} = await chrome.storage.local.get(["goals_logpheus_sync"]);
+    if (!goals_logpheus_sync) return;
+
+    refreshApiKey();
+    if (!apiKey) return;
+
+    const items = (shopItems && shopItems.length > 0) ? shopItems : Array.from(document.querySelectorAll(".shop-goals__item"));
+
+    if (items.length === 0) return;
+
+    const allStorage = await chrome.storage.local.get(null);
+    const currentRegion = getRegion();
+
+    const goalItems = items.map((item) => {
+      const id = item.getAttribute("data-item-id");
+      const name = allStorage[`shop_goal_name_${id}`] || id;
+      const quantity = allStorage[`shop_goal_qty_${id}`] || 1;
+      const apiItem = shopItemsMap.get(id);
+      const unitCost = apiItem ? getItemCost(apiItem, currentRegion) : 0;
+      const accessories = Object.keys(allStorage)
+        .filter((key) => key.startsWith(`shop_goal_accessory_${id}_`) && allStorage[key] === true)
+        .map((key) => key.split("_").pop());
+      return {id, name, quantity, unit_cost: unitCost, accessories};
+    });
+
+    const payload = {
+      goals: goalItems.map(item => parseInt(item.id)),
+    };
+
+    const sendSync = (method) =>
+      new Promise((resolve) =>
+        chrome.runtime.sendMessage(
+          {type: "LOGPHEUS_SYNC", url: "https://logpheus.gizzy.gay/api/v1/goals", method, apiKey, payload},
+          resolve
+        )
+      );
+
+    try {
+      let result = await sendSync("POST");
+      if (!result?.ok) return;
+      logpheusToggleButton.textContent = "Sent data to Logpheus successfully!";
+      setTimeout(() => {logpheusToggleButton.textContent = "Send data to Logpheus";}, 2000);
+    } catch (error) {
+      console.error("sync unsuccessful", error);
+    }
+  }
 
   async function autoReconcile() {
     try {
