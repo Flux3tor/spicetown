@@ -1764,6 +1764,20 @@ async function addSpicetownSettings() {
   `;
   settingsForm.appendChild(syncSection);
 
+  const logpheusSection = document.createElement("div");
+  logpheusSection.className = "settings-section";
+  logpheusSection.innerHTML = `
+    <h3>Logpheus</h3>
+    <p>self-host? point it here (coming soon; doesnt work)</p>
+    <div>
+      <input type="text" id="logpheus-url-input" class="settings-form__input" placeholder="https://logpheus.gizzy.gay"/>
+      <button id="btn-save-logpheus-url" class="btn btn--brown">Save</button>
+      <button id="btn-reset-logpheus-url" class="btn btn--brown">Reset</button>
+    </div>
+    <small id="logpheus-url-status"></small>
+  `;
+  settingsForm.appendChild(logpheusSection);
+
   document.getElementById("btn-export-settings").addEventListener("click", async () => {
     const localStore = await chrome.storage.local.get(null);
     const exportData = {
@@ -2115,7 +2129,7 @@ async function addDevlogGenerator() {
 
   async function generateDevlog(repoUrl, from, to) {
     let repoPath = repoUrl.replace("https://github.com/", "").replace("http://github.com/", "").split("/").slice(0, 2).join("/");
-    const apiUrl = `https://api.github.com/repos/${repoPath}/compare/${from}%5E...${to}`;
+    const apiUrl = `https://api.github.com/repos/${repoPath}/compare/${from}...${to}`;
     
     try {
       const response = await fetch(apiUrl);
