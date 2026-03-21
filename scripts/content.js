@@ -2250,22 +2250,22 @@ async function addExtraShipInfo() {
 
   shipPosts.forEach(shipPost => {
     let mins = 0;
-    let next = shipPost.nextElementSibling;
-    while (next && !next.classList.contains("post--ship")) {
-      if (next.classList.contains("post--devlog")) {
-        const d = next.querySelector(".post__duration")?.textContent || "";
+    let previous = shipPost.previousElementSibling;
+    while (previous && !previous.classList.contains("post--ship")) {
+      if (previous.classList.contains("post--devlog")) {
+        const d = previous.querySelector(".post__duration")?.textContent || "";
         const h = d.match(/(\d+)h/)?.[1] || 0;
         const m = d.match(/(\d+)m/)?.[1] || 0;
         mins += (parseInt(h) * 60) + parseInt(m);
       }
-      next = next.nextElementSibling;
+      previous = previous.previousElementSibling;
     }
 
     const timeSinceItem = document.createElement("div");
     timeSinceItem.className = "post__payout-item";
     timeSinceItem.innerHTML = `
       <span class="post__payout-label">Time since:</span>
-      <span class="post__payout-value">${convertMToFormat(totalTime - mins)}</span>
+      <span class="post__payout-value">${convertMToFormat(mins)}</span>
     `;
 
     const footer = shipPost.querySelector(".post__payout-footer");
@@ -2765,43 +2765,36 @@ function addNextShipEstimation() {
   const payoutFooters = document.querySelectorAll(".post__payout-footer");
   if (payoutFooters.length === 0) return;
 
-  const latestFooter = payoutFooters[payoutFooters.length - 1];
+  const latestFooter = payoutFooters[0];
 
   const calculate = () => {
     const items = Array.from(latestFooter.querySelectorAll(".post__payout-item"));
-    const multiplierItem = items.find(i => i.querySelector(".post__payout-label")?.textContent.includes("Multiplier"));
-    const timeSinceItem = items.find(i => i.querySelector(".post__payout-label")?.textContent.includes("Time since"));
+    const multiplierItem = items.find(item => item.querySelector(".post__payout-label")?.textContent.includes("Multiplier"));
+    const timeSinceItem = items.find(item => item.querySelector(".post__payout-label")?.textContent.includes("Time since"));
 
-    if (!multiplierItem || !timeSinceItem) return false; // Not loaded yet
+    if (!multiplierItem || !timeSinceItem) return false;
 
     const multiplier = parseFloat(multiplierItem.querySelector(".post__payout-value").textContent.replace(/[^\d.]/g, '')) || 0;
     const timeText = timeSinceItem.querySelector(".post__payout-value").textContent;
-
     const h = parseInt(timeText.match(/(\d+)h/)?.[1] || 0);
     const m = parseInt(timeText.match(/(\d+)m/)?.[1] || 0);
     const totalHours = h + (m / 60);
 
     const estimatedPayout = Math.round(totalHours * multiplier);
 
-    const targetLink = document.querySelector("#ship-btn-wrapper > *");
+    const targetLink = document.querySelector("[id^='ship-btn-wrapper'] > *");
     if (!targetLink) return false;
     if (targetLink.textContent.includes("~🍪")) return true;
-    targetLink.textContent += ` ~🍪 ${estimatedPayout}`;
+    targetLink.textContent = `Ship Again ~🍪 ${estimatedPayout}`;
 
     return true;
   };
 
   const observer = new MutationObserver((mutations, obs) => {
-    if (calculate()) {
-      obs.disconnect();
-    }
+    if (calculate()) obs.disconnect();
   });
 
-  observer.observe(latestFooter, {
-    childList: true,
-    subtree: true,
-    characterData: true
-  });
+  observer.observe(latestFooter, {childList: true, subtree: true, characterData: true});
 
   calculate();
 }
