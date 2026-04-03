@@ -1287,6 +1287,9 @@ body.sidebar-editing #sidebar-banner {
   border-radius: calc(var(--border-radius)/1.5) !important;
   transition: width 180ms ease !important;
 }
+.sidebar__user-avatar-hat {
+  z-index: 2 !important;
+}
 
 /** ANIMATIONS **/
 
@@ -1706,6 +1709,7 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .project-show-card,
 [data-theme] .btn--brown,
 [data-theme] .btn.btn--red,
+[data-theme] .not-authorized-page__btn,
 [data-theme] .projects-board__grid-item > .project-card {
   background-color: var(--surface-dark) !important;
   border-color: var(--border-color) !important;
@@ -2351,7 +2355,8 @@ body.sidebar-editing #sidebar-banner {
 [data-theme] .projects-ship__edit-link,
 [data-theme] .projects-ship__form-actions button,
 [data-theme] .shop-order__edit-address > a.btn,
-[data-theme] .shop-order__details > .btn-order {
+[data-theme] .shop-order__details > .btn-order,
+[data-theme] .not-authorized-page__btn {
   background-color: var(--surface-card) !important;
   box-shadow: 0px 4px 0px var(--surface-dark) !important;
 }
@@ -3340,4 +3345,11 @@ body[data-theme="bg-color-aurora"] {
   background: var(--accent) repeating-conic-gradient(from 0deg, rgba(0, 0, 0, 0.02) 0deg 90deg, transparent 90deg 180deg) !important;
   outline-color: var(--border-color) !important;
   color: var(--text-primary) !important;
+}
+[data-theme] .ui-heading__title,
+[data-theme] .not-authorized-page__message {
+  color: var(--text-primary) !important;
+}
+[data-theme] .not-authorized-page__title {
+  color: var(--text-highlight) !important;
 }
