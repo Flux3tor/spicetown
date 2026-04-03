@@ -51,7 +51,8 @@ async function initialize() {
     autoClaimAchievements,
     addVoteKeybinds,
     addBetterVoting,
-    addBetterVoteHistory
+    addBetterVoteHistory,
+    addAIDevlogFilter
   ];
   uiEnhancements.forEach(func => func());
 
@@ -3666,6 +3667,53 @@ function addBetterVoteHistory() {
     actionCell.appendChild(copyBtn);
     row.appendChild(actionCell);
   });
+}
+
+function addAIDevlogFilter() {
+  const devlogList = document.querySelector("#devlog-list");
+  if (!devlogList) return;
+  const savedState = localStorage.getItem("hide-ai-devlogs") === "true";
+  const toggleContainer = document.createElement("label");
+  toggleContainer.className = "ai-filter__toggle";
+  toggleContainer.innerHTML = `
+    <input type="checkbox" id="ai-devlog-toggle" ${savedState ? "checked" : ""}>
+    <span>Hide suspected AI devlogs</span>
+  `;
+  devlogList.before(toggleContainer);
+  const applyFilter = (hide) => {
+    const devlogs = devlogList.querySelectorAll(".post.post--devlog");
+    let hiddenCount = 0;
+    devlogs.forEach(devlog => {
+      const body = devlog.querySelector(".post__body")?.textContent || "";
+      let score = 0;
+      if (/seamless|robust|streamlined|comprehensive|leveraging|real-time|user-centric/i.test(body)) score++;
+      if (/on the (cleanup|frontend|backend|technical) side|biggest update (is|this)/i.test(body)) score += 1.5;
+      const hasEmojiHeaders = (body.match(/^[^\w\s]{1,2}\s[A-Z]/gm) || []).length >= 2;
+      if (hasEmojiHeaders) score++;
+      if (body.includes("—")) score += 2;
+      if (/stay tuned|happy coding|paving the way|in summary/i.test(body.slice(-100))) score++;
+      const sus = score >= 2;
+      if (hide && sus) {
+        devlog.style.display = "none";
+        hiddenCount++;
+      } else {
+        devlog.style.display = "";
+      }
+    });
+    const label = toggleContainer.querySelector("span");
+    label.textContent = hide && hiddenCount > 0 ? `Hide suspected AI devlogs (${hiddenCount} hidden)` : "Hide suspected AI devlogs";
+  };
+  applyFilter(savedState);
+  document.getElementById("ai-devlog-toggle").addEventListener("change", (event) => {
+    localStorage.setItem("hide-ai-devlog", event.target.checked);
+    applyFilter(event.target.checked);
+  });
+  const observer = new MutationObserver(() => {
+    if (document.getElementById("ai-devlog-toggle")?.checked) {
+      applyFilter(true);
+    }
+  });
+  observer.observe(devlogList, {childList: true});
 }
 
 function str_rand(length) {
