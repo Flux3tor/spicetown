@@ -1321,7 +1321,10 @@ body.sidebar-editing #sidebar-banner {
 .votes-new__prev-btn,
 .shop__recently-added,
 .projects-new__time-preview,
-.projects-show__container > .mt-4 > form > button {
+.projects-show__container > .mt-4 > form > button,
+.kitchen-open-sauce,
+.kitchen-pyramid-banner,
+.kitchen-flavortime-banner {
   opacity: 0;
   animation: 0.5s fade-in 300ms ease forwards;
 }
@@ -3351,5 +3354,12 @@ body[data-theme="bg-color-aurora"] {
   color: var(--text-primary) !important;
 }
 [data-theme] .not-authorized-page__title {
+  color: var(--text-highlight) !important;
+}
+[data-theme] .user-profile__order {
+  background-color: var(--surface-card) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme] .user-profile__order span {
   color: var(--text-highlight) !important;
 }
