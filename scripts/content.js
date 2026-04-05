@@ -1973,6 +1973,10 @@ async function addThemesPage() {
 }
 
 async function addDevlogGenerator() {
+  const DEFAULT_CHANGELOG_FORMAT = `## Changelog\n{commits\n* {commitname} ([{commithash}]({commitlink}))\n}`;
+
+  let isInjecting = false;
+
   const path = window.location.pathname;
   if (path.includes("/projects/") && !path.includes("/devlogs/")) {
     const repoLink = Array.from(document.querySelectorAll(".project-show-card__actions a"))
@@ -1982,28 +1986,34 @@ async function addDevlogGenerator() {
 
   const checkForTextArea = async () => {
     const textArea = document.querySelector("#post_devlog_body");
-    if (textArea && !document.getElementById("devlog-gen-container")) {
-      let repoUrl = sessionStorage.getItem("active_repo_url");
-      if (!repoUrl) {
-        const projectId = path.match(/\/projects\/(\d+)/)?.[1];
-        if (projectId) {
-          try {
-            const response = await fetch(`https://flavortown.hackclub.com/projects/${projectId}`);
-            const html = await response.text();
-            const doc = new DOMParser().parseFromString(html, "text/html");
-            const repoLink = Array.from(doc.querySelectorAll(".project-show-card__actions a"))
-              .find(a => a.textContent.toLowerCase().includes("repository"));
-            if (repoLink) {
-              repoUrl = repoLink.href;
-              sessionStorage.setItem("active_repo_url", repoUrl);
-            }
-          } catch (error) {
-            console.error("failed to backload a repo url ", error);
+    if (!textArea || textArea.dataset.devlogGenAttached || isInjecting) return;
+    textArea.dataset.devlogGenAttached = "true";
+    isInjecting = true;
+    let repoUrl = sessionStorage.getItem("active_repo_url");
+    if (!repoUrl) {
+      const projectId = path.match(/\/projects\/(\d+)/)?.[1];
+      if (projectId) {
+        try {
+          const response = await fetch(`https://flavortown.hackclub.com/projects/${projectId}`);
+          const html = await response.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const repoLink = Array.from(doc.querySelectorAll(".project-show-card__actions a"))
+            .find(a => a.textContent.toLowerCase().includes("repository"));
+          if (repoLink) {
+            repoUrl = repoLink.href;
+            sessionStorage.setItem("active_repo_url", repoUrl);
           }
+        } catch (error) {
+          console.error("failed to backload a repo url ", error);
         }
       }
-      if (repoUrl) injectDevlogTools(repoUrl, textArea);
     }
+    if (repoUrl) {
+      await injectDevlogTools(repoUrl, textArea);
+    } else {
+      delete textArea.dataset.devlogGenAttached;
+    }
+    isInjecting = false;
   };
 
   const observer = new MutationObserver(() => checkForTextArea());
@@ -2012,10 +2022,10 @@ async function addDevlogGenerator() {
   checkForTextArea();
 
   async function injectDevlogTools(repoUrl, textArea) {
-    if (document.getElementById("devlog-gen-container")) return;
-
     const projectId = window.location.pathname.match(/\/projects\/(\d+)/)?.[1];
     const repoPath = repoUrl.replace(/https?:\/\/github\.com\//, "").split("/").slice(0, 2).join("/");
+    const {devlog_changelog_format: savedFormat} = await chrome.storage.local.get(["devlog_changelog_format"]);
+    const currentFormat = savedFormat || DEFAULT_CHANGELOG_FORMAT;
 
     const container = document.createElement("div");
     container.id = "devlog-gen-container";
@@ -2025,6 +2035,29 @@ async function addDevlogGenerator() {
         <span> to </span>
         <select id="commit-to"><option>select your from commit first</option></select>
         <button type="button" id="btn-gen-devlog" class="btn btn--brown">add changelog</button>
+        <button type="button" id="btn-changelog-format" class="btn btn--brown">format</button>
+        <p>this feature is currently only available to github repositories. support to bitbucket and gitlabs will come soon!</p>
+      </div>
+      <div id="changelog-format-panel">
+        <h2>custom changelog formatting</h2>
+        <p>change how your changelogs look! use the variables shown below to create your personalized template. (beta)</p>
+        <div>
+          <strong>Variables:</strong><br>
+          <code>{commits ... }</code> - wraps the repeated commit block (you can only have one of these)<br>
+          <code>{commitname}</code> - the commit title<br>
+          <code>{commithash}</code> - shortened 7-char sha for the commit<br>
+          <code>{commitlink}</code> - full URL to the commit on github<br><br>
+          <strong>Example:</strong><br>
+          <pre>## Changelog\n{commits\n* {commitname} ([{commithash}]({commitlink}))\n}</pre><br>
+          p.s. anything inside <code>{commits ... }</code> is repeated once per commit.<br>
+          everything outside is written once (header/footer [if you decide to have one])
+        </div>
+        <textarea id="changelog-format-input" rows="4" class="input__field input__field--textarea">${currentFormat}</textarea>
+        <div>
+          <button type="button" id="btn-save-format" class="btn btn--brown">Save</button>
+          <button type="button" id="btn-reset-format" class="btn btn--brown">Reset to Default</button>
+        </div>
+        <small id="format-save-status" style="display: block;"></small>
       </div>
       <small>repository: ${repoPath}</small>
     `;
@@ -2032,6 +2065,30 @@ async function addDevlogGenerator() {
     const targetField = textArea.closest(".projects-new__field") || textArea.parentElement;
     targetField.parentNode.insertBefore(container, targetField);
     
+    const formatPanel = document.getElementById("changelog-format-panel");
+    const formatInput = document.getElementById("changelog-format-input");
+    const formatStatus = document.getElementById("format-save-status");
+
+    document.getElementById("btn-changelog-format").addEventListener("click", (event) => {
+      event.preventDefault();
+      formatPanel.style.display = formatPanel.style.display === "none" ? "flex" : "none";
+    });
+
+    document.getElementById("btn-save-format").addEventListener("click", async (event) => {
+      event.preventDefault();
+      await chrome.storage.local.set({devlog_changelog_format: formatInput.value});
+      formatStatus.textContent = "saved!!!!!!!";
+      setTimeout(() => {formatStatus.textContent = "";}, 2000);
+    });
+
+    document.getElementById("btn-reset-format").addEventListener("click", async (event) => {
+      event.preventDefault();
+      formatInput.value = DEFAULT_CHANGELOG_FORMAT;
+      await chrome.storage.local.set({devlog_changelog_format: DEFAULT_CHANGELOG_FORMAT});
+      formatStatus.textContent = "formatting was successfully reset(ed) to default!";
+      setTimeout(() => {formatStatus.textContent = "";}, 2000);
+    });
+
     const fromSelect = document.getElementById("commit-from");
     const toSelect = document.getElementById("commit-to");
 
@@ -2128,26 +2185,59 @@ async function addDevlogGenerator() {
     });
   }
 
+  function applyChangelogFormat(format, commits) {
+    const commitBlockMatch = format.match(/\{commits\n([\s\S]*?)\n\}/);
+    if (!commitBlockMatch) {
+      return commits.map(c => `- ${c.commit.message.split("\n")[0]} (${c.sha.substring(0, 7)})`).join("\n");
+    }
+
+    const commitTemplate = commitBlockMatch[1];
+
+    const renderedCommits = commits.map(commit => {
+      const shortSha = commit.sha.substring(0, 7);
+      const name = commit.commit.message.split("\n")[0].trim();
+      const link = commit.html_url;
+
+      return commitTemplate
+        .replace(/\{commitname\}/g, name)
+        .replace(/\{commithash\}/g, shortSha)
+        .replace(/\{commitlink\}/g, link);
+    }).join("\n");
+
+    return format.replace(/\{commits\n[\s\S]*?\n\}/, renderedCommits);
+  }
+
   async function generateDevlog(repoUrl, from, to) {
     let repoPath = repoUrl.replace("https://github.com/", "").replace("http://github.com/", "").split("/").slice(0, 2).join("/");
-    const apiUrl = `https://api.github.com/repos/${repoPath}/compare/${from}...${to}`;
     
     try {
-      const response = await fetch(apiUrl);
-      if (response.status === 404) {
-        throw new Error("repo or commits not found, check if hashes and repo names are correct!!!!!!!!!!! pweeaseee");
+      const compareUrl = `https://api.github.com/repos/${repoPath}/compare/${from}...${to}`;
+      const compareResponse = await fetch(compareUrl);
+
+      if (compareResponse.status === 404) {
+        throw new Error("repo or commits not found, check if hashes and repo names are correct!!!!!!!!!!!");
       }
-      const data = await response.json();
-      if (!data.commits || data.commits.length === 0) {
+
+      const compareData = await compareResponse.json();
+
+      const fromResponse = await fetch(`https://api.github.com/repos/${repoPath}/commits/${from}`);
+      const fromCommit = fromResponse.ok ? await fromResponse.json() : null;
+
+      let commits = compareData.commits || [];
+
+      if (fromCommit && !commits.some(c => c.sha === fromCommit.sha)) {
+        commits = [fromCommit, ...commits];
+      }
+
+      if (commits.length === 0) {
         alert("no commits found in that range (p.s. 'from' should be an older commit than 'to')");
         return "";
       }
 
-      return data.commits.map(commit => {
-        const shortSha = commit.sha.substring(0, 7);
-        const message = commit.commit.message.split("\n")[0].trim();
-        return `- ${message} ([${shortSha}](${commit.html_url}))`;
-      }).join("\n");
+      const { devlog_changelog_format: savedFormat } = await chrome.storage.local.get(["devlog_changelog_format"]);
+      const format = savedFormat || DEFAULT_CHANGELOG_FORMAT;
+
+      return applyChangelogFormat(format, commits);
     } catch (error) {
       alert(error.message);
       return "";

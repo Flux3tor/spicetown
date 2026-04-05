@@ -1290,6 +1290,14 @@ body.sidebar-editing #sidebar-banner {
 .sidebar__user-avatar-hat {
   z-index: 2 !important;
 }
+#changelog-format-panel {
+  display: none;
+  margin-top: 8px;
+  padding: 16px;
+  gap: 12px;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.05);
+}
 
 /** ANIMATIONS **/
 
