@@ -2448,7 +2448,16 @@ function addEmojiAutocomplete() {
   function insertEmoji(input, name, originalUrl) {
     const text = input.value;
     const cursorPos = input.selectionStart;
-    const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=20&h=20&fit=contain`;
+    const lineStart = text.lastIndexOf("\n", cursorPos - 1) + 1;
+    const currentLine = text.slice(lineStart, cursorPos);
+    let size = 20;
+    if (currentLine.startsWith("# ")) size = 40;
+    else if (currentLine.startsWith("## ")) size = 30;
+    else if (currentLine.startsWith("### ")) size = 23;
+    else if (currentLine.startsWith("#### ")) size = 20;
+    else if (currentLine.startsWith("##### ")) size = 17;
+    else if (currentLine.startsWith("###### ")) size = 13;
+    const proxyUrl = `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&w=${size}&h=${size}&fit=contain`;
     const emojiMarkdown = `![${name}](${proxyUrl}) `;
     const before = text.slice(0, cursorPos).replace(/:[a-z0-9_\-+]*$/, emojiMarkdown);
     const after = text.slice(cursorPos);
