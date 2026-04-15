@@ -2658,18 +2658,18 @@ body.sidebar-editing #sidebar-banner {
 
   --bg-primary: #0E1218;
 
-  --surface-card: #141b2d;
-  --surface-header: #1b2336;
+  --surface-card: rgba(28, 32, 44, 0.72);
+  --surface-header: rgba(34, 40, 56, 0.85);
 
   --accent: #1A9CFF;
 
-  --text-primary: #F7FBFF;
+  --text-primary: #FFFFFF;
   --text-muted: #B3BED0;
 
-  --border-color: rgba(255, 255, 255, 0.12);
+  --border-color: rgba(255, 255, 255, 0.18);
   --glow-color: rgba(26, 156, 255, 0.4);
 
-  --text-highlight: #FFFFFF;
+  --text-highlight: #ffffff;
 
   --surface-dark: #101726;
   --surface-header-backdrop: #182133;
@@ -2680,7 +2680,7 @@ body.sidebar-editing #sidebar-banner {
 
   --kitchen-bar-border: var(--border-color);
   --kitchen-bar-bg: #0f1424;
-  --kitchen-gradient: linear-gradient(90deg, var(--accent), var(--accent-darker));
+  --kitchen-gradient: linear-gradient(90deg, var(--accent), #0a6ed1);
 
   --input-main-bg: #0f1424;
   --input-sub-bg: #1c2230;
@@ -2691,8 +2691,8 @@ body.sidebar-editing #sidebar-banner {
   --projects-show-timeline-url: url('data:image/svg+xml,<svg width="8" height="90" viewBox="0 0 4 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="4" height="30" rx="2" fill="%231A9CFF"/></svg>');
 
   --star-color: var(--accent);
-  --music-player-bg: var(--surface-dark);
-  
+  --music-player-bg: #101726;
+
   --accent-image: none;
 }
 
