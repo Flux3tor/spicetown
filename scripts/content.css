@@ -2668,6 +2668,32 @@ body.sidebar-editing #sidebar-banner {
 
   --border-color: rgba(255, 255, 255, 0.18);
   --glow-color: rgba(26, 156, 255, 0.4);
+
+  --text-highlight: #ffffff;
+
+  --surface-dark: #101726;
+  --surface-header-backdrop: #182133;
+
+  --accent-darker: #0a6ed1;
+  --accent-muted: rgba(255,255,255,0.6);
+  --accent-semi-transparent: rgba(26,156,255,0.2);
+
+  --kitchen-bar-border: var(--border-color);
+  --kitchen-bar-bg: #0f1424;
+  --kitchen-gradient: linear-gradient(90deg, var(--accent), #0a6ed1);
+
+  --input-main-bg: #0f1424;
+  --input-sub-bg: #1c2230;
+  --input-sub-text: var(--text-primary);
+
+  --create-project-url: var(--create-project-mask);
+
+  --projects-show-timeline-url: url('data:image/svg+xml,<svg width="8" height="90" viewBox="0 0 4 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="4" height="30" rx="2" fill="%231A9CFF"/></svg>');
+
+  --star-color: var(--accent);
+  --music-player-bg: #101726;
+
+  --accent-image: none;
 }
 
 body[data-theme="bg-color-aurora"] {
